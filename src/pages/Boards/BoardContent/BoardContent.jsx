@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
-import { mapOrder } from '~/utils/sorts'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
@@ -24,7 +23,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => {
+const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn, moveCardInTheSameColumn, moveCardToDifferentColumn }) => {
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 500 } })
   const sensors = useSensors(mouseSensor, touchSensor)
@@ -39,7 +38,7 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => 
   const lastOverId = useRef(null)
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    setOrderedColumns(board.columns)
   }, [board])
 
   const findColumnByCardId = (cardId) => {
@@ -53,7 +52,8 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => 
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns(prevColumns => {
       const overCardIndex = overColumn?.cards?.findIndex(card => card._id === overCardId)
@@ -78,6 +78,10 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => 
         nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, { ...activeDraggingCardData, columnId: nextOverColumn._id })
         nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+      }
+
+      if (triggerFrom === 'handleDragEnd') {
+        moveCardToDifferentColumn(activeDraggingCardId, oldColumnWhenDraggingCard._id, nextOverColumn._id, nextColumns)
       }
 
       return nextColumns
@@ -116,7 +120,8 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => 
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
     }
   }
@@ -142,19 +147,24 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => 
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(c => c._id === activeDragItemId)
         const newCardIndex = overColumn?.cards?.findIndex(c => c._id === overCardId)
         const dndOrderedCards = arrayMove(oldColumnWhenDraggingCard?.cards, oldCardIndex, newCardIndex)
+        const dndOrderedCardIds = dndOrderedCards.map(c => c._id)
+
         setOrderedColumns(prevColums => {
           const nextColumns = cloneDeep(prevColums)
           const targetColumns = nextColumns.find(c => c._id === overColumn._id)
           targetColumns.cards = dndOrderedCards
-          targetColumns.cardOrderIds = dndOrderedCards.map(c => c._id)
+          targetColumns.cardOrderIds = dndOrderedCardIds
           return nextColumns
         })
+
+        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
       }
     }
 
@@ -162,8 +172,8 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => 
       const oldColumnIndex = orderedColumns.findIndex(c => c._id === active.id)
       const newColumnIndex = orderedColumns.findIndex(c => c._id === over.id)
       const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
-      moveColumn(dndOrderedColumns)
       setOrderedColumns(dndOrderedColumns)
+      moveColumn(dndOrderedColumns)
     }
 
     setActiveDragItemId(null)
