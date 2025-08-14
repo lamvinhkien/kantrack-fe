@@ -13,10 +13,12 @@ import {
   createNewCardAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
-  moveCardToDifferentColumnAPI
+  moveCardToDifferentColumnAPI,
+  deleteColumnDetailsAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 
 const Board = () => {
   const [board, setBoard] = useState(null)
@@ -111,6 +113,17 @@ const Board = () => {
     })
   }
 
+  const deleteColumnDetails = (columnId) => {
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c.id !== columnId)
+    setBoard(newBoard)
+
+    deleteColumnDetailsAPI(columnId).then(res => {
+      toast.success(res?.deleteResult)
+    })
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
@@ -142,6 +155,7 @@ const Board = () => {
               moveColumn={moveColumn}
               moveCardInTheSameColumn={moveCardInTheSameColumn}
               moveCardToDifferentColumn={moveCardToDifferentColumn}
+              deleteColumnDetails={deleteColumnDetails}
             />
           </>
       }
