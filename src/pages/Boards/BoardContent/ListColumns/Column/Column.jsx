@@ -24,8 +24,15 @@ import { CSS } from '@dnd-kit/utilities'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { useConfirm } from 'material-ui-confirm'
+import { cloneDeep } from 'lodash'
+import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
-const Column = ({ column, createNewCard, deleteColumnDetails }) => {
+const Column = ({ column }) => {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -54,7 +61,7 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('Please enter card title.')
       return
@@ -65,7 +72,23 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
       columnId: column._id
     }
 
-    createNewCard(newCardData)
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    })
+
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+    if (columnToUpdate) {
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+        columnToUpdate.cardOrderIds = [createdCard._id]
+      } else {
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+      }
+    }
+    dispatch(updateCurrentActiveBoard(newBoard))
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
@@ -80,7 +103,14 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
       cancellationText: 'Cancel',
       confirmationButtonProps: { color: 'error' }
     }).then(() => {
-      deleteColumnDetails(column._id)
+      const newBoard = { ...board }
+      newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+      newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c.id !== column._id)
+      dispatch(updateCurrentActiveBoard(newBoard))
+
+      deleteColumnDetailsAPI(column._id).then(res => {
+        toast.success(res?.deleteResult)
+      })
     }).catch(() => { })
   }
 
@@ -205,7 +235,7 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
                 value={newCardTitle}
                 onChange={(event) => setNewCardTitle(event.target.value)}
                 id="outlined-search"
-                label="Enter Card title"
+                label="Enter card title"
                 type="text"
                 size='small'
                 variant="outlined"
