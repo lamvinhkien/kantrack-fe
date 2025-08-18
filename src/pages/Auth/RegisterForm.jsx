@@ -62,7 +62,7 @@ const RegisterForm = () => {
           <FieldErrorAlert errors={errors} fieldName={'password_confirmation'} />
         </Box>
         <Box sx={{ marginBottom: '10px' }}>
-          <Button type='submit' variant='outlined'>Register</Button>
+          <Button type='submit' variant='outlined' className='interceptor-loading'>Register</Button>
         </Box>
         <Link to='/login' style={{ textDecoration: 'none' }}>
           <Typography>

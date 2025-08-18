@@ -105,25 +105,25 @@ const BoardBar = ({ board }) => {
           }}
         >
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
           <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="src/assets/with-bezau-1.JPG" />
+            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
           </Tooltip>
         </AvatarGroup>
       </Box>

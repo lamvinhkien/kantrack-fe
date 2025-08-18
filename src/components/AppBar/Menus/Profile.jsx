@@ -33,7 +33,7 @@ const Profile = () => {
             aria-expanded={open ? 'true' : undefined}
             sx={{ padding: 0 }}
           >
-            <Avatar sx={{ width: 35, height: 35 }} src='src/assets/with-bezau-1.JPG' />
+            <Avatar sx={{ width: 35, height: 35 }} src='/src/assets/with-bezau-1.JPG' />
           </IconButton>
         </Tooltip>
       </Box>

@@ -49,7 +49,7 @@ const LoginForm = () => {
           <FieldErrorAlert errors={errors} fieldName={'password'} />
         </Box>
         <Box sx={{ marginBottom: '10px' }}>
-          <Button type='submit' variant='outlined'>Login</Button>
+          <Button type='submit' variant='outlined' className='interceptor-loading'>Login</Button>
         </Box>
         <Link to='/register' style={{ textDecoration: 'none' }}>
           <Typography>
