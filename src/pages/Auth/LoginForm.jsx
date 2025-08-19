@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
   EMAIL_RULE,
@@ -15,12 +15,33 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 
 const LoginForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
+
+  let [searchParams] = useSearchParams()
+  const verifiedEmail = searchParams.get('verifiedEmail')
+  const registeredEmail = searchParams.get('registeredEmail')
+
   const submitLogIn = (data) => {
     data
   }
 
   return (
     <form onSubmit={handleSubmit(submitLogIn)}>
+      {
+        verifiedEmail &&
+        <Box sx={{ marginBottom: '10px' }}>
+          <Typography>
+            Your email {verifiedEmail} has been verified.
+          </Typography>
+        </Box>
+      }
+      {
+        registeredEmail &&
+        <Box sx={{ marginBottom: '10px' }}>
+          <Typography>
+            Please verify your email: {registeredEmail}.
+          </Typography>
+        </Box>
+      }
       <Box sx={{ textAlign: 'center' }}>
         <Box sx={{ marginBottom: '10px' }}>
           <TextField label='Enter Email...' type='text' variant='outlined' fullWidth

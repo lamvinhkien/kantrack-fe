@@ -1,8 +1,5 @@
 import { useEffect } from 'react'
 import Container from '@mui/material/Container'
-import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
-import Typography from '@mui/material/Typography'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
@@ -15,6 +12,7 @@ import { fetchBoardDetailsAPI, updateCurrentActiveBoard, selectCurrentActiveBoar
 import { useDispatch, useSelector } from 'react-redux'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'react-router-dom'
+import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 
 const Board = () => {
   const dispatch = useDispatch()
@@ -67,28 +65,14 @@ const Board = () => {
   }
 
   return (
-    <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
-      <AppBar />
+    <>
       {
         !board
           ?
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: (theme) => `calc(100vh - ${theme.trello.appBarHeight})`,
-              width: '100%',
-              bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
-              gap: 2
-            }}
-          >
-            <CircularProgress sx={{ color: '#fff' }} />
-            <Typography sx={{ color: '#fff' }}>Loading Board...</Typography>
-          </Box>
-
+          <PageLoadingSpinner caption='Loading Board...' />
           :
-          <>
+          <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
+            <AppBar />
             <BoardBar board={board} />
             <BoardContent
               board={board}
@@ -96,9 +80,9 @@ const Board = () => {
               moveCardInTheSameColumn={moveCardInTheSameColumn}
               moveCardToDifferentColumn={moveCardToDifferentColumn}
             />
-          </>
+          </Container>
       }
-    </Container>
+    </>
   )
 }
 

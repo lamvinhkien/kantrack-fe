@@ -2,7 +2,8 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
   EMAIL_RULE,
@@ -13,11 +14,16 @@ import {
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
+import { registerUserAPI } from '~/apis'
 
 const RegisterForm = () => {
+  const navigate = useNavigate()
+
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
   const submitRegister = (data) => {
-    data
+    const { email, password } = data
+    toast.promise(registerUserAPI({ email, password }), { pending: 'Registration is in progress...' })
+      .then(user => { navigate(`/login?registeredEmail=${user.email}`) })
   }
 
   return (
