@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
   EMAIL_RULE,
@@ -12,8 +12,14 @@ import {
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
+import { useDispatch } from 'react-redux'
+import { loginUserAPI } from '~/redux/user/userSlice'
+import { toast } from 'react-toastify'
 
 const LoginForm = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const { register, handleSubmit, formState: { errors } } = useForm()
 
   let [searchParams] = useSearchParams()
@@ -21,7 +27,13 @@ const LoginForm = () => {
   const registeredEmail = searchParams.get('registeredEmail')
 
   const submitLogIn = (data) => {
-    data
+    const { email, password } = data
+    toast.promise(
+      dispatch(loginUserAPI({ email, password })),
+      { pending: 'Logging in...' }
+    ).then(res => {
+      if (!res.error) navigate('/')
+    })
   }
 
   return (
