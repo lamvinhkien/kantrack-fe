@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import CssBaseline from '@mui/material/CssBaseline'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
+import GlobalStyles from '@mui/material/GlobalStyles'
 import App from '~/App.jsx'
 import theme from '~/theme.js'
 import { ToastContainer } from 'react-toastify'
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             allowClose: false,
             buttonOrder: ['confirm', 'cancel']
           }}>
+            <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
             <CssBaseline />
             <App />
             <ToastContainer position='top-center' theme="colored" autoClose={3500} />
