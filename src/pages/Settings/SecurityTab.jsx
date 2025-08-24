@@ -79,7 +79,7 @@ const SecurityTab = () => {
                     <InputAdornment position="start">
                       <PasswordIcon fontSize="small" />
                     </InputAdornment>
-                  ),
+                  )
                 }}
                 {...register('current_password', {
                   required: FIELD_REQUIRED_MESSAGE,
@@ -104,7 +104,7 @@ const SecurityTab = () => {
                     <InputAdornment position="start">
                       <LockIcon fontSize="small" />
                     </InputAdornment>
-                  ),
+                  )
                 }}
                 {...register('new_password', {
                   required: FIELD_REQUIRED_MESSAGE,
@@ -129,7 +129,7 @@ const SecurityTab = () => {
                     <InputAdornment position="start">
                       <LockResetIcon fontSize="small" />
                     </InputAdornment>
-                  ),
+                  )
                 }}
                 {...register('new_password_confirmation', {
                   validate: (value) => {

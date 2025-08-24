@@ -58,9 +58,14 @@ const AccountTab = () => {
 
     let reqData = new FormData()
     reqData.append('avatar', e.target?.files[0])
-    for (const value of reqData.values()) {
-      console.log('reqData Value: ', value)
-    }
+
+    toast.promise(
+      dispatch(updateUserAPI(reqData)),
+      { pending: 'Updating...' }
+    ).then(res => {
+      if (!res.error) toast.success('User updated successfully.')
+      e.target.value = ''
+    })
   }
 
   return (
