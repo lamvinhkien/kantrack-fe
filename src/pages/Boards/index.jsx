@@ -13,12 +13,14 @@ import HomeIcon from '@mui/icons-material/Home'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
+// import CardMedia from '@mui/material/CardMedia'
 import Pagination from '@mui/material/Pagination'
 import PaginationItem from '@mui/material/PaginationItem'
 import { Link, useLocation } from 'react-router-dom'
 import randomColor from 'randomcolor'
 import SidebarCreateBoardModal from './create'
+import { fetchBoardsAPI } from '~/apis'
+import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
 import { styled } from '@mui/material/styles'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -41,6 +43,8 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 const Boards = () => {
   const [boards, setBoards] = useState(null)
 
+  const [totalBoards, setTotalBoards] = useState(null)
+
   const location = useLocation()
 
   const query = new URLSearchParams(location.search)
@@ -48,8 +52,11 @@ const Boards = () => {
   const page = parseInt(query.get('page') || '1', 10)
 
   useEffect(() => {
-    setBoards([...Array(16)].map((_, i) => i))
-  }, [])
+    fetchBoardsAPI(location.search).then(res => {
+      setBoards(res.boards || [])
+      setTotalBoards(res.totalBoards || 0)
+    })
+  }, [location.search])
 
   if (!boards) {
     return <PageLoadingSpinner caption="Loading Boards..." />
@@ -88,23 +95,23 @@ const Boards = () => {
             }
             <Grid container spacing={2}>
               {boards.map(b =>
-                <Grid xs={12} sm={3} md={4} key={b}>
+                <Grid xs={12} sm={3} md={4} key={b._id}>
                   <Card sx={{ width: '250px' }}>
+                    {/* <CardMedia component='img' height='100' image='https://picsum.photos/100' /> */}
                     <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
                     <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
                       <Typography gutterBottom variant="h6" component="div">
-                        Board title
+                        {b?.title}
                       </Typography>
                       <Typography
                         variant="body2"
                         color="text.secondary"
                         sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                        This impressive paella is a perfect party dish and a fun meal to cook together
-                        with your guests. Add 1 cup of frozen peas along with the mussels, if you like.
+                        {b?.description}
                       </Typography>
                       <Box
                         component={Link}
-                        to={'/boards/id'}
+                        to={`/boards/${b._id}`}
                         sx={{
                           mt: 1,
                           display: 'flex',
@@ -122,23 +129,26 @@ const Boards = () => {
               )}
             </Grid>
 
-            <Box sx={{ my: 3, pr: 5, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-              <Pagination
-                size="large"
-                color="secondary"
-                showFirstButton
-                showLastButton
-                count={boards.length}
-                page={page}
-                renderItem={(item) => (
-                  <PaginationItem
-                    component={Link}
-                    to={`/boards${item.page === 1 ? '' : `?page=${item.page}`}`}
-                    {...item}
-                  />
-                )}
-              />
-            </Box>
+            {
+              totalBoards > 0 &&
+              <Box sx={{ my: 3, pr: 5, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                <Pagination
+                  size="large"
+                  color="primary"
+                  showFirstButton
+                  showLastButton
+                  count={Math.ceil(totalBoards / DEFAULT_ITEMS_PER_PAGE)}
+                  page={page}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      component={Link}
+                      to={`/boards${item.page === DEFAULT_PAGE ? '' : `?page=${item.page}`}`}
+                      {...item}
+                    />
+                  )}
+                />
+              </Box>
+            }
           </Grid>
         </Grid>
       </Box>
