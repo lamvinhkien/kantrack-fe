@@ -27,7 +27,7 @@ import { cloneDeep } from 'lodash'
 import { createNewCardAPI, deleteColumnDetailsAPI, updateColumnDetailsAPI } from '~/apis'
 import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import ToogleFocusInput from '~/components/Form/ToogleFocusInput'
+import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 
 const Column = ({ column }) => {
   const dispatch = useDispatch()
@@ -144,7 +144,7 @@ const Column = ({ column }) => {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <ToogleFocusInput value={column?.title} onChangedValue={onUpdateColumnTitle} data-no-dnd="true" />
+          <ToggleFocusInput value={column?.title} onChangedValue={onUpdateColumnTitle} data-no-dnd="true" />
           <Box>
             <Tooltip title="More options">
               <ExpandMoreIcon

@@ -5,12 +5,11 @@ import VpnLockIcon from '@mui/icons-material/VpnLock'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import BoltIcon from '@mui/icons-material/Bolt'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import Avatar from '@mui/material/Avatar'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { capitalizeFirstLetter } from '~/utils/formatters'
+import BoardUserGroup from './BoardUserGroup'
 
 const MENU_STYLES = {
   color: 'white',
@@ -89,43 +88,7 @@ const BoardBar = ({ board }) => {
         >
           Invite
         </Button>
-        <AvatarGroup
-          max={6}
-          sx={{
-            gap: '10px',
-            '& .MuiAvatar-root': {
-              width: 35,
-              height: 35,
-              fontSize: 15,
-              border: 'none',
-              color: 'white',
-              cursor: 'pointer',
-              '&:first-of-type': { bgcolor: '#a4b0be' }
-            }
-          }}
-        >
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-          <Tooltip title="lamvinhkien">
-            <Avatar alt="lamvinhkien" src="/src/assets/with-bezau-1.JPG" />
-          </Tooltip>
-        </AvatarGroup>
+        <BoardUserGroup />
       </Box>
     </Box>
   )

@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import TextField from '@mui/material/TextField'
 
-const ToogleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...props }) => {
+const ToggleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...props }) => {
   const [inputValue, setInputValue] = useState(value)
 
   const triggerBlur = () => {
-    if (!inputValue) {
+    setInputValue(inputValue.trim())
+
+    if (!inputValue || inputValue.trim() === value) {
       setInputValue(value)
       return
     }
-    if (inputValue === value) return
-
     onChangedValue(inputValue)
   }
 
@@ -50,4 +50,4 @@ const ToogleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...pr
   )
 }
 
-export default ToogleFocusInput
+export default ToggleFocusInput

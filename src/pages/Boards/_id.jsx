@@ -3,22 +3,22 @@ import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
-import {
-  updateBoardDetailsAPI,
-  updateColumnDetailsAPI,
-  moveCardToDifferentColumnAPI
-} from '~/apis'
+import { updateBoardDetailsAPI, updateColumnDetailsAPI, moveCardToDifferentColumnAPI } from '~/apis'
 import { fetchBoardDetailsAPI, updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
+import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
+import { selectCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 
 const Board = () => {
   const dispatch = useDispatch()
-  const board = useSelector(selectCurrentActiveBoard)
 
+  const board = useSelector(selectCurrentActiveBoard)
   const { boardId } = useParams()
+
+  const activeCard = useSelector(selectCurrentActiveCard)
 
   useEffect(() => {
     dispatch(fetchBoardDetailsAPI(boardId))
@@ -64,25 +64,20 @@ const Board = () => {
     })
   }
 
+  if (!board) return <PageLoadingSpinner caption='Loading Board...' />
+
   return (
-    <>
-      {
-        !board
-          ?
-          <PageLoadingSpinner caption='Loading Board...' />
-          :
-          <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
-            <AppBar />
-            <BoardBar board={board} />
-            <BoardContent
-              board={board}
-              moveColumn={moveColumn}
-              moveCardInTheSameColumn={moveCardInTheSameColumn}
-              moveCardToDifferentColumn={moveCardToDifferentColumn}
-            />
-          </Container>
-      }
-    </>
+    <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
+      {activeCard && <ActiveCard />}
+      <AppBar />
+      <BoardBar board={board} />
+      <BoardContent
+        board={board}
+        moveColumn={moveColumn}
+        moveCardInTheSameColumn={moveCardInTheSameColumn}
+        moveCardToDifferentColumn={moveCardToDifferentColumn}
+      />
+    </Container>
   )
 }
 
