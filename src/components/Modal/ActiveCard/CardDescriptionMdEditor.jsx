@@ -6,27 +6,15 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import EditNoteIcon from '@mui/icons-material/EditNote'
 
-const markdownValueExample = `
-  \\*\\*Markdown Content Example:\\*\\*
-
-  **Hello world | TrungQuanDev - Một Lập Trình Viên | Trello MERN Stack Advanced**
-  ![TrungQuanDev-Avatar](https://avatars.githubusercontent.com/u/14128099?v=4&s=80)
-
-  \`\`\`javascript
-  import React from "react"
-  import ReactDOM from "react-dom"
-  import MDEditor from '@uiw/react-md-editor'
-  \`\`\`
-`
-
-const CardDescriptionMdEditor = () => {
+const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription }) => {
   const { mode } = useColorScheme()
 
   const [markdownEditMode, setMarkdownEditMode] = useState(false)
-  const [cardDescription, setCardDescription] = useState(markdownValueExample)
+  const [cardDescription, setCardDescription] = useState(cardDescriptionProp)
 
   const updateCardDescription = () => {
     setMarkdownEditMode(false)
+    handleUpdateCardDescription(cardDescription)
   }
 
   return (
@@ -73,8 +61,8 @@ const CardDescriptionMdEditor = () => {
               source={cardDescription}
               style={{
                 whiteSpace: 'pre-wrap',
-                padding: '10px',
-                border: '0.5px solid rgba(0, 0, 0, 0.2)',
+                padding: cardDescription ? '10px' : '0px',
+                border: cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
                 borderRadius: '8px'
               }}
             />

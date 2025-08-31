@@ -32,6 +32,7 @@ import CardDescriptionMdEditor from './CardDescriptionMdEditor'
 import CardActivitySection from './CardActivitySection'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentActiveCard, updateCurrentActiveCard, clearCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { updateCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
 
@@ -66,11 +67,15 @@ const ActiveCard = () => {
   const callApiUpdateCard = async (updateData) => {
     const updatedCard = await updateCardDetailsAPI(activeCard._id, updateData)
     dispatch(updateCurrentActiveCard(updatedCard))
-    return updatedCard
+    dispatch(updateCardInBoard(updatedCard))
   }
 
   const onUpdateCardTitle = (newTitle) => {
     callApiUpdateCard({ title: newTitle.trim() })
+  }
+
+  const onUpdateCardDescription = (newDescription) => {
+    callApiUpdateCard({ description: newDescription.trim() })
   }
 
   const onUploadCardCover = (event) => {
@@ -81,6 +86,11 @@ const ActiveCard = () => {
     }
     let reqData = new FormData()
     reqData.append('cardCover', event.target?.files[0])
+
+    toast.promise(
+      callApiUpdateCard(reqData).finally(() => { event.target.value = '' }),
+      { pending: 'Updating...' }
+    )
   }
 
   return (
@@ -143,7 +153,10 @@ const ActiveCard = () => {
                 <SubjectRoundedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Description</Typography>
               </Box>
-              <CardDescriptionMdEditor />
+              <CardDescriptionMdEditor
+                cardDescriptionProp={activeCard?.description}
+                handleUpdateCardDescription={onUpdateCardDescription}
+              />
             </Box>
 
             <Box sx={{ mb: 3 }}>
