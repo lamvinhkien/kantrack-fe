@@ -139,7 +139,7 @@ const Column = ({ column }) => {
         {/* Header */}
         <Box sx={{
           height: theme => theme.trello.columnHeaderHeight,
-          p: 2,
+          p: '8px 10px 8px 10px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
