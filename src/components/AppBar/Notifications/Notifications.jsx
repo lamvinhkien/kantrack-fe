@@ -14,7 +14,15 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd'
 import DoneIcon from '@mui/icons-material/Done'
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchInvitationsAPI, updateBoardInvitationAPI, selectCurrentNotifications } from '~/redux/notifications/notificationsSlice'
+import {
+  fetchInvitationsAPI,
+  updateBoardInvitationAPI,
+  selectCurrentNotifications,
+  addNotification
+} from '~/redux/notifications/notificationsSlice'
+import { socketIoInstance } from '~/main'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 const BOARD_INVITATION_STATUS = {
   PENDING: 'PENDING',
@@ -23,11 +31,14 @@ const BOARD_INVITATION_STATUS = {
 }
 
 const Notifications = () => {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
+  const [newNotification, setNewNotification] = useState(false)
   const handleClickNotificationIcon = (event) => {
     setAnchorEl(event.currentTarget)
+    setNewNotification(false)
   }
 
   const handleClose = () => {
@@ -35,16 +46,33 @@ const Notifications = () => {
   }
 
   const notifications = useSelector(selectCurrentNotifications)
+  const currentUser = useSelector(selectCurrentUser)
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(fetchInvitationsAPI())
-  }, [dispatch])
+
+    const onReceiveNewInvitation = (invitation) => {
+      if (invitation.inviteeId === currentUser._id) {
+        dispatch(addNotification(invitation))
+        setNewNotification(true)
+      }
+    }
+
+    socketIoInstance.on('BE_USER_INVITED_TO_BOARD', onReceiveNewInvitation)
+
+    return () => {
+      socketIoInstance.off('BE_USER_INVITED_TO_BOARD', onReceiveNewInvitation)
+    }
+
+  }, [dispatch, currentUser._id])
 
   const updateBoardInvitation = (invitationId, status) => {
     dispatch(updateBoardInvitationAPI({ invitationId, status }))
       .then(res => {
-        console.log('🚀 ~ res: ', res)
+        if (res.payload.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
+          navigate(`/boards/${res.payload.boardInvitation.boardId}`)
+        }
       })
   }
 
@@ -53,8 +81,7 @@ const Notifications = () => {
       <Tooltip title="Notifications">
         <Badge
           color="warning"
-          // variant="none"
-          variant="dot"
+          variant={newNotification ? 'dot' : 'none'}
           sx={{ cursor: 'pointer' }}
           id="basic-button-open-notification"
           aria-controls={open ? 'basic-notification-drop-down' : undefined}
@@ -63,8 +90,7 @@ const Notifications = () => {
           onClick={handleClickNotificationIcon}
         >
           <NotificationsNoneIcon sx={{
-            // color: 'white'
-            color: 'yellow'
+            color: newNotification ? 'yellow' : 'white'
           }} />
         </Badge>
       </Tooltip>
