@@ -7,6 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
+import LogoutIcon from '@mui/icons-material/Logout'
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined'
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
@@ -38,8 +39,10 @@ import {
   clearAndHideCurrentActiveCard
 } from '~/redux/activeCard/activeCardSlice'
 import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 import { updateCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
+import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -63,6 +66,7 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 
 const ActiveCard = () => {
   const dispatch = useDispatch()
+  const currentUser = useSelector(selectCurrentUser)
   const activeCard = useSelector(selectCurrentActiveCard)
   const isShowModalActiveCard = useSelector(selectIsShowModalActiveCard)
 
@@ -101,6 +105,10 @@ const ActiveCard = () => {
 
   const onAddCardComment = async (commentToAdd) => {
     await callApiUpdateCard({ commentToAdd })
+  }
+
+  const onUpdateCardMembers = async (incomingMemberInfo) => {
+    callApiUpdateCard({ incomingMemberInfo })
   }
 
   return (
@@ -155,7 +163,10 @@ const ActiveCard = () => {
           <Grid xs={12} sm={9}>
             <Box sx={{ mb: 3 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
-              <CardUserGroup />
+              <CardUserGroup
+                cardMemberIds={activeCard?.memberIds}
+                onUpdateCardMembers={onUpdateCardMembers}
+              />
             </Box>
 
             <Box sx={{ mb: 3 }}>
@@ -184,10 +195,25 @@ const ActiveCard = () => {
           <Grid xs={12} sm={3}>
             <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Add To Card</Typography>
             <Stack direction="column" spacing={1}>
-              <SidebarItem className='active'>
-                <PersonOutlinedIcon fontSize="small" />
-                Join
-              </SidebarItem>
+              {
+                activeCard?.memberIds?.includes(currentUser._id)
+                  ?
+                  <SidebarItem
+                    className='active'
+                    onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.REMOVE })}
+                  >
+                    <LogoutIcon fontSize="small" />
+                    Left
+                  </SidebarItem>
+                  :
+                  <SidebarItem
+                    className='active'
+                    onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.ADD })}
+                  >
+                    <PersonOutlinedIcon fontSize="small" />
+                    Join
+                  </SidebarItem>
+              }
 
               <SidebarItem className='active' component="label">
                 <ImageOutlinedIcon fontSize="small" />

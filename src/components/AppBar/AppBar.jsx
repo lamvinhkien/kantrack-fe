@@ -10,16 +10,13 @@ import Recent from './Menus/Recent'
 import Starred from './Menus/Starred'
 import Templates from './Menus/Templates'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import Profile from './Menus/Profile'
 import AddIcon from '@mui/icons-material/Add'
-import InputAdornment from '@mui/material/InputAdornment'
-import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
 import Notifications from './Notifications/Notifications'
+import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
 
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('')
@@ -60,42 +57,8 @@ const AppBar = () => {
         </Box>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <TextField
-          value={searchValue}
-          onChange={(event) => changeSearchValue(event.target.value)}
-          id="outlined-search"
-          label="Search"
-          type="text"
-          size='small'
-          sx={{
-            minWidth: '120px',
-            maxWidth: '170px',
-            '& label': { color: 'white' },
-            '& input': { color: 'white' },
-            '& label.Mui-focused': { color: 'white' },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': { borderColor: 'white' },
-              '&:hover fieldset': { borderColor: 'white' },
-              '&.Mui-focused fieldset': { borderColor: 'white' }
-            }
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ color: 'white' }} />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <CloseIcon
-                  sx={{ display: searchValue ? 'block' : 'none', color: 'white', cursor: 'pointer' }}
-                  fontSize='small'
-                  onClick={() => setSearchValue('')}
-                />
-              </InputAdornment>
-            )
-          }}
-        />
+        <AutoCompleteSearchBoard />
+
         <ModeSelect />
 
         <Notifications />
