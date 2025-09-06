@@ -5,6 +5,8 @@ import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import { createSearchParams, useNavigate } from 'react-router-dom'
+import { fetchBoardsAPI } from '~/apis'
+import { useDebounceFn } from '~/customHooks/useDebounceFn'
 
 const AutoCompleteSearchBoard = () => {
   const navigate = useNavigate()
@@ -20,15 +22,20 @@ const AutoCompleteSearchBoard = () => {
   const handleInputSearchChange = (event) => {
     const searchValue = event.target?.value
     if (!searchValue) return
-    console.log(searchValue)
 
     const searchPath = `?${createSearchParams({ 'q[title]': searchValue })}`
-    console.log(searchPath)
+
+    setLoading(true)
+
+    fetchBoardsAPI(searchPath)
+      .then(res => setBoards(res.boards || []))
+      .finally(() => setLoading(false))
   }
 
+  const debounceSearchBoard = useDebounceFn(handleInputSearchChange, 1000)
 
   const handleSelectedBoard = (event, selectedBoard) => {
-    console.log(selectedBoard)
+    if (selectedBoard) navigate(`/boards/${selectedBoard._id}`)
   }
 
   return (
@@ -36,16 +43,15 @@ const AutoCompleteSearchBoard = () => {
       sx={{ width: 220 }}
       id="asynchronous-search-board"
       noOptionsText={!boards ? 'Type to search board...' : 'No board found!'}
-
+      isOptionEqualToValue={(option, value) => option._id === value._id}
       open={open}
       onOpen={() => { setOpen(true) }}
       onClose={() => { setOpen(false) }}
       getOptionLabel={(board) => board.title}
       options={boards || []}
       loading={loading}
-      onInputChange={handleInputSearchChange}
+      onInputChange={debounceSearchBoard}
       onChange={handleSelectedBoard}
-
       renderInput={(params) => (
         <TextField
           {...params}
