@@ -31,7 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
             <CssBaseline />
             <App />
-            <ToastContainer position='top-center' theme="colored" autoClose={3500} />
+            <ToastContainer position='bottom-left' theme="colored" autoClose={3500} />
           </ConfirmProvider>
         </CssVarsProvider>
       </BrowserRouter>
