@@ -15,7 +15,7 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useForm } from 'react-hook-form'
 import { useConfirm } from 'material-ui-confirm'
 import { useDispatch } from 'react-redux'
-import { updateUserAPI, logoutUserAPI } from '~/redux/user/userSlice'
+import { updateUserAPI, logoutUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import Setup2FA from '~/components/Modal/2FA/Setup2FA'
@@ -56,6 +56,11 @@ const SecurityTab = () => {
   const [openSetup2FA, setOpenSetup2FA] = useState(false)
   const user = { require_2fa: false }
 
+  const handleSuccessSetup2FA = (updatedUser) => {
+    dispatch(updateCurrentUser(updatedUser))
+    setOpenSetup2FA(false)
+  }
+
   return (
     <Box sx={{
       width: '100%',
@@ -67,6 +72,7 @@ const SecurityTab = () => {
       <Setup2FA
         isOpen={openSetup2FA}
         toggleOpen={setOpenSetup2FA}
+        handleSuccessSetup2FA={handleSuccessSetup2FA}
       />
 
       <Box sx={{

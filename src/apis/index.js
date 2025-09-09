@@ -83,3 +83,13 @@ export const refreshTokenAPI = async () => {
   const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`)
   return response.data
 }
+
+export const get2FA_QRCodeAPI = async () => {
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/get_2fa_qr_code`)
+  return response.data
+}
+
+export const setup2faAPI = async (otpToken) => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/setup_2fa`, { otpToken })
+  return response.data
+}
