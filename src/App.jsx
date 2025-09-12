@@ -7,9 +7,16 @@ import Settings from '~/pages/Settings/Settings'
 import Boards from '~/pages/Boards'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+import Require2FA from './components/Modal/2FA/Require2FA'
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to='/login' />
+  return <Outlet />
+}
+
+const TwoFactorRoute = ({ user }) => {
+  if (!user) return <Navigate to='/login' />
+  if (user.require2fa && !user.is2faVerified) return <Require2FA />
   return <Outlet />
 }
 
@@ -18,13 +25,15 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path='/' element={<Navigate to='/boards' replace={true} />} />
+      <Route element={<TwoFactorRoute user={currentUser} />}>
+        <Route path='/' element={<Navigate to='/boards' replace={true} />} />
 
-      <Route element={<ProtectedRoute user={currentUser} />}>
-        <Route path='/boards' element={<Boards />} />
-        <Route path='/boards/:boardId' element={<Board />} />
-        <Route path='/settings/account' element={<Settings />} />
-        <Route path='/settings/security' element={<Settings />} />
+        <Route element={<ProtectedRoute user={currentUser} />}>
+          <Route path='/boards' element={<Boards />} />
+          <Route path='/boards/:boardId' element={<Board />} />
+          <Route path='/settings/account' element={<Settings />} />
+          <Route path='/settings/security' element={<Settings />} />
+        </Route>
       </Route>
 
       <Route path='/login' element={<Auth />} />

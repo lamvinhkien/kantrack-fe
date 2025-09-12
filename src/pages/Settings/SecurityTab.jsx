@@ -14,12 +14,13 @@ import { FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useForm } from 'react-hook-form'
 import { useConfirm } from 'material-ui-confirm'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateUserAPI, logoutUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import Setup2FA from '~/components/Modal/2FA/Setup2FA'
 import { alpha } from '@mui/material/styles'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 
 const SecurityTab = () => {
   const dispatch = useDispatch()
@@ -54,7 +55,7 @@ const SecurityTab = () => {
   }
 
   const [openSetup2FA, setOpenSetup2FA] = useState(false)
-  const user = { require_2fa: false }
+  const user = useSelector(selectCurrentUser)
 
   const handleSuccessSetup2FA = (updatedUser) => {
     dispatch(updateCurrentUser(updatedUser))
@@ -90,13 +91,13 @@ const SecurityTab = () => {
           </Box>
 
           <Alert
-            severity={user.require_2fa ? 'success' : 'warning'}
+            severity={user.require2fa ? 'success' : 'warning'}
             sx={(theme) => ({
               '.MuiAlert-message': { overflow: 'hidden' },
               backgroundColor:
                 theme.palette.mode === 'dark'
                   ? alpha(
-                    user.require_2fa
+                    user.require2fa
                       ? theme.palette.success.main
                       : theme.palette.warning.main,
                     0.1
@@ -107,11 +108,11 @@ const SecurityTab = () => {
             Account security status:{' '}
             <Typography component='span' sx={{ fontWeight: 'bold' }}>
               Two-Factor Authentication (2FA){' '}
-              {user.require_2fa ? 'enabled' : 'not enabled'}.
+              {user.require2fa ? 'enabled' : 'not enabled'}.
             </Typography>
           </Alert>
 
-          {!user.require_2fa &&
+          {!user.require2fa &&
             <Button
               type='button'
               variant='contained'
