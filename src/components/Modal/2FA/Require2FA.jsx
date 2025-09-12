@@ -6,8 +6,12 @@ import Typography from '@mui/material/Typography'
 import SecurityIcon from '@mui/icons-material/Security'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import { verify2faAPI } from '~/apis'
+import { updateCurrentUser } from '~/redux/user/userSlice'
+import { useDispatch } from 'react-redux'
 
-function Require2FA() {
+const Require2FA = () => {
+  const dispatch = useDispatch()
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
 
@@ -18,13 +22,19 @@ function Require2FA() {
       toast.error(errMsg)
       return
     }
-    console.log('handleRequire2FA > otpToken: ', otpToken)
+
+    verify2faAPI(otpToken).then(updatedUser => {
+      dispatch(updateCurrentUser(updatedUser))
+      toast.success('2FA verify successfully.')
+      setConfirmOtpToken('')
+      setError(null)
+    })
   }
 
   return (
     <Modal
       disableScrollLock
-      open={true} // Chỗ này cứ để true, còn về phần hiển thị render Modal này hay không thì dựa theo trường require_2fa của user
+      open={true}
       sx={{ overflowY: 'auto' }}>
       <Box sx={{
         position: 'relative',

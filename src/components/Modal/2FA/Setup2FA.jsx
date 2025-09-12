@@ -10,7 +10,7 @@ import Button from '@mui/material/Button'
 import { get2FA_QRCodeAPI, setup2faAPI } from '~/apis'
 import CircularProgress from '@mui/material/CircularProgress'
 
-function Setup2FA({ isOpen, toggleOpen, handleSuccessSetup2FA }) {
+const Setup2FA = ({ isOpen, toggleOpen, handleSuccessSetup2FA }) => {
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
   const [QRCodeImageUrl, setQRCodeImageUrl] = useState(null)
@@ -38,6 +38,7 @@ function Setup2FA({ isOpen, toggleOpen, handleSuccessSetup2FA }) {
     setup2faAPI(otpToken).then(updatedUser => {
       handleSuccessSetup2FA(updatedUser)
       toast.success('2FA setup successfully.')
+      setConfirmOtpToken('')
       setError(null)
     })
   }
@@ -46,7 +47,7 @@ function Setup2FA({ isOpen, toggleOpen, handleSuccessSetup2FA }) {
     <Modal
       disableScrollLock
       open={isOpen}
-      // onClose={handleCloseModal} // Sử dụng onClose trong trường hợp muốn đóng Modal bằng nút ESC hoặc click ra ngoài Modal
+      onClose={handleCloseModal}
       sx={{ overflowY: 'auto' }}>
       <Box sx={{
         position: 'relative',
