@@ -21,6 +21,7 @@ import { useState } from 'react'
 import Setup2FA from '~/components/Modal/2FA/Setup2FA'
 import { alpha } from '@mui/material/styles'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+import { SETUP_2FA_ACTIONS } from '~/utils/constants'
 
 const SecurityTab = () => {
   const dispatch = useDispatch()
@@ -55,7 +56,13 @@ const SecurityTab = () => {
   }
 
   const [openSetup2FA, setOpenSetup2FA] = useState(false)
+  const [action2FA, setAction2FA] = useState(null)
   const user = useSelector(selectCurrentUser)
+
+  const handleOpenSetup2FA = (action) => {
+    setOpenSetup2FA(true)
+    setAction2FA(action)
+  }
 
   const handleSuccessSetup2FA = (updatedUser) => {
     dispatch(updateCurrentUser(updatedUser))
@@ -74,6 +81,7 @@ const SecurityTab = () => {
         isOpen={openSetup2FA}
         toggleOpen={setOpenSetup2FA}
         handleSuccessSetup2FA={handleSuccessSetup2FA}
+        action2FA={action2FA}
       />
 
       <Box sx={{
@@ -112,13 +120,24 @@ const SecurityTab = () => {
             </Typography>
           </Alert>
 
-          {!user.require2fa &&
+          {user.require2fa
+            ?
+            <Button
+              type='button'
+              variant='contained'
+              color='error'
+              fullWidth
+              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.DISABLE)}
+            >
+              Disable 2FA
+            </Button>
+            :
             <Button
               type='button'
               variant='contained'
               color='warning'
               fullWidth
-              onClick={() => setOpenSetup2FA(true)}
+              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.ENABLE)}
             >
               Enable 2FA
             </Button>

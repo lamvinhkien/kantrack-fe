@@ -51,12 +51,12 @@ const Require2FA = () => {
       }}>
         <Box sx={{ pr: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
           <SecurityIcon sx={{ color: '#27ae60' }} />
-          <Typography variant='h6' sx={{ fontWeight: 'bold', color: '#27ae60' }}>Require 2FA (Two-Factor Authentication)</Typography>
+          <Typography variant='h6' sx={{ fontWeight: 'bold', color: '#27ae60' }}>Require Two-Factor Authentication (2FA)</Typography>
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, p: 1 }}>
           <Box sx={{ textAlign: 'center' }}>
-            Nhập mã gồm 6 chữ số từ ứng dụng bảo mật của bạn và click vào <strong>Confirm</strong> để xác nhận.
+            Enter the 6-digit code from your authentication app and click <strong>Confirm</strong> to verify.
           </Box>
 
           <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, my: 1 }}>
@@ -82,14 +82,6 @@ const Require2FA = () => {
             >
               Confirm
             </Button>
-          </Box>
-
-          <Box>
-            <Typography variant="span" sx={{ fontWeight: 'bold', fontSize: '0.9em', color: '#8395a7', '&:hover': { color: '#fdba26' } }}>
-              <a style={{ color: 'inherit', textDecoration: 'none' }} href='https://youtube.com/@trungquandev' target='_blank' rel='noreferrer'>
-                TrungQuanDev - Một Lập Trình Viên
-              </a>
-            </Typography>
           </Box>
         </Box>
       </Box>

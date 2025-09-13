@@ -4,13 +4,15 @@ import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
 import SecurityIcon from '@mui/icons-material/Security'
+import LockOpenIcon from '@mui/icons-material/LockOpen'
 import CancelIcon from '@mui/icons-material/Cancel'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { get2FA_QRCodeAPI, setup2faAPI } from '~/apis'
 import CircularProgress from '@mui/material/CircularProgress'
+import { SETUP_2FA_ACTIONS } from '~/utils/constants'
 
-const Setup2FA = ({ isOpen, toggleOpen, handleSuccessSetup2FA }) => {
+const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
   const [QRCodeImageUrl, setQRCodeImageUrl] = useState(null)
@@ -35,9 +37,9 @@ const Setup2FA = ({ isOpen, toggleOpen, handleSuccessSetup2FA }) => {
       return
     }
 
-    setup2faAPI(otpToken).then(updatedUser => {
+    setup2faAPI(otpToken, action2FA).then(updatedUser => {
       handleSuccessSetup2FA(updatedUser)
-      toast.success('2FA setup successfully.')
+      toast.success(`2FA ${action2FA}d Successfully.`)
       setConfirmOtpToken('')
       setError(null)
     })
@@ -71,8 +73,17 @@ const Setup2FA = ({ isOpen, toggleOpen, handleSuccessSetup2FA }) => {
         </Box>
 
         <Box sx={{ mb: 1, mt: -3, pr: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-          <SecurityIcon sx={{ color: '#27ae60' }} />
-          <Typography variant='h6' sx={{ fontWeight: 'bold', color: '#27ae60' }}>Setup Two-Factor Authentication (2FA)</Typography>
+          {
+            action2FA === SETUP_2FA_ACTIONS.ENABLE
+              ? <SecurityIcon sx={{ color: '#27ae60' }} />
+              : <LockOpenIcon sx={{ color: '#ae2727ff' }} />
+          }
+          <Typography variant='h6' sx={{
+            fontWeight: 'bold',
+            color: action2FA === SETUP_2FA_ACTIONS.ENABLE ? '#27ae60' : '#ae2727ff'
+          }}>
+            {action2FA} Two-Factor Authentication (2FA)
+          </Typography>
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, p: 1 }}>
@@ -86,9 +97,17 @@ const Setup2FA = ({ isOpen, toggleOpen, handleSuccessSetup2FA }) => {
             />
           }
 
-          <Box sx={{ textAlign: 'center' }}>
-            Scan the QR code using your <strong>Google Authenticator</strong> or <strong>Authy</strong> app.<br />Then enter the 6-digit code and click <strong>Confirm</strong> to verify.
-          </Box>
+          {
+            action2FA === SETUP_2FA_ACTIONS.ENABLE
+              ?
+              <Box sx={{ textAlign: 'center' }}>
+                Scan the QR code using your authentication app.<br />Then enter the 6-digit code and click <strong>Confirm</strong> to verify.
+              </Box>
+              :
+              <Box sx={{ textAlign: 'center' }}>
+                Enter the 6-digit code from your authentication app and click <strong>Confirm</strong> to disable.
+              </Box>
+          }
 
           <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, my: 1 }}>
             <TextField
