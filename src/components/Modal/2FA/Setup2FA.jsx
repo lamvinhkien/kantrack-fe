@@ -18,12 +18,12 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
   const [QRCodeImageUrl, setQRCodeImageUrl] = useState(null)
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && action2FA === SETUP_2FA_ACTIONS.ENABLE) {
       get2FA_QRCodeAPI().then(res => {
         setQRCodeImageUrl(res.qrcode)
       })
     }
-  }, [isOpen])
+  }, [isOpen, action2FA])
 
   const handleCloseModal = () => {
     toggleOpen(!isOpen)
@@ -87,14 +87,19 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, p: 1 }}>
-          {!QRCodeImageUrl
-            ? <CircularProgress sx={{ margin: '30px 0px' }} />
-            :
-            <img
-              style={{ width: '100%', maxWidth: '250px', objectFit: 'contain' }}
-              src={QRCodeImageUrl}
-              alt="qr-code"
-            />
+          {
+            action2FA === SETUP_2FA_ACTIONS.ENABLE
+              ?
+              !QRCodeImageUrl
+                ? <CircularProgress sx={{ margin: '30px 0px' }} />
+                :
+                <img
+                  style={{ width: '100%', maxWidth: '250px', objectFit: 'contain' }}
+                  src={QRCodeImageUrl}
+                  alt="qr-code"
+                />
+              :
+              <></>
           }
 
           {

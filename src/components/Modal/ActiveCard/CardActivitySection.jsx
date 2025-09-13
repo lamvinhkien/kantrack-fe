@@ -32,7 +32,7 @@ const CardActivitySection = ({ cardComments = [], onAddCardComment }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <Avatar
           sx={{ width: 36, height: 36, cursor: 'pointer' }}
-          alt="trungquandev"
+          alt={currentUser?.username}
           src={currentUser?.avatar}
         />
         <TextField
