@@ -25,7 +25,6 @@ const Require2FA = () => {
 
     verify2faAPI(otpToken).then(updatedUser => {
       dispatch(updateCurrentUser(updatedUser))
-      toast.success('2FA verify successfully.')
       setConfirmOtpToken('')
       setError(null)
     })
