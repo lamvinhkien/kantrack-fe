@@ -11,7 +11,7 @@ import Require2FA from './components/Modal/2FA/Require2FA'
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to='/login' />
-  if (user.require2fa && !user.is2faVerified) return <Require2FA />
+  if (user.require2fa && !user.is2faVerified) return <Require2FA user={user} />
   return <Outlet />
 }
 

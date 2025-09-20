@@ -94,7 +94,7 @@ export const setup2faAPI = async (otpToken, action2FA) => {
   return response.data
 }
 
-export const verify2faAPI = async (otpToken) => {
-  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/verify_2fa`, { otpToken })
+export const verify2faAPI = async (email, otpToken) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/verify_2fa`, { email, otpToken })
   return response.data
 }

@@ -10,7 +10,7 @@ import { verify2faAPI } from '~/apis'
 import { updateCurrentUser } from '~/redux/user/userSlice'
 import { useDispatch } from 'react-redux'
 
-const Require2FA = () => {
+const Require2FA = ({ user }) => {
   const dispatch = useDispatch()
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
@@ -23,7 +23,7 @@ const Require2FA = () => {
       return
     }
 
-    verify2faAPI(otpToken).then(updatedUser => {
+    verify2faAPI(user?.email, otpToken).then(updatedUser => {
       dispatch(updateCurrentUser(updatedUser))
       setConfirmOtpToken('')
       setError(null)
@@ -50,12 +50,13 @@ const Require2FA = () => {
       }}>
         <Box sx={{ pr: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
           <SecurityIcon sx={{ color: '#27ae60' }} />
-          <Typography variant='h6' sx={{ fontWeight: 'bold', color: '#27ae60' }}>Require Two-Factor Authentication (2FA)</Typography>
+          <Typography variant='h5' sx={{ fontWeight: 'bold', color: '#27ae60' }}>Require Two-Factor Authentication (2FA)</Typography>
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, p: 1 }}>
           <Box sx={{ textAlign: 'center' }}>
-            Enter the 6-digit code from your authentication app and click <strong>Confirm</strong> to verify.
+            Enter the 6-digit code from your authentication app and click <strong>Confirm</strong> <br />
+            to verify your account: <strong>{user.email}</strong>.
           </Box>
 
           <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, my: 1 }}>
