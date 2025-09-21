@@ -28,6 +28,7 @@ import { createNewCardAPI, deleteColumnDetailsAPI, updateColumnDetailsAPI } from
 import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
+import { socketIoInstance } from '~/socketClient'
 
 const Column = ({ column }) => {
   const dispatch = useDispatch()
@@ -67,15 +68,9 @@ const Column = ({ column }) => {
       return
     }
 
-    const newCardData = {
-      title: newCardTitle,
-      columnId: column._id
-    }
+    const newCardData = { title: newCardTitle, columnId: column._id }
 
-    const createdCard = await createNewCardAPI({
-      ...newCardData,
-      boardId: board._id
-    })
+    const createdCard = await createNewCardAPI({ ...newCardData, boardId: board._id })
 
     const newBoard = cloneDeep(board)
     const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
@@ -89,6 +84,8 @@ const Column = ({ column }) => {
       }
     }
     dispatch(updateCurrentActiveBoard(newBoard))
+
+    socketIoInstance.emit('FE_ADD_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
@@ -109,6 +106,7 @@ const Column = ({ column }) => {
       dispatch(updateCurrentActiveBoard(newBoard))
 
       deleteColumnDetailsAPI(column._id).then(res => {
+        socketIoInstance.emit('FE_DELETE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
         toast.success(res?.deleteResult)
       })
     }).catch(() => { })
@@ -120,6 +118,7 @@ const Column = ({ column }) => {
       const columnToUpdate = newBoard.columns.find(c => c._id === column._id)
       if (columnToUpdate) columnToUpdate.title = newTitle
       dispatch(updateCurrentActiveBoard(newBoard))
+      socketIoInstance.emit('FE_UPDATE_COLUMN_TITLE_IN_BOARD', { boardId: newBoard._id, board: newBoard })
     })
   }
 

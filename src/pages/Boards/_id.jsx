@@ -26,23 +26,26 @@ const Board = () => {
   useEffect(() => {
     if (!socketIoInstance) return
 
-    const joinBoard = () => { if (boardId) socketIoInstance.emit('FE_JOIN_BOARD', boardId) }
-
     const onReceiveNewBoard = (newBoard) => {
       if (newBoard._id === boardId) dispatch(updateCurrentActiveBoard(newBoard))
     }
 
-    socketIoInstance.on('connect', joinBoard)
+    if (boardId) socketIoInstance.emit('FE_JOIN_BOARD', boardId)
     socketIoInstance.on('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
-
-    joinBoard()
+    socketIoInstance.on('BE_ADD_COLUMN_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_DELETE_COLUMN_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_UPDATE_COLUMN_TITLE_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_ADD_CARD_IN_BOARD', onReceiveNewBoard)
 
     return () => {
       if (boardId) socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
-      socketIoInstance.off('connect', joinBoard)
       socketIoInstance.off('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_ADD_COLUMN_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_DELETE_COLUMN_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_UPDATE_COLUMN_TITLE_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_ADD_CARD_IN_BOARD', onReceiveNewBoard)
     }
   }, [dispatch, boardId])
 

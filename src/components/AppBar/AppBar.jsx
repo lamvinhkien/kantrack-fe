@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Box from '@mui/material/Box'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -19,12 +18,6 @@ import Notifications from './Notifications/Notifications'
 import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
 
 const AppBar = () => {
-  const [searchValue, setSearchValue] = useState('')
-
-  const changeSearchValue = (event) => {
-    setSearchValue(event)
-  }
-
   return (
     <Box sx={{
       width: '100%',

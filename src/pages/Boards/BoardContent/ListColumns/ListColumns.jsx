@@ -12,6 +12,7 @@ import { generatePlaceholderCard } from '~/utils/formatters'
 import { cloneDeep } from 'lodash'
 import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import { socketIoInstance } from '~/socketClient'
 
 const ListColumns = ({ columns }) => {
   const dispatch = useDispatch()
@@ -27,14 +28,9 @@ const ListColumns = ({ columns }) => {
       return
     }
 
-    const newColumnData = {
-      title: newColumnTitle
-    }
+    const newColumnData = { title: newColumnTitle }
 
-    const createdColumn = await createNewColumnAPI({
-      ...newColumnData,
-      boardId: board._id
-    })
+    const createdColumn = await createNewColumnAPI({ ...newColumnData, boardId: board._id })
 
     createdColumn.cards = [generatePlaceholderCard(createdColumn)]
     createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id]
@@ -43,6 +39,8 @@ const ListColumns = ({ columns }) => {
     newBoard.columns.push(createdColumn)
     newBoard.columnOrderIds.push(createdColumn._id)
     dispatch(updateCurrentActiveBoard(newBoard))
+
+    socketIoInstance.emit('FE_ADD_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
 
     toggleOpenNewColumnForm()
     setNewColumnTitle('')

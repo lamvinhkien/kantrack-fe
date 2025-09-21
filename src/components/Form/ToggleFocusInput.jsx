@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TextField from '@mui/material/TextField'
 
 const ToggleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...props }) => {
   const [inputValue, setInputValue] = useState(value)
+
+  useEffect(() => {
+    setInputValue(value)
+  }, [value])
 
   const triggerBlur = () => {
     setInputValue(inputValue.trim())
