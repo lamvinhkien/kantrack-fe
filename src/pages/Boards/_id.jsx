@@ -10,6 +10,7 @@ import { cloneDeep } from 'lodash'
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
+import { socketIoInstance } from '~/socketClient'
 
 const Board = () => {
   const dispatch = useDispatch()
@@ -18,7 +19,31 @@ const Board = () => {
   const { boardId } = useParams()
 
   useEffect(() => {
+    dispatch(updateCurrentActiveBoard(null))
     dispatch(fetchBoardDetailsAPI(boardId))
+  }, [dispatch, boardId])
+
+  useEffect(() => {
+    if (!socketIoInstance) return
+
+    const joinBoard = () => { if (boardId) socketIoInstance.emit('FE_JOIN_BOARD', boardId) }
+
+    const onReceiveNewBoard = (newBoard) => {
+      if (newBoard._id === boardId) dispatch(updateCurrentActiveBoard(newBoard))
+    }
+
+    socketIoInstance.on('connect', joinBoard)
+    socketIoInstance.on('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
+
+    joinBoard()
+
+    return () => {
+      if (boardId) socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
+      socketIoInstance.off('connect', joinBoard)
+      socketIoInstance.off('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
+    }
   }, [dispatch, boardId])
 
   const moveColumn = (dndOrderedColumns) => {
@@ -28,7 +53,9 @@ const Board = () => {
     newBoard.columnOrderIds = dndOrderedColumnsIds
     dispatch(updateCurrentActiveBoard(newBoard))
 
-    updateBoardDetailsAPI(newBoard._id, { columnOrderIds: newBoard.columnOrderIds })
+    updateBoardDetailsAPI(newBoard._id, { columnOrderIds: newBoard.columnOrderIds }).then(() => {
+      socketIoInstance.emit('FE_MOVE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+    })
   }
 
   const moveCardInTheSameColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
@@ -39,7 +66,9 @@ const Board = () => {
       columnToUpdate.cardOrderIds = dndOrderedCardIds
     }
     dispatch(updateCurrentActiveBoard(newBoard))
-    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds }).then(() => {
+      socketIoInstance.emit('FE_MOVE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+    })
   }
 
   const moveCardToDifferentColumn = (currentCardId, prevColumnId, nextColumnId, dndOrderedColumns) => {
@@ -58,6 +87,8 @@ const Board = () => {
       prevCardOrderIds,
       nextColumnId,
       nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+    }).then(() => {
+      socketIoInstance.emit('FE_MOVE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
     })
   }
 

@@ -65,7 +65,7 @@ const Boards = () => {
   }
 
   if (!boards) {
-    return <PageLoadingSpinner caption="Loading Boards..." />
+    return <PageLoadingSpinner caption="Loading..." />
   }
 
   return (
