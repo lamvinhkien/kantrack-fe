@@ -43,6 +43,8 @@ import { selectCurrentUser } from '~/redux/user/userSlice'
 import { updateCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
+import { useEffect } from 'react'
+import { socketIoInstance } from '~/socketClient'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -78,6 +80,7 @@ const ActiveCard = () => {
     const updatedCard = await updateCardDetailsAPI(activeCard._id, updateData)
     dispatch(updateCurrentActiveCard(updatedCard))
     dispatch(updateCardInBoard(updatedCard))
+    socketIoInstance.emit('FE_UPDATE_CARD', { cardId: activeCard._id, card: updatedCard })
   }
 
   const onUpdateCardTitle = (newTitle) => {
@@ -110,6 +113,24 @@ const ActiveCard = () => {
   const onUpdateCardMembers = async (incomingMemberInfo) => {
     callApiUpdateCard({ incomingMemberInfo })
   }
+
+  useEffect(() => {
+    if (isShowModalActiveCard === true) {
+      if (!socketIoInstance) return
+
+      const onReceiveNewCard = (newCard) => {
+        if (newCard._id === activeCard._id) dispatch(updateCurrentActiveCard(newCard))
+      }
+
+      if (activeCard._id) socketIoInstance.emit('FE_JOIN_CARD', activeCard._id)
+      socketIoInstance.on('BE_UPDATE_CARD', onReceiveNewCard)
+
+      return () => {
+        if (activeCard._id) socketIoInstance.emit('FE_LEAVE_CARD', activeCard._id)
+        socketIoInstance.off('BE_UPDATE_CARD', onReceiveNewCard)
+      }
+    }
+  }, [dispatch, activeCard?._id, isShowModalActiveCard])
 
   return (
     <Modal
