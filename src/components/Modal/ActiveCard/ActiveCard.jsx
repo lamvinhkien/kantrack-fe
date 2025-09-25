@@ -31,9 +31,10 @@ import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 import { useEffect } from 'react'
 import { socketIoInstance } from '~/socketClient'
-import CardAttachment from './CardAttachment'
+import AddAttachment from './AddAttachment'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
+import ListAttachment from './ListAttachment'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -103,7 +104,7 @@ const ActiveCard = () => {
     callApiUpdateCard({ incomingMemberInfo })
   }
 
-  const onUpdateCardAttachments = (files, link) => {
+  const onAddCardAttachments = (files, link) => {
     if (files) {
       const error = multipleFileValidator(files)
       if (error) {
@@ -120,12 +121,11 @@ const ActiveCard = () => {
       )
     }
 
-    if (link) {
-      toast.promise(
-        callApiUpdateCard(link),
-        { pending: 'Updating...' }
-      )
-    }
+    if (link) callApiUpdateCard(link)
+  }
+
+  const onUpdateCardAttachments = (action, data) => {
+    callApiUpdateCard({ action, newAttachment: data })
   }
 
   useEffect(() => {
@@ -154,9 +154,9 @@ const ActiveCard = () => {
     >
       <Box sx={{
         position: 'relative',
-        width: 1100,
-        maxWidth: 1100,
-        height: 620,
+        width: 1000,
+        maxWidth: 1000,
+        height: 600,
         maxHeight: 620,
         bgcolor: 'white',
         boxShadow: 24,
@@ -230,7 +230,7 @@ const ActiveCard = () => {
               </SidebarItem>
             </Stack>
 
-            <Box sx={{ mb: 3 }}>
+            <Box sx={{ mb: 4 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
               <CardUserGroup
                 cardMemberIds={activeCard?.memberIds}
@@ -238,7 +238,7 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Box sx={{ mb: 3 }}>
+            <Box sx={{ mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <SubjectRoundedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Description</Typography>
@@ -254,10 +254,8 @@ const ActiveCard = () => {
                 <AttachFileOutlinedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Attachment</Typography>
               </Box>
-              <CardAttachment
-                CardAttachmentsProp={activeCard?.attachments}
-                handleUpdateCardAttachment={onUpdateCardAttachments}
-              />
+              <AddAttachment handleAddCardAttachment={onAddCardAttachments} />
+              <ListAttachment ListAttachments={activeCard?.attachments} handleUpdateCardAttachments={onUpdateCardAttachments} />
             </Box>
           </Grid>
 

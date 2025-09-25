@@ -159,7 +159,7 @@ const Notifications = () => {
 
                     <Box sx={{ textAlign: 'right' }}>
                       <Typography variant="span" sx={{ fontSize: '13px' }}>
-                        {moment(notification.createdAt).format('LLLL')}
+                        {moment(notification.createdAt).format('lll')}
                       </Typography>
                     </Box>
                   </Box>

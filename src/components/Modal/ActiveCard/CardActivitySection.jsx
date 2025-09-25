@@ -63,7 +63,7 @@ const CardActivitySection = ({ cardComments = [], onAddCardComment }) => {
               {comment?.userDisplayName}
             </Typography>
             <Typography variant="span" sx={{ fontSize: '12px' }}>
-              {moment(comment?.commentedAt).format('llll')}
+              {moment(comment?.commentedAt).format('lll')}
             </Typography>
             <Box sx={{
               display: 'block',

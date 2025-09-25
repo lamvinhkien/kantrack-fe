@@ -3,9 +3,6 @@ import { useColorScheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
 import Popover from '@mui/material/Popover'
 import AddIcon from '@mui/icons-material/Add'
@@ -16,23 +13,12 @@ import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined'
 import { useForm } from 'react-hook-form'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import ListSubheader from '@mui/material/ListSubheader'
-import { Link as MuiLink } from '@mui/material'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
-const isImageUrl = (url) => {
-  return /\.(jpg|jpeg|png|gif|webp)$/i.test(url)
-}
-
-const CardAttachment = ({ CardAttachmentsProp, handleUpdateCardAttachment }) => {
+const AddAttachment = ({ handleAddCardAttachment }) => {
   const { mode } = useColorScheme()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
-  const popoverId = isOpenPopover ? 'card-all-attachments-popover' : undefined
-
-  const files = CardAttachmentsProp?.filter(att => att.type === 'file') || []
-  const links = CardAttachmentsProp?.filter(att => att.type === 'link') || []
+  const popoverId = isOpenPopover ? 'card-add-attachments-popover' : undefined
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
 
@@ -42,16 +28,16 @@ const CardAttachment = ({ CardAttachmentsProp, handleUpdateCardAttachment }) => 
   }
 
   const handleAddFile = (e) => {
-    if (e) handleUpdateCardAttachment([...e.target.files], null)
+    if (e) handleAddCardAttachment([...e.target.files], null)
     e.target.value = ''
     setAnchorPopoverElement(null)
   }
 
   const handleAddLink = (data) => {
     const { link, displayText } = data
-    handleUpdateCardAttachment(null, { link, displayText })
-    reset()
+    handleAddCardAttachment(null, { link, displayText })
     setAnchorPopoverElement(null)
+    reset()
   }
 
   return (
@@ -119,82 +105,9 @@ const CardAttachment = ({ CardAttachmentsProp, handleUpdateCardAttachment }) => 
             </form>
           </Box>
         </Popover>
-
-        <Box data-color-mode={mode} >
-          {/* Files Section */}
-          {files.length > 0 && (
-            <List
-              dense
-              subheader={<ListSubheader component="div">📎 Files</ListSubheader>}
-            >
-              {files.map((att, idx) => (
-                <ListItem key={`file-${idx}`} alignItems="flex-start">
-                  {isImageUrl(att.attachment) ? (
-                    <Box
-                      component="img"
-                      src={att.attachment}
-                      alt={att.displayText || `File ${idx + 1}`}
-                      sx={{
-                        maxWidth: 120,
-                        maxHeight: 120,
-                        objectFit: 'cover',
-                        borderRadius: 1,
-                        mr: 2
-                      }}
-                    />
-                  ) : (
-                    <ListItemIcon>
-                      <InsertDriveFileIcon fontSize="small" />
-                    </ListItemIcon>
-                  )}
-                  <MuiLink
-                    href={att.attachment}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    underline="hover"
-                    sx={{ flexGrow: 1 }}
-                  >
-                    <ListItemText
-                      primary={att.displayText || `File ${idx + 1}`}
-                      secondary={att.uploadedAt ? new Date(att.uploadedAt).toLocaleString() : null}
-                    />
-                  </MuiLink>
-                </ListItem>
-              ))}
-            </List>
-          )}
-
-          {/* Links Section */}
-          {links.length > 0 && (
-            <List
-              dense
-              subheader={<ListSubheader component="div">🔗 Links</ListSubheader>}
-            >
-              {links.map((att, idx) => (
-                <ListItem key={`link-${idx}`}>
-                  <ListItemIcon>
-                    <LinkIcon fontSize="small" />
-                  </ListItemIcon>
-                  <MuiLink
-                    href={att.attachment}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    underline="hover"
-                    sx={{ flexGrow: 1 }}
-                  >
-                    <ListItemText
-                      primary={att.displayText || `Link ${idx + 1}`}
-                      secondary={att.uploadedAt ? new Date(att.uploadedAt).toLocaleString() : null}
-                    />
-                  </MuiLink>
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </Box>
       </Box>
     </Box>
   )
 }
 
-export default CardAttachment
+export default AddAttachment
