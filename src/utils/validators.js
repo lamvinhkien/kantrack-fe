@@ -19,3 +19,23 @@ export const singleFileValidator = (file) => {
   }
   return null
 }
+
+export const multipleFileValidator = (files) => {
+  if (!files || files.length === 0) {
+    return ['File cannot be blank.']
+  }
+
+  const errors = []
+
+  for (const file of files) {
+    if (!file || !file.name || !file.size || !file.type) {
+      errors.push('File cannot be blank.')
+      continue
+    }
+    if (file.size > LIMIT_COMMON_FILE_SIZE) {
+      errors.push(`${file.name}: Maximum file size exceeded. (10MB)`)
+    }
+  }
+
+  return errors.length > 0 ? errors : null
+}

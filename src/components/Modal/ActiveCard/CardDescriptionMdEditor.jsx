@@ -27,21 +27,34 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
               value={cardDescription}
               onChange={setCardDescription}
               previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
-              height={400}
+              height={150}
               preview="edit"
             />
           </Box>
-          <Button
-            sx={{ alignSelf: 'flex-end' }}
-            onClick={updateCardDescription}
-            className="interceptor-loading"
-            type="button"
-            variant="contained"
-            size="small"
-            color="info"
-          >
-            Save
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Button
+              onClick={() => {
+                setCardDescription(cardDescriptionProp)
+                setMarkdownEditMode(false)
+              }}
+              type="button"
+              variant="text"
+              size="small"
+              color="inherit"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={updateCardDescription}
+              className="interceptor-loading"
+              type="button"
+              variant="contained"
+              size="small"
+              color="info"
+            >
+              Save
+            </Button>
+          </Box>
         </Box>
         :
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -56,13 +69,17 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
           >
             Edit
           </Button>
-          <Box data-color-mode={mode}>
+          <Box
+            onClick={() => setMarkdownEditMode(true)}
+            data-color-mode={mode}
+            sx={{ cursor: 'pointer' }}
+          >
             <MDEditor.Markdown
-              source={cardDescription}
+              source={cardDescription ? cardDescription : 'Add a more detailed description...'}
               style={{
                 whiteSpace: 'pre-wrap',
-                padding: cardDescription ? '10px' : '0px',
-                border: cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
+                padding: !cardDescription ? '10px' : '0px',
+                border: !cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
                 borderRadius: '8px'
               }}
             />

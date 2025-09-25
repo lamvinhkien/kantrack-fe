@@ -5,28 +5,14 @@ import CreditCardIcon from '@mui/icons-material/CreditCard'
 import CancelIcon from '@mui/icons-material/Cancel'
 import Grid from '@mui/material/Unstable_Grid2'
 import Stack from '@mui/material/Stack'
-import Divider from '@mui/material/Divider'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import LogoutIcon from '@mui/icons-material/Logout'
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined'
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined'
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import AutoFixHighOutlinedIcon from '@mui/icons-material/AutoFixHighOutlined'
-import AspectRatioOutlinedIcon from '@mui/icons-material/AspectRatioOutlined'
-import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined'
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined'
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
-import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
-import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
-import { singleFileValidator } from '~/utils/validators'
+import { singleFileValidator, multipleFileValidator } from '~/utils/validators'
 import { toast } from 'react-toastify'
 import CardUserGroup from './CardUserGroup'
 import CardDescriptionMdEditor from './CardDescriptionMdEditor'
@@ -45,6 +31,9 @@ import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 import { useEffect } from 'react'
 import { socketIoInstance } from '~/socketClient'
+import CardAttachment from './CardAttachment'
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
+import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -87,10 +76,6 @@ const ActiveCard = () => {
     callApiUpdateCard({ title: newTitle.trim() })
   }
 
-  const onUpdateCardDescription = (newDescription) => {
-    callApiUpdateCard({ description: newDescription.trim() })
-  }
-
   const onUploadCardCover = (event) => {
     const error = singleFileValidator(event.target?.files[0])
     if (error) {
@@ -106,12 +91,41 @@ const ActiveCard = () => {
     )
   }
 
+  const onUpdateCardDescription = (newDescription) => {
+    callApiUpdateCard({ description: newDescription.trim() })
+  }
+
   const onAddCardComment = async (commentToAdd) => {
     await callApiUpdateCard({ commentToAdd })
   }
 
   const onUpdateCardMembers = async (incomingMemberInfo) => {
     callApiUpdateCard({ incomingMemberInfo })
+  }
+
+  const onUpdateCardAttachments = (files, link) => {
+    if (files) {
+      const error = multipleFileValidator(files)
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      const reqData = new FormData()
+      files.forEach(file => reqData.append('cardAttachments', file))
+
+      toast.promise(
+        callApiUpdateCard(reqData),
+        { pending: 'Updating...' }
+      )
+    }
+
+    if (link) {
+      toast.promise(
+        callApiUpdateCard(link),
+        { pending: 'Updating...' }
+      )
+    }
   }
 
   useEffect(() => {
@@ -137,24 +151,26 @@ const ActiveCard = () => {
       disableScrollLock
       open={isShowModalActiveCard}
       onClose={handleCloseModal}
-      sx={{ overflowY: 'auto' }}
     >
       <Box sx={{
         position: 'relative',
-        width: 900,
-        maxWidth: 900,
+        width: 1100,
+        maxWidth: 1100,
+        height: 620,
+        maxHeight: 620,
         bgcolor: 'white',
         boxShadow: 24,
         borderRadius: '8px',
         border: 'none',
         outline: 0,
-        padding: '40px 20px 20px',
+        padding: '20px 30px 20px 30px',
         margin: '50px auto',
+        overflowY: 'auto',
         backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1A2027' : '#fff'
       }}>
         <Box sx={{
           position: 'absolute',
-          top: '12px',
+          top: '8px',
           right: '10px',
           cursor: 'pointer'
         }}>
@@ -162,60 +178,27 @@ const ActiveCard = () => {
         </Box>
 
         {activeCard?.cover &&
-          <Box sx={{ mb: 4 }}>
+          <Box sx={{ mb: 1 }}>
             <img
-              style={{ width: '100%', height: '320px', borderRadius: '6px', objectFit: 'cover' }}
+              style={{ width: '100%', height: '200px', objectFit: 'contain' }}
               src={activeCard?.cover}
               alt="card-cover"
             />
           </Box>
         }
 
-        <Box sx={{ mb: 1, mt: -3, pr: 2.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CreditCardIcon />
-          <ToggleFocusInput
-            inputFontSize='22px'
-            value={activeCard?.title}
-            onChangedValue={onUpdateCardTitle}
-          />
-        </Box>
-
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid xs={12} sm={9}>
-            <Box sx={{ mb: 3 }}>
-              <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
-              <CardUserGroup
-                cardMemberIds={activeCard?.memberIds}
-                onUpdateCardMembers={onUpdateCardMembers}
+        <Grid container spacing={2}>
+          <Grid xs={12} sm={7}>
+            <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CreditCardIcon />
+              <ToggleFocusInput
+                inputFontSize='22px'
+                value={activeCard?.title}
+                onChangedValue={onUpdateCardTitle}
               />
             </Box>
 
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <SubjectRoundedIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Description</Typography>
-              </Box>
-              <CardDescriptionMdEditor
-                cardDescriptionProp={activeCard?.description}
-                handleUpdateCardDescription={onUpdateCardDescription}
-              />
-            </Box>
-
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <DvrOutlinedIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Activity</Typography>
-              </Box>
-              <CardActivitySection
-                cardComments={activeCard?.comments}
-                onAddCardComment={onAddCardComment}
-              />
-            </Box>
-          </Grid>
-
-          <Grid xs={12} sm={3}>
-            <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Add To Card</Typography>
-            <Stack direction="column" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
               {
                 activeCard?.memberIds?.includes(currentUser._id)
                   ?
@@ -242,58 +225,53 @@ const ActiveCard = () => {
                 <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
               </SidebarItem>
 
-              <SidebarItem>
-                <AttachFileOutlinedIcon fontSize="small" />Attachment
-              </SidebarItem>
-              <SidebarItem>
-                <LocalOfferOutlinedIcon fontSize="small" />Labels
-              </SidebarItem>
-              <SidebarItem>
-                <TaskAltOutlinedIcon fontSize="small" />Checklist
-              </SidebarItem>
-              <SidebarItem>
-                <WatchLaterOutlinedIcon fontSize="small" />Dates
-              </SidebarItem>
-              <SidebarItem>
-                <AutoFixHighOutlinedIcon fontSize="small" />Custom Fields
+              <SidebarItem className='active'>
+                <WatchLaterOutlinedIcon fontSize="small" />Deadline
               </SidebarItem>
             </Stack>
 
-            <Divider sx={{ my: 2 }} />
+            <Box sx={{ mb: 3 }}>
+              <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
+              <CardUserGroup
+                cardMemberIds={activeCard?.memberIds}
+                onUpdateCardMembers={onUpdateCardMembers}
+              />
+            </Box>
 
-            <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Power-Ups</Typography>
-            <Stack direction="column" spacing={1}>
-              <SidebarItem>
-                <AspectRatioOutlinedIcon fontSize="small" />Card Size
-              </SidebarItem>
-              <SidebarItem>
-                <AddToDriveOutlinedIcon fontSize="small" />Google Drive
-              </SidebarItem>
-              <SidebarItem>
-                <AddOutlinedIcon fontSize="small" />Add Power-Ups
-              </SidebarItem>
-            </Stack>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <SubjectRoundedIcon />
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Description</Typography>
+              </Box>
+              <CardDescriptionMdEditor
+                cardDescriptionProp={activeCard?.description}
+                handleUpdateCardDescription={onUpdateCardDescription}
+              />
+            </Box>
 
-            <Divider sx={{ my: 2 }} />
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <AttachFileOutlinedIcon />
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Attachment</Typography>
+              </Box>
+              <CardAttachment
+                CardAttachmentsProp={activeCard?.attachments}
+                handleUpdateCardAttachment={onUpdateCardAttachments}
+              />
+            </Box>
+          </Grid>
 
-            <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Actions</Typography>
-            <Stack direction="column" spacing={1}>
-              <SidebarItem>
-                <ArrowForwardOutlinedIcon fontSize="small" />Move
-              </SidebarItem>
-              <SidebarItem>
-                <ContentCopyOutlinedIcon fontSize="small" />Copy
-              </SidebarItem>
-              <SidebarItem>
-                <AutoAwesomeOutlinedIcon fontSize="small" />Make Template
-              </SidebarItem>
-              <SidebarItem>
-                <ArchiveOutlinedIcon fontSize="small" />Archive
-              </SidebarItem>
-              <SidebarItem>
-                <ShareOutlinedIcon fontSize="small" />Share
-              </SidebarItem>
-            </Stack>
+          <Grid xs={12} sm={5}>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <DvrOutlinedIcon />
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Comments</Typography>
+              </Box>
+              <CardActivitySection
+                cardComments={activeCard?.comments}
+                onAddCardComment={onAddCardComment}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Box>
