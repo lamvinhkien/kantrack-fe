@@ -83,10 +83,17 @@ const AddAttachment = ({ handleAddCardAttachment }) => {
               </Box>
 
               <Box sx={{ mb: 2 }}>
-                <TextField label='Paste a link' size='small' fullWidth
+                <TextField
+                  label="Paste a link"
+                  size="small"
+                  fullWidth
                   error={!!errors['link']}
                   {...register('link', {
-                    required: FIELD_REQUIRED_MESSAGE
+                    required: FIELD_REQUIRED_MESSAGE,
+                    pattern: {
+                      value: /^(https?:\/\/[^\s$.?#].[^\s]*)$/i,
+                      message: 'Please enter a valid URL'
+                    }
                   })}
                 />
                 <FieldErrorAlert errors={errors} fieldName={'link'} />

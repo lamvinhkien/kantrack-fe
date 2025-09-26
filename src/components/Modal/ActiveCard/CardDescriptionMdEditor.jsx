@@ -27,7 +27,7 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
               value={cardDescription}
               onChange={setCardDescription}
               previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
-              height={150}
+              height={200}
               preview="edit"
             />
           </Box>
@@ -70,9 +70,9 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
             Edit
           </Button>
           <Box
-            onClick={() => setMarkdownEditMode(true)}
             data-color-mode={mode}
-            sx={{ cursor: 'pointer' }}
+            sx={!cardDescription && { cursor: 'pointer' }}
+            onClick={() => { if (!cardDescription) setMarkdownEditMode(true) }}
           >
             <MDEditor.Markdown
               source={cardDescription ? cardDescription : 'Add a more detailed description...'}
@@ -80,7 +80,8 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
                 whiteSpace: 'pre-wrap',
                 padding: !cardDescription ? '10px' : '0px',
                 border: !cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
-                borderRadius: '8px'
+                borderRadius: '8px',
+                backgroundColor: !cardDescription ? mode === 'dark' && 'rgba(0, 0, 0, 0.2)' : 'inherit'
               }}
             />
           </Box>

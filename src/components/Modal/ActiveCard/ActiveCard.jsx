@@ -154,10 +154,9 @@ const ActiveCard = () => {
     >
       <Box sx={{
         position: 'relative',
-        width: 1000,
-        maxWidth: 1000,
-        height: 600,
-        maxHeight: 620,
+        width: 1050,
+        minheight: 510,
+        maxHeight: 610,
         bgcolor: 'white',
         boxShadow: 24,
         borderRadius: '8px',
@@ -178,7 +177,7 @@ const ActiveCard = () => {
         </Box>
 
         {activeCard?.cover &&
-          <Box sx={{ mb: 1 }}>
+          <Box>
             <img
               style={{ width: '100%', height: '200px', objectFit: 'contain' }}
               src={activeCard?.cover}
@@ -189,7 +188,7 @@ const ActiveCard = () => {
 
         <Grid container spacing={2}>
           <Grid xs={12} sm={7}>
-            <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CreditCardIcon />
               <ToggleFocusInput
                 inputFontSize='22px'
@@ -198,7 +197,7 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
               {
                 activeCard?.memberIds?.includes(currentUser._id)
                   ?
@@ -220,17 +219,16 @@ const ActiveCard = () => {
               }
 
               <SidebarItem className='active' component="label">
-                <ImageOutlinedIcon fontSize="small" />
-                Cover
+                <ImageOutlinedIcon fontSize="small" /> Cover
                 <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
               </SidebarItem>
 
               <SidebarItem className='active'>
-                <WatchLaterOutlinedIcon fontSize="small" />Deadline
+                <WatchLaterOutlinedIcon fontSize="small" /> Deadline
               </SidebarItem>
             </Stack>
 
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mt: 2 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
               <CardUserGroup
                 cardMemberIds={activeCard?.memberIds}
@@ -238,7 +236,7 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mt: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <SubjectRoundedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Description</Typography>
@@ -249,7 +247,7 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Box sx={{ mb: 3 }}>
+            <Box sx={{ mt: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <AttachFileOutlinedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Attachment</Typography>
@@ -258,7 +256,6 @@ const ActiveCard = () => {
               <ListAttachment ListAttachments={activeCard?.attachments} handleUpdateCardAttachments={onUpdateCardAttachments} />
             </Box>
           </Grid>
-
           <Grid xs={12} sm={5}>
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
