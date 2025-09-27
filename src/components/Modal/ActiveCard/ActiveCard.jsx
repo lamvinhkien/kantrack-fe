@@ -154,7 +154,7 @@ const ActiveCard = () => {
     >
       <Box sx={{
         position: 'relative',
-        width: 1050,
+        width: 1000,
         minheight: 510,
         maxHeight: 610,
         bgcolor: 'white',
@@ -197,7 +197,7 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+            <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
               {
                 activeCard?.memberIds?.includes(currentUser._id)
                   ?
@@ -228,7 +228,7 @@ const ActiveCard = () => {
               </SidebarItem>
             </Stack>
 
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 3 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
               <CardUserGroup
                 cardMemberIds={activeCard?.memberIds}
@@ -236,10 +236,10 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Box sx={{ mt: 4 }}>
+            <Box sx={{ mt: 5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <SubjectRoundedIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Description</Typography>
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Description</Typography>
               </Box>
               <CardDescriptionMdEditor
                 cardDescriptionProp={activeCard?.description}
@@ -247,13 +247,17 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Box sx={{ mt: 4 }}>
+            <Box sx={{ mt: 5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <AttachFileOutlinedIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Attachment</Typography>
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Attachment</Typography>
               </Box>
               <AddAttachment handleAddCardAttachment={onAddCardAttachments} />
-              <ListAttachment ListAttachments={activeCard?.attachments} handleUpdateCardAttachments={onUpdateCardAttachments} />
+              <ListAttachment
+                ListAttachments={activeCard?.attachments}
+                handleUpdateCardAttachments={onUpdateCardAttachments}
+                handleAddCardAttachment={onAddCardAttachments}
+              />
             </Box>
           </Grid>
           <Grid xs={12} sm={5}>

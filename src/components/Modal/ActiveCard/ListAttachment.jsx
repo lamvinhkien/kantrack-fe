@@ -7,7 +7,6 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Popover from '@mui/material/Popover'
 import { Link as MuiLink } from '@mui/material'
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
@@ -19,15 +18,24 @@ import { useForm } from 'react-hook-form'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import AttachmentPreview from './AttachmentPreview'
+import { useColorScheme } from '@mui/material/styles'
+import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 
 const isImageUrl = (url) => {
   return /\.(jpg|jpeg|png|gif|webp)$/i.test(url)
 }
 
-const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
+const getFileExtension = (url) => {
+  const parts = url.split('.')
+  return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : ''
+}
+
+const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAddCardAttachment }) => {
+  const { mode } = useColorScheme()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const [selectedAttachment, setSelectedAttachment] = useState(null)
-  const [modePopover, setModePopover] = useState('main') // main | edit | remove
+  const [modePopover, setModePopover] = useState('main')
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'card-list-attachments-popover' : undefined
 
@@ -42,7 +50,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
     setAnchorPopoverElement(event.currentTarget)
     setSelectedAttachment(att)
     setModePopover('main')
-    reset({ newDisplayText: att.displayText })
+    reset({ newLink: att.attachment, newDisplayText: att.displayText })
   }
 
   const handleClosePopover = () => {
@@ -52,8 +60,12 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
   }
 
   const handleEditDisplayText = (action, data) => {
-    const { newDisplayText } = data
-    handleUpdateCardAttachments(action, { ...selectedAttachment, displayText: newDisplayText.trim() })
+    const { newDisplayText, newLink } = data
+    if (newLink) {
+      handleUpdateCardAttachments(action, { ...selectedAttachment, newLink: newLink.trim(), displayText: newDisplayText.trim() })
+    } else {
+      handleUpdateCardAttachments(action, { ...selectedAttachment, displayText: newDisplayText.trim() })
+    }
     setAnchorPopoverElement(null)
     setSelectedAttachment(null)
   }
@@ -62,6 +74,12 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
     handleUpdateCardAttachments(action, selectedAttachment)
     setAnchorPopoverElement(null)
     setSelectedAttachment(null)
+  }
+
+  const handleAddFile = (e) => {
+    if (e) handleAddCardAttachment([...e.target.files], null)
+    e.target.value = ''
+    setAnchorPopoverElement(null)
   }
 
   return (
@@ -75,34 +93,72 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                 <List sx={{ mt: 1 }}>
                   <Typography sx={{ fontWeight: '500' }}>Files</Typography>
                   {files.map((att, idx) => (
-                    <ListItem key={`file-${idx}`} disablePadding sx={{ mt: 1.2 }}>
+                    <ListItem
+                      key={`file-${idx}`}
+                      disablePadding
+                      sx={{ mt: 1.5, gap: 2, pr: 1, display: 'flex', alignItems: 'center' }}
+                    >
                       {isImageUrl(att.attachment) ? (
                         <Box
                           component="img"
                           src={att.attachment}
                           alt={att.displayText || `File ${idx + 1}`}
-                          sx={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 1, mr: 2 }}
+                          sx={{
+                            width: 45,
+                            height: 45,
+                            objectFit: 'cover',
+                            borderRadius: 1,
+                            cursor: 'pointer'
+                          }}
+                          onClick={() =>
+                            setPreviewFile({ url: att.attachment, name: att.displayText })
+                          }
                         />
                       ) : (
                         <Box
+                          onClick={() =>
+                            setPreviewFile({ url: att.attachment, name: att.displayText })
+                          }
                           sx={{
-                            width: 50, height: 50, borderRadius: 1, mr: 2,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            width: 45,
+                            height: 45,
+                            borderRadius: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: mode === 'dark' ? 'grey.800' : 'grey.200',
+                            fontWeight: 'bold',
+                            fontSize: 10,
+                            color: mode === 'dark' ? 'white' : '#555',
+                            cursor: 'pointer'
                           }}
                         >
-                          <InsertDriveFileIcon fontSize='large' color='disabled' />
+                          {getFileExtension(att.attachment)}
                         </Box>
                       )}
                       <MuiLink
-                        sx={{ cursor: 'pointer' }}
+                        sx={{ cursor: 'pointer', flex: 1, minWidth: 0 }}
                         component="span"
                         underline="none"
                         onClick={() => setPreviewFile({ url: att.attachment, name: att.displayText })}
                       >
-                        <ListItemText
-                          primary={att.displayText || `File ${idx + 1}`}
-                          secondary={att.uploadedAt ? moment(att.uploadedAt).format('lll') : null}
-                        />
+                        <Typography
+                          sx={{
+                            fontWeight: 'bold',
+                            color: mode === 'dark' ? 'grey.300' : 'grey.700',
+                            wordBreak: 'break-word',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {att.displayText || att.attachment}
+                        </Typography>
+                        {att.uploadedAt && (
+                          <Typography sx={{ color: mode === 'dark' ? 'grey.500' : 'grey.600' }}>
+                            {moment(att.uploadedAt).format('lll')}
+                          </Typography>
+                        )}
                       </MuiLink>
                       <Button
                         sx={{ ml: 'auto', minWidth: 'unset', width: 25, height: 25 }}
@@ -121,31 +177,50 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
             )}
 
             {links.length > 0 && (
-              <List sx={{ mt: 1 }}>
+              <List sx={{ mt: files.length > 0 ? 0 : 1 }}>
                 <Typography sx={{ fontWeight: '500' }}>Links</Typography>
                 {links.map((att, idx) => (
-                  <ListItem key={`link-${idx}`} disablePadding sx={{ mt: 1.2 }}>
-                    <Box
-                      sx={{
-                        width: 40, height: 40, borderRadius: 1, mr: 2,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.100'
-                      }}
-                    >
+                  <ListItem
+                    key={`link-${idx}`}
+                    disablePadding
+                    sx={{
+                      mt: 1,
+                      gap: 2,
+                      bgcolor: mode === 'dark' ? '#151a1f' : 'grey.200',
+                      p: 1,
+                      borderRadius: 2,
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
                       <Box
                         component="img"
                         src={`https://www.google.com/s2/favicons?sz=64&domain_url=${att.attachment}`}
                         alt="favicon"
                         sx={{ width: 22, height: 22 }}
                       />
+                      <MuiLink
+                        href={att.attachment}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}
+                      >
+                        <ListItemText
+                          primary={att.displayText || att.attachment}
+                          primaryTypographyProps={{
+                            noWrap: true,
+                            sx: {
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap'
+                            }
+                          }}
+                        />
+                      </MuiLink>
                     </Box>
-                    <MuiLink href={att.attachment} target="_blank" rel="noopener noreferrer" underline="none">
-                      <ListItemText
-                        primary={att.displayText || `Link ${idx + 1}`}
-                        secondary={att.uploadedAt ? moment(att.uploadedAt).format('lll') : null}
-                      />
-                    </MuiLink>
                     <Button
-                      sx={{ ml: 'auto', minWidth: 'unset', width: 25, height: 25 }}
+                      sx={{ ml: 1, minWidth: 'unset', width: 25, height: 25 }}
                       onClick={(e) => handleOpenPopover(e, att)}
                       variant="outlined"
                       color="primary"
@@ -183,17 +258,34 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
               )}
 
               {modePopover === 'edit' && (
-                <Box sx={{ p: 2, width: 260 }}>
+                <Box sx={{ p: 2, width: 300 }}>
                   <form onSubmit={handleSubmit((data) => handleEditDisplayText(CARD_ATTACHMENT_ACTIONS.EDIT, data))}>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      label="File name"
-                      error={!!errors['newDisplayText']}
-                      {...register('newDisplayText', {
-                        required: FIELD_REQUIRED_MESSAGE
-                      })}
-                    />
+                    {selectedAttachment?.type === 'link'
+                      ?
+                      <>
+                        <TextField fullWidth size="medium" label="Link"
+                          error={!!errors['newLink']}
+                          {...register('newLink', {
+                            required: FIELD_REQUIRED_MESSAGE,
+                            pattern: {
+                              value: /^(https?:\/\/[^\s$.?#].[^\s]*)$/i,
+                              message: 'Please enter a valid URL'
+                            }
+                          })}
+                        />
+                        <FieldErrorAlert errors={errors} fieldName={'newLink'} />
+                        <TextField label='Display text' size='medium' fullWidth sx={{ mt: 2 }} {...register('newDisplayText')} />
+                      </>
+                      :
+                      <TextField
+                        fullWidth size="medium"
+                        label='File name'
+                        error={!!errors['newDisplayText']}
+                        {...register('newDisplayText', {
+                          required: FIELD_REQUIRED_MESSAGE
+                        })}
+                      />
+                    }
                     <FieldErrorAlert errors={errors} fieldName={'newDisplayText'} />
                     <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1 }}>
                       <Button size="small" color='inherit' onClick={() => setModePopover('main')}>Cancel</Button>
@@ -204,7 +296,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
               )}
 
               {modePopover === 'remove' && (
-                <Box sx={{ p: 2, width: 260 }}>
+                <Box sx={{ p: 2, width: 220 }}>
                   <Typography sx={{ mb: 2 }}>Remove this attachment?</Typography>
                   <Stack direction="row" spacing={1} justifyContent="flex-end">
                     <Button size="small" color='inherit' onClick={() => setModePopover('main')}>Cancel</Button>
@@ -216,24 +308,25 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
           </>
           :
           <Box
+            component='label'
             sx={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              p: 1,
+              p: 2,
               mt: 2,
               border: '1px dashed',
               borderColor: 'divider',
               borderRadius: 2,
-              bgcolor: 'grey.50',
-              textAlign: 'center'
+              bgcolor: mode === 'dark' ? '#151a1f' : 'grey.100',
+              textAlign: 'center',
+              cursor: 'pointer'
             }}
           >
-            <InsertDriveFileIcon color="disabled" sx={{ fontSize: 35, mb: 1 }} />
-            <Typography variant="body2" color="text.secondary">
-              No attachments yet
-            </Typography>
+            <UploadFileIcon color="disabled" sx={{ fontSize: 40, mb: 1 }} />
+            <Typography variant="body2" color="text.secondary">Attach a file from your computer</Typography>
+            <VisuallyHiddenInput type="file" multiple onChange={handleAddFile} />
           </Box>
       }
     </Box>

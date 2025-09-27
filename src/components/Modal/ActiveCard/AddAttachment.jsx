@@ -70,8 +70,7 @@ const AddAttachment = ({ handleAddCardAttachment }) => {
             </Box>
             <Button component='label' variant='outlined'>
               Choose a file
-              <VisuallyHiddenInput type="file" multiple onChange={handleAddFile}
-              />
+              <VisuallyHiddenInput type="file" multiple onChange={handleAddFile} />
             </Button>
 
             <Divider sx={{ my: 2 }} />
@@ -85,7 +84,7 @@ const AddAttachment = ({ handleAddCardAttachment }) => {
               <Box sx={{ mb: 2 }}>
                 <TextField
                   label="Paste a link"
-                  size="small"
+                  size="medium"
                   fullWidth
                   error={!!errors['link']}
                   {...register('link', {
@@ -99,7 +98,7 @@ const AddAttachment = ({ handleAddCardAttachment }) => {
                 <FieldErrorAlert errors={errors} fieldName={'link'} />
               </Box>
 
-              <TextField label='Text to display' size='small' fullWidth sx={{ mb: 2 }} {...register('displayText')} />
+              <TextField label='Text to display' size='medium' fullWidth sx={{ mb: 2 }} {...register('displayText')} />
 
               <Box display="flex" justifyContent="flex-end" gap={1}>
                 <Button variant="outlined" onClick={handleTogglePopover}>
