@@ -155,8 +155,8 @@ const ActiveCard = () => {
       <Box sx={{
         position: 'relative',
         width: 1000,
-        minheight: 510,
-        maxHeight: 610,
+        minheight: 500,
+        maxHeight: 600,
         bgcolor: 'white',
         boxShadow: 24,
         borderRadius: '8px',
