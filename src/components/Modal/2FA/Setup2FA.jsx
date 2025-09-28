@@ -39,7 +39,7 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
 
     setup2faAPI(otpToken, action2FA).then(updatedUser => {
       handleSuccessSetup2FA(updatedUser)
-      toast.success(`2FA ${action2FA}d Successfully.`)
+      toast.success(`2FA ${action2FA}d.`)
       setConfirmOtpToken('')
       setError(null)
     })

@@ -39,7 +39,7 @@ const AttachmentPreview = ({ att, onClose }) => {
 
         {isPdf && (
           <iframe key={att.attachment} src={att.attachment}
-            width="100%" height="100%" style={{ border: 'none' }} title="PDF Preview"
+            width="100%" height="100%" style={{ border: 'none' }} title="PDF Preview" allowFullScreen
           />
         )}
 
@@ -50,11 +50,11 @@ const AttachmentPreview = ({ att, onClose }) => {
         )}
 
         {!isImage && !isPdf && !isVideo && (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'white' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <Typography variant="caption" sx={{ fontWeight: 'bold', color: 'white', fontSize: '22px' }}>
               There is no preview available for this attachment.
             </Typography>
-            <Button sx={{ mt: 2, gap: 1 }} href={getDownloadUrl(att.attachment, att.displayText)}
+            <Button sx={{ mt: 1, gap: 1 }} href={getDownloadUrl(att.attachment, att.displayText)}
               download variant="contained" component='a'
             >
               <FileDownloadIcon fontSize="small" />
@@ -67,14 +67,14 @@ const AttachmentPreview = ({ att, onClose }) => {
       <DialogTitle
         sx={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          color: 'white', fontWeight: 500, pt: 2, pb: 2, gap: 1
+          color: 'white', pt: 2, pb: 2, gap: 1
         }}
       >
         <Typography
-          variant='h5'
+          variant='caption'
           sx={{
             fontWeight: 600, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap', textAlign: 'center'
+            whiteSpace: 'nowrap', textAlign: 'center', fontSize: '22px'
           }}
           title={att.displayText}
         >
@@ -82,7 +82,7 @@ const AttachmentPreview = ({ att, onClose }) => {
         </Typography>
 
         <Typography
-          variant='subtitle1'
+          variant='body1'
           sx={{
             maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis',
             whiteSpace: 'nowrap', textAlign: 'center'

@@ -33,7 +33,7 @@ const AccountTab = () => {
       dispatch(updateUserAPI({ displayName })),
       { pending: 'Updating...' }
     ).then(res => {
-      if (!res.error) toast.success('User updated successfully.')
+      if (!res.error) toast.success('User info updated.')
     })
   }
 
@@ -45,13 +45,13 @@ const AccountTab = () => {
     }
 
     let reqData = new FormData()
-    reqData.append('avatar', e.target?.files[0])
+    reqData.append('userAvatar', e.target?.files[0])
 
     toast.promise(
       dispatch(updateUserAPI(reqData)),
       { pending: 'Updating...' }
     ).then(res => {
-      if (!res.error) toast.success('User updated successfully.')
+      if (!res.error) toast.success('Avatar updated.')
       e.target.value = ''
     })
   }
@@ -76,8 +76,8 @@ const AccountTab = () => {
           <Box>
             <Avatar
               sx={{ width: 84, height: 84, mb: 1 }}
-              alt={currentUser?.username}
-              src={currentUser?.avatar}
+              alt={currentUser?.displayName}
+              src={currentUser?.avatar?.attachment}
             />
             <Tooltip title="Upload a new image to update your avatar immediately.">
               <Button

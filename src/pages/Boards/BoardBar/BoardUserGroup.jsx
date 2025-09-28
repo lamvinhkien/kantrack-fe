@@ -23,7 +23,7 @@ const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
               <Avatar
                 sx={{ width: 34, height: 34, cursor: 'pointer' }}
                 alt={user?.displayName}
-                src={user?.avatar}
+                src={user?.avatar?.attachment}
               />
             </Tooltip>
           )
@@ -68,7 +68,7 @@ const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
               <Avatar
                 sx={{ width: 34, height: 34, cursor: 'pointer' }}
                 alt={user?.displayName}
-                src={user?.avatar}
+                src={user?.avatar?.attachment}
               />
             </Tooltip>
           ))}

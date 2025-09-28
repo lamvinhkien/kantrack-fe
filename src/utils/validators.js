@@ -6,7 +6,14 @@ export const PASSWORD_RULE_MESSAGE = 'Password must include at least 1 letter, a
 export const PASSWORD_CONFIRMATION_MESSAGE = 'Passwords do not match.'
 
 export const LIMIT_COMMON_FILE_SIZE = 10485760
-export const ALLOW_COMMON_FILE_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
+export const ALLOW_COMMON_FILE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/svg+xml'
+]
+
 export const singleFileValidator = (file) => {
   if (!file || !file.name || !file.size || !file.type) {
     return 'File cannot be blank.'
@@ -15,7 +22,7 @@ export const singleFileValidator = (file) => {
     return 'Maximum file size exceeded. (10MB)'
   }
   if (!ALLOW_COMMON_FILE_TYPES.includes(file.type)) {
-    return 'File type is invalid. Only accept jpg, jpeg and png'
+    return 'File type is invalid. Only accept image type.'
   }
   return null
 }

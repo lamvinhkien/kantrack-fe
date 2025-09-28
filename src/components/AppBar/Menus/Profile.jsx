@@ -51,7 +51,7 @@ const Profile = () => {
             aria-expanded={open ? 'true' : undefined}
             sx={{ padding: 0 }}
           >
-            <Avatar sx={{ width: 35, height: 35 }} src={currentUser?.avatar} />
+            <Avatar sx={{ width: 35, height: 35 }} alt={currentUser?.displayName} src={currentUser?.avatar?.attachment} />
           </IconButton>
         </Tooltip>
       </Box>
@@ -94,7 +94,7 @@ const Profile = () => {
       >
         <Link to='/settings/account' style={{ color: 'inherit' }}>
           <MenuItem sx={{ '&:hover': { color: 'success.light' } }}>
-            <Avatar src={currentUser?.avatar} /> Profile
+            <Avatar src={currentUser?.avatar?.attachment} alt={currentUser?.displayName} /> Profile
           </MenuItem>
         </Link>
         <Divider />

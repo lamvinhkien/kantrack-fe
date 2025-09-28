@@ -16,7 +16,7 @@ const CardActivitySection = ({ cardComments = [], onAddCardComment }) => {
       if (!event.target?.value) return
 
       const commentToAdd = {
-        userAvatar: currentUser?.avatar,
+        userAvatar: currentUser?.avatar?.attachment,
         userDisplayName: currentUser?.displayName,
         content: event.target.value.trim()
       }
@@ -32,8 +32,8 @@ const CardActivitySection = ({ cardComments = [], onAddCardComment }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <Avatar
           sx={{ width: 36, height: 36, cursor: 'pointer' }}
-          alt={currentUser?.username}
-          src={currentUser?.avatar}
+          alt={currentUser?.displayName}
+          src={currentUser?.avatar?.attachment}
         />
         <TextField
           fullWidth

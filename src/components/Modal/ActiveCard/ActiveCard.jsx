@@ -91,7 +91,9 @@ const ActiveCard = () => {
     reqData.append('cardCover', event.target?.files[0])
 
     toast.promise(
-      callApiUpdateCard(reqData).finally(() => { event.target.value = '' }),
+      callApiUpdateCard(reqData)
+        .then(() => toast.success('Upload complete.'))
+        .finally(() => { event.target.value = '' }),
       { pending: 'Updating...' }
     )
   }
@@ -105,7 +107,8 @@ const ActiveCard = () => {
       confirmationButtonProps: { color: 'error' }
     }).then(() => {
       toast.promise(
-        callApiUpdateCard({ coverToDelete: cover }),
+        callApiUpdateCard({ coverToDelete: cover })
+          .then(() => toast.success('Cover removed.')),
         { pending: 'Removing...' }
       )
     }).catch(() => { })
@@ -135,12 +138,15 @@ const ActiveCard = () => {
       files.forEach(file => reqData.append('cardAttachments', file))
 
       toast.promise(
-        callApiUpdateCard(reqData),
+        callApiUpdateCard(reqData)
+          .then(() => toast.success('Upload complete.')),
         { pending: 'Updating...' }
       )
     }
 
-    if (link) callApiUpdateCard(link)
+    if (link) {
+      callApiUpdateCard(link)
+    }
   }
 
   const onUpdateCardAttachments = async (action, data) => {
