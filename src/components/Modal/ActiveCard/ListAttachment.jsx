@@ -21,15 +21,9 @@ import AttachmentPreview from './AttachmentPreview'
 import { useColorScheme } from '@mui/material/styles'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
-
-const isImageUrl = (url) => {
-  return /\.(jpg|jpeg|png|gif|webp)$/i.test(url)
-}
-
-const getFileExtension = (url) => {
-  const parts = url.split('.')
-  return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : ''
-}
+import { getDownloadUrl, isImageUrl, isVideoUrl, getFileExtension } from '~/utils/formatters'
+import { toast } from 'react-toastify'
+import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 
 const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAddCardAttachment }) => {
   const { mode } = useColorScheme()
@@ -71,7 +65,10 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
   }
 
   const handleRemoveAttachment = (action) => {
-    handleUpdateCardAttachments(action, selectedAttachment)
+    toast.promise(
+      handleUpdateCardAttachments(action, selectedAttachment),
+      { pending: 'Removing...' }
+    )
     setAnchorPopoverElement(null)
     setSelectedAttachment(null)
   }
@@ -110,15 +107,27 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
                             borderRadius: 1,
                             cursor: 'pointer'
                           }}
-                          onClick={() =>
-                            setPreviewFile({ url: att.attachment, name: att.displayText })
-                          }
+                          onClick={() => setPreviewFile(att)}
                         />
+                      ) : isVideoUrl(att.attachment) ? (
+                        <Box
+                          onClick={() => setPreviewFile(att)}
+                          sx={{
+                            width: 45,
+                            height: 45,
+                            borderRadius: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: mode === 'dark' ? 'grey.800' : 'grey.200',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <PlayCircleIcon sx={{ fontSize: 24, color: mode === 'dark' ? 'white' : '#555' }} />
+                        </Box>
                       ) : (
                         <Box
-                          onClick={() =>
-                            setPreviewFile({ url: att.attachment, name: att.displayText })
-                          }
+                          onClick={() => setPreviewFile(att)}
                           sx={{
                             width: 45,
                             height: 45,
@@ -140,7 +149,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
                         sx={{ cursor: 'pointer', flex: 1, minWidth: 0 }}
                         component="span"
                         underline="none"
-                        onClick={() => setPreviewFile({ url: att.attachment, name: att.displayText })}
+                        onClick={() => setPreviewFile(att)}
                       >
                         <Typography
                           sx={{
@@ -172,7 +181,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
                     </ListItem>
                   ))}
                 </List>
-                <AttachmentPreview file={previewFile} onClose={() => setPreviewFile(null)} />
+                <AttachmentPreview att={previewFile} onClose={() => setPreviewFile(null)} />
               </>
             )}
 
@@ -247,7 +256,9 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
                     <Typography>Edit</Typography>
                   </MenuItem>
                   {selectedAttachment?.type === 'file' && (
-                    <MenuItem component="a" href={selectedAttachment?.attachment} download>
+                    <MenuItem component="a" download
+                      href={getDownloadUrl(selectedAttachment?.attachment, selectedAttachment?.displayText)}
+                    >
                       <Typography>Download</Typography>
                     </MenuItem>
                   )}
@@ -258,7 +269,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
               )}
 
               {modePopover === 'edit' && (
-                <Box sx={{ p: 2, width: 300 }}>
+                <Box sx={{ p: 2, width: 350 }}>
                   <form onSubmit={handleSubmit((data) => handleEditDisplayText(CARD_ATTACHMENT_ACTIONS.EDIT, data))}>
                     {selectedAttachment?.type === 'link'
                       ?

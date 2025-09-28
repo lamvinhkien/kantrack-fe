@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import LogoutIcon from '@mui/icons-material/Logout'
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined'
+import AttachmentIcon from '@mui/icons-material/Attachment'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
@@ -35,6 +35,9 @@ import AddAttachment from './AddAttachment'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 import ListAttachment from './ListAttachment'
+import { useConfirm } from 'material-ui-confirm'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -61,6 +64,7 @@ const ActiveCard = () => {
   const currentUser = useSelector(selectCurrentUser)
   const activeCard = useSelector(selectCurrentActiveCard)
   const isShowModalActiveCard = useSelector(selectIsShowModalActiveCard)
+  const confirmDeleteCardCover = useConfirm()
 
   const handleCloseModal = () => {
     dispatch(clearAndHideCurrentActiveCard())
@@ -90,6 +94,21 @@ const ActiveCard = () => {
       callApiUpdateCard(reqData).finally(() => { event.target.value = '' }),
       { pending: 'Updating...' }
     )
+  }
+
+  const onDeleteCardCover = (cover) => {
+    confirmDeleteCardCover({
+      title: 'Delete card cover?',
+      description: 'This action will permanently delete your card cover, are you sure?',
+      confirmationText: 'Confirm',
+      cancellationText: 'Cancel',
+      confirmationButtonProps: { color: 'error' }
+    }).then(() => {
+      toast.promise(
+        callApiUpdateCard({ coverToDelete: cover }),
+        { pending: 'Removing...' }
+      )
+    }).catch(() => { })
   }
 
   const onUpdateCardDescription = (newDescription) => {
@@ -124,8 +143,8 @@ const ActiveCard = () => {
     if (link) callApiUpdateCard(link)
   }
 
-  const onUpdateCardAttachments = (action, data) => {
-    callApiUpdateCard({ action, newAttachment: data })
+  const onUpdateCardAttachments = async (action, data) => {
+    await callApiUpdateCard({ action, newAttachment: data })
   }
 
   useEffect(() => {
@@ -176,14 +195,58 @@ const ActiveCard = () => {
           <CancelIcon color="error" sx={{ '&:hover': { color: 'error.light' } }} onClick={handleCloseModal} />
         </Box>
 
-        {activeCard?.cover &&
-          <Box>
-            <img
-              style={{ width: '100%', height: '200px', objectFit: 'contain' }}
-              src={activeCard?.cover}
-              alt="card-cover"
-            />
-          </Box>
+        {activeCard?.cover?.attachment && activeCard?.cover?.publicId
+          ?
+          (
+            <Box
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '200px',
+                overflow: 'hidden',
+                borderRadius: 1,
+                cursor: 'pointer',
+                '&:hover img': {
+                  opacity: 0.7
+                },
+                '&:hover .delete-icon': {
+                  opacity: 1
+                }
+              }}
+            >
+              <img
+                src={activeCard.cover.attachment}
+                alt="card-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  transition: 'opacity 0.3s ease'
+                }}
+              />
+              <IconButton
+                className="delete-icon"
+                onClick={() => onDeleteCardCover(activeCard.cover)}
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'rgba(255, 0, 0, 0.6)',
+                  color: 'white',
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 0, 0, 0.8)'
+                  }
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          )
+          :
+          <></>
         }
 
         <Grid container spacing={2}>
@@ -249,7 +312,7 @@ const ActiveCard = () => {
 
             <Box sx={{ mt: 5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <AttachFileOutlinedIcon />
+                <AttachmentIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Attachment</Typography>
               </Box>
               <AddAttachment handleAddCardAttachment={onAddCardAttachments} />

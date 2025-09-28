@@ -71,7 +71,7 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
           </Button>
           <Box
             data-color-mode={mode}
-            sx={!cardDescription && { cursor: 'pointer' }}
+            sx={cardDescription ? {} : { cursor: 'pointer' }}
             onClick={() => { if (!cardDescription) setMarkdownEditMode(true) }}
           >
             <MDEditor.Markdown
