@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react'
 import TextField from '@mui/material/TextField'
 
-const ToggleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...props }) => {
+const ToggleFocusInput = ({
+  value,
+  onChangedValue,
+  inputFontSize = '16px',
+  colorDarkMode = 'white',
+  colorWhiteMode = '#212121',
+  bgDarkMode = '#33485D',
+  bgWhiteMode = 'white',
+  forcusBorderColor = 'primary.main',
+  ...props }) => {
   const [inputValue, setInputValue] = useState(value)
 
   useEffect(() => {
@@ -30,7 +39,10 @@ const ToggleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...pr
       {...props}
       sx={{
         '& label': {},
-        '& input': { fontSize: inputFontSize, fontWeight: 'bold' },
+        '& input': {
+          fontSize: inputFontSize, fontWeight: 'bold',
+          color: (theme) => theme.palette.mode === 'dark' ? colorDarkMode : colorWhiteMode
+        },
         '& .MuiOutlinedInput-root': {
           backgroundColor: 'transparent',
           '& fieldset': { borderColor: 'transparent' }
@@ -40,8 +52,8 @@ const ToggleFocusInput = ({ value, onChangedValue, inputFontSize = '16px', ...pr
           '& fieldset': { borderColor: 'transparent' }
         },
         '& .MuiOutlinedInput-root.Mui-focused': {
-          backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#33485D' : 'white',
-          '& fieldset': { borderColor: 'primary.main' }
+          backgroundColor: (theme) => theme.palette.mode === 'dark' ? bgDarkMode : bgWhiteMode,
+          '& fieldset': { borderColor: forcusBorderColor }
         },
         '& .MuiOutlinedInput-input': {
           px: '6px',

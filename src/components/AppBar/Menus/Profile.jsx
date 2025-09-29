@@ -6,12 +6,12 @@ import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import Divider from '@mui/material/Divider'
 import Logout from '@mui/icons-material/Logout'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentUser, logoutUserAPI } from '~/redux/user/userSlice'
 import { useConfirm } from 'material-ui-confirm'
 import { Link } from 'react-router-dom'
+import ListItemText from '@mui/material/ListItemText'
 
 const Profile = () => {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -61,43 +61,19 @@ const Profile = () => {
         open={open}
         onClose={handleClose}
         onClick={handleClose}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-              mt: 1.5,
-              '& .MuiAvatar-root': {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1
-              },
-              '&::before': {
-                content: '""',
-                display: 'block',
-                position: 'absolute',
-                top: 0,
-                right: 14,
-                width: 10,
-                height: 10,
-                bgcolor: 'background.paper',
-                transform: 'translateY(-50%) rotate(45deg)',
-                zIndex: 0
-              }
-            }
-          }
-        }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link to='/settings/account' style={{ color: 'inherit' }}>
-          <MenuItem sx={{ '&:hover': { color: 'success.light' } }}>
-            <Avatar src={currentUser?.avatar?.attachment} alt={currentUser?.displayName} /> Profile
-          </MenuItem>
-        </Link>
-        <Divider />
+        <MenuItem component={Link} to="/settings/account" sx={{ mb: 1 }} >
+          <ListItemIcon>
+            <Avatar
+              src={currentUser?.avatar?.attachment}
+              alt={currentUser?.displayName}
+              sx={{ width: 28, height: 28 }}
+            />
+          </ListItemIcon>
+          <ListItemText primary="Profile" />
+        </MenuItem>
         <MenuItem
           onClick={handleLogout}
           sx={{ '&:hover': { color: 'error.main', '& .logout-icon': { color: 'error.main' } } }}

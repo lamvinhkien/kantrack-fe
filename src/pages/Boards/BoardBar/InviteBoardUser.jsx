@@ -34,15 +34,27 @@ const InviteBoardUser = ({ boardId }) => {
   return (
     <Box>
       <Tooltip title="Invite user to this board!">
-        <Button
-          aria-describedby={popoverId}
+        <Box
           onClick={handleTogglePopover}
-          variant="outlined"
-          startIcon={<PersonAddIcon />}
-          sx={{ color: 'white', borderColor: 'white', '&:hover': { borderColor: 'white' } }}
+          sx={{
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 1.5,
+            py: 0.5,
+            borderRadius: 1,
+            cursor: 'pointer',
+            '&:hover': {
+              bgcolor: 'rgba(255,255,255,0.12)'
+            }
+          }}
         >
-          Invite
-        </Button>
+          <PersonAddIcon />
+          <Typography variant="body2" fontWeight={500}>
+            Invite
+          </Typography>
+        </Box>
       </Tooltip>
 
       <Popover

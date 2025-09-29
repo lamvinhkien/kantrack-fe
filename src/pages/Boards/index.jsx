@@ -6,10 +6,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 import Stack from '@mui/material/Stack'
-import Divider from '@mui/material/Divider'
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard'
-import ListAltIcon from '@mui/icons-material/ListAlt'
-import HomeIcon from '@mui/icons-material/Home'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -28,11 +25,10 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: '8px',
   cursor: 'pointer',
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#ffff',
   padding: '12px 16px',
   borderRadius: '8px',
   '&:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#33485D' : theme.palette.grey[300]
+    backgroundColor: theme.palette.mode === 'dark' ? '#2a3a4cff' : theme.palette.grey[300]
   },
   '&.active': {
     color: theme.palette.mode === 'dark' ? '#90caf9' : '#0c66e4',
@@ -74,46 +70,38 @@ const Boards = () => {
       <Box sx={{ paddingX: 2, my: 4 }}>
         <Grid container spacing={2}>
           <Grid xs={12} sm={3}>
-            <Stack direction="column" spacing={1}>
-              <SidebarItem className="active">
+            <Stack direction="column" spacing={1} sx={{ mb: 1 }}>
+              <SidebarItem>
                 <SpaceDashboardIcon fontSize="small" />
                 Boards
               </SidebarItem>
-              <SidebarItem>
-                <ListAltIcon fontSize="small" />
-                Templates
-              </SidebarItem>
-              <SidebarItem>
-                <HomeIcon fontSize="small" />
-                Home
-              </SidebarItem>
             </Stack>
-            <Divider sx={{ my: 1 }} />
             <Stack direction='column' spacing={1}>
               <SidebarCreateBoardModal afterCreateNewBoard={afterCreateNewBoard} />
             </Stack>
           </Grid>
 
           <Grid xs={12} sm={9}>
-            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>Your boards:</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
+              <SpaceDashboardIcon />
+              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>YOUR BOARDS</Typography>
+            </Box>
             {boards?.length === 0 &&
               <Typography variant="span" sx={{ fontWeight: 'bold', mb: 3 }}>No result found!</Typography>
             }
             <Grid container spacing={2}>
               {boards.map(b =>
                 <Grid xs={12} sm={3} md={4} key={b._id}>
-                  <Card sx={{ width: '250px' }}>
+                  <Card
+                    sx={{
+                      width: '250px',
+                      bgcolor: theme => theme.palette.mode === 'dark' ? '#242b34ff' : '#fbfcffff'
+                    }}>
                     {/* <CardMedia component='img' height='100' image='https://picsum.photos/100' /> */}
                     <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
                     <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
                       <Typography gutterBottom variant="h6" component="div">
                         {b?.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                        {b?.description}
                       </Typography>
                       <Box
                         component={Link}

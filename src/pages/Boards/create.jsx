@@ -10,7 +10,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import AbcIcon from '@mui/icons-material/Abc'
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import Button from '@mui/material/Button'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
@@ -23,11 +22,10 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: '8px',
   cursor: 'pointer',
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   padding: '12px 16px',
   borderRadius: '8px',
   '&:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#33485D' : theme.palette.grey[300]
+    backgroundColor: theme.palette.mode === 'dark' ? '#2a3a4cff' : theme.palette.grey[300]
   },
   '&.active': {
     color: theme.palette.mode === 'dark' ? '#90caf9' : '#0c66e4',
@@ -123,30 +121,6 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
                     error={!!errors['title']}
                   />
                   <FieldErrorAlert errors={errors} fieldName={'title'} />
-                </Box>
-
-                <Box>
-                  <TextField
-                    fullWidth
-                    label="Description"
-                    type="text"
-                    variant="outlined"
-                    multiline
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <DescriptionOutlinedIcon fontSize="small" />
-                        </InputAdornment>
-                      )
-                    }}
-                    {...register('description', {
-                      required: FIELD_REQUIRED_MESSAGE,
-                      minLength: { value: 3, message: 'Min Length is 3 characters' },
-                      maxLength: { value: 255, message: 'Max Length is 255 characters' }
-                    })}
-                    error={!!errors['description']}
-                  />
-                  <FieldErrorAlert errors={errors} fieldName={'description'} />
                 </Box>
 
                 <Controller

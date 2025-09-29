@@ -32,7 +32,7 @@ const AutoCompleteSearchBoard = () => {
       .finally(() => setLoading(false))
   }
 
-  const debounceSearchBoard = useDebounceFn(handleInputSearchChange, 1000)
+  const debounceSearchBoard = useDebounceFn(handleInputSearchChange, 700)
 
   const handleSelectedBoard = (event, selectedBoard) => {
     if (selectedBoard) navigate(`/boards/${selectedBoard._id}`)
@@ -40,7 +40,7 @@ const AutoCompleteSearchBoard = () => {
 
   return (
     <Autocomplete
-      sx={{ width: 220 }}
+      sx={{ width: 500 }}
       id="asynchronous-search-board"
       noOptionsText={!boards ? 'Type to search board...' : 'No board found!'}
       isOptionEqualToValue={(option, value) => option._id === value._id}
@@ -55,7 +55,7 @@ const AutoCompleteSearchBoard = () => {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Type to search..."
+          label="Search board"
           size="small"
           InputProps={{
             ...params.InputProps,
