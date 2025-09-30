@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 
-const CardUserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
+const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'card-all-users-popover' : undefined
@@ -109,4 +109,4 @@ const CardUserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
   )
 }
 
-export default CardUserGroup
+export default UserGroup

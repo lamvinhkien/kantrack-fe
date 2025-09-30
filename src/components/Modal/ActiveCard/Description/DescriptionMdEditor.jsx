@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import EditNoteIcon from '@mui/icons-material/EditNote'
 
-const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription }) => {
+const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription }) => {
   const { mode } = useColorScheme()
 
   const [markdownEditMode, setMarkdownEditMode] = useState(false)
@@ -78,7 +78,7 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
               source={cardDescription ? cardDescription : 'Add a more detailed description...'}
               style={{
                 whiteSpace: 'pre-wrap',
-                padding: !cardDescription ? '10px' : '0px',
+                padding: !cardDescription ? '12px' : '0px',
                 border: !cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
                 borderRadius: '8px',
                 backgroundColor: !cardDescription ? mode === 'dark' && 'rgba(0, 0, 0, 0.2)' : 'inherit'
@@ -91,4 +91,4 @@ const CardDescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescript
   )
 }
 
-export default CardDescriptionMdEditor
+export default DescriptionMdEditor

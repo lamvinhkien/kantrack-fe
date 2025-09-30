@@ -3,7 +3,6 @@ import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
 import CancelIcon from '@mui/icons-material/Cancel'
-import Grid from '@mui/material/Unstable_Grid2'
 import Stack from '@mui/material/Stack'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import LogoutIcon from '@mui/icons-material/Logout'
@@ -14,9 +13,9 @@ import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { singleFileValidator, multipleFileValidator } from '~/utils/validators'
 import { toast } from 'react-toastify'
-import CardUserGroup from './CardUserGroup'
-import CardDescriptionMdEditor from './CardDescriptionMdEditor'
-import CardActivitySection from './CardActivitySection'
+import UserGroup from './UserGroup/UserGroup'
+import DescriptionMdEditor from './Description/DescriptionMdEditor'
+import Comment from './Comment/Comment'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   selectIsShowModalActiveCard,
@@ -31,10 +30,10 @@ import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 import { useEffect } from 'react'
 import { socketIoInstance } from '~/socketClient'
-import AddAttachment from './AddAttachment'
+import AddAttachment from './Attachment/AddAttachment'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
-import ListAttachment from './ListAttachment'
+import ListAttachment from './Attachment/ListAttachment'
 import { useConfirm } from 'material-ui-confirm'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
@@ -58,6 +57,33 @@ const SidebarItem = styled(Box)(({ theme }) => ({
     }
   }
 }))
+
+const getScrollbarStyles = (theme) => ({
+  '&::-webkit-scrollbar': {
+    width: '8px'
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
+    borderRadius: '4px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#555' : '#b0b0b0',
+    borderRadius: '4px'
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#777' : '#8c8c8c'
+  },
+  '&::-webkit-scrollbar-thumb:active': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#999' : '#666'
+  },
+
+  // Firefox support
+  scrollbarWidth: 'thin',
+  scrollbarColor:
+    theme.palette.mode === 'dark'
+      ? '#555 #1e1e1e'
+      : '#b0b0b0 #f5f5f5'
+})
 
 const ActiveCard = () => {
   const dispatch = useDispatch()
@@ -177,86 +203,118 @@ const ActiveCard = () => {
       open={isShowModalActiveCard}
       onClose={handleCloseModal}
     >
-      <Box sx={{
-        position: 'relative',
-        width: 1000,
-        minheight: 500,
-        maxHeight: 600,
-        bgcolor: 'white',
-        boxShadow: 24,
-        borderRadius: '8px',
-        border: 'none',
-        outline: 0,
-        padding: '20px 30px 20px 30px',
-        margin: '50px auto',
-        overflowY: 'auto',
-        backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1A2027' : '#fff'
-      }}>
-        <Box sx={{
-          position: 'absolute',
-          top: '8px',
-          right: '10px',
-          cursor: 'pointer'
-        }}>
-          <CancelIcon color="error" sx={{ '&:hover': { color: 'error.light' } }} onClick={handleCloseModal} />
+      <Box
+        sx={{
+          position: 'relative',
+          width: 1070,
+          minHeight: 'auto',
+          maxHeight: 625,
+          bgcolor: 'white',
+          boxShadow: 24,
+          borderRadius: '8px',
+          border: 'none',
+          outline: 0,
+          margin: '50px auto',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? '#1E2A36' : '#fff'
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '8px',
+            right: '14px',
+            cursor: 'pointer',
+            zIndex: 10
+          }}
+        >
+          <CancelIcon
+            fontSize="medium"
+            onClick={handleCloseModal}
+            sx={{
+              color: (theme) => theme.palette.mode === 'dark' ? 'grey.400' : 'grey.600',
+              cursor: 'pointer',
+              '&:hover': {
+                color: (theme) => theme.palette.mode === 'dark' ? 'grey.200' : 'grey.800'
+              }
+            }}
+          />
         </Box>
 
-        {activeCard?.cover?.attachment && activeCard?.cover?.publicId
-          ?
-          (
-            <Box
-              sx={{
+        {activeCard?.cover?.attachment && activeCard?.cover?.publicId && (
+          <Box
+            sx={{
+              borderColor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+              position: 'relative',
+              width: '100%',
+              height: '260px',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              '&:hover img.foreground': { opacity: 0.7 },
+              '&:hover .delete-icon': { opacity: 1 }
+            }}
+          >
+            <img
+              src={activeCard.cover.attachment}
+              alt="bg-blur"
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                filter: 'blur(20px)',
+                transform: 'scale(1.1)',
+                zIndex: 0
+              }}
+            />
+
+            <img
+              src={activeCard.cover.attachment}
+              alt="card-cover"
+              className="foreground"
+              style={{
                 position: 'relative',
                 width: '100%',
-                height: '200px',
-                overflow: 'hidden',
-                borderRadius: 1,
-                cursor: 'pointer',
-                '&:hover img': {
-                  opacity: 0.7
-                },
-                '&:hover .delete-icon': {
-                  opacity: 1
-                }
+                height: '100%',
+                objectFit: 'contain',
+                transition: 'opacity 0.3s ease',
+                zIndex: 1
+              }}
+            />
+
+            <IconButton
+              className="delete-icon"
+              onClick={() => onDeleteCardCover(activeCard.cover)}
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'rgba(255, 0, 0, 0.6)',
+                color: 'white',
+                opacity: 0,
+                transition: 'opacity 0.3s ease',
+                zIndex: 2,
+                '&:hover': { bgcolor: 'rgba(255, 0, 0, 0.8)' }
               }}
             >
-              <img
-                src={activeCard.cover.attachment}
-                alt="card-cover"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  transition: 'opacity 0.3s ease'
-                }}
-              />
-              <IconButton
-                className="delete-icon"
-                onClick={() => onDeleteCardCover(activeCard.cover)}
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  bgcolor: 'rgba(255, 0, 0, 0.6)',
-                  color: 'white',
-                  opacity: 0,
-                  transition: 'opacity 0.3s ease',
-                  '&:hover': {
-                    bgcolor: 'rgba(255, 0, 0, 0.8)'
-                  }
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Box>
-          )
-          :
-          <></>
-        }
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        )}
 
-        <Grid container spacing={2}>
-          <Grid xs={12} sm={7}>
+        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
+          <Box
+            sx={(theme) => ({
+              flex: 7,
+              padding: '10px 30px 30px 30px',
+              overflowY: 'auto',
+              minHeight: 0,
+              ...getScrollbarStyles(theme)
+            })}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CreditCardIcon />
               <ToggleFocusInput
@@ -299,7 +357,7 @@ const ActiveCard = () => {
 
             <Box sx={{ mt: 3 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
-              <CardUserGroup
+              <UserGroup
                 cardMemberIds={activeCard?.memberIds}
                 onUpdateCardMembers={onUpdateCardMembers}
               />
@@ -310,7 +368,7 @@ const ActiveCard = () => {
                 <SubjectRoundedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Description</Typography>
               </Box>
-              <CardDescriptionMdEditor
+              <DescriptionMdEditor
                 cardDescriptionProp={activeCard?.description}
                 handleUpdateCardDescription={onUpdateCardDescription}
               />
@@ -328,20 +386,30 @@ const ActiveCard = () => {
                 handleAddCardAttachment={onAddCardAttachments}
               />
             </Box>
-          </Grid>
-          <Grid xs={12} sm={5}>
+          </Box>
+
+          <Box
+            sx={(theme) => ({
+              flex: 5,
+              padding: '12px 20px 20px 20px',
+              overflowY: 'auto',
+              minHeight: 0,
+              bgcolor: theme => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100',
+              ...getScrollbarStyles(theme)
+            })}
+          >
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <DvrOutlinedIcon />
                 <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Comments</Typography>
               </Box>
-              <CardActivitySection
+              <Comment
                 cardComments={activeCard?.comments}
                 onAddCardComment={onAddCardComment}
               />
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Box>
     </Modal>
   )

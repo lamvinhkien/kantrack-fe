@@ -17,7 +17,7 @@ import { CARD_ATTACHMENT_ACTIONS } from '~/utils/constants'
 import { useForm } from 'react-hook-form'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
-import AttachmentPreview from './AttachmentPreview'
+import PreviewAttachment from './PreviewAttachment'
 import { useColorScheme } from '@mui/material/styles'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
@@ -182,7 +182,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
                     </ListItem>
                   ))}
                 </List>
-                <AttachmentPreview att={previewFile} onClose={() => setPreviewFile(null)} />
+                <PreviewAttachment att={previewFile} onClose={() => setPreviewFile(null)} />
               </>
             )}
 
@@ -323,21 +323,21 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
             component='label'
             sx={{
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              p: 2,
+              justifyContent: 'start',
+              p: 1.5,
               mt: 2,
               border: '1px dashed',
               borderColor: 'divider',
               borderRadius: 2,
               bgcolor: mode === 'dark' ? '#151a1f' : 'grey.100',
               textAlign: 'center',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              gap: 0.5
             }}
           >
-            <UploadFileIcon color="disabled" sx={{ fontSize: 40, mb: 1 }} />
-            <Typography variant="body2" color="text.secondary">Attach a file from your computer</Typography>
+            <UploadFileIcon color="disabled"/>
+            <Typography variant="inherit" color="grey.500">Attach a file from your computer</Typography>
             <VisuallyHiddenInput type="file" multiple onChange={handleAddFile} />
           </Box>
       }

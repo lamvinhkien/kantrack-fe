@@ -5,7 +5,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import moment from 'moment'
 import { getDownloadUrl, formatFileSize, isImageUrl, isPdfUrl, isVideoUrl } from '~/utils/formatters'
 
-const AttachmentPreview = ({ att, onClose }) => {
+const PreviewAttachment = ({ att, onClose }) => {
   if (!att) return null
 
   const isImage = isImageUrl(att.attachment)
@@ -133,4 +133,4 @@ const AttachmentPreview = ({ att, onClose }) => {
   )
 }
 
-export default AttachmentPreview
+export default PreviewAttachment
