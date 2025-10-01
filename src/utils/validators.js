@@ -5,7 +5,7 @@ export const PASSWORD_RULE = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\W]{8,256}$/
 export const PASSWORD_RULE_MESSAGE = 'Password must include at least 1 letter, a number, and at least 8 characters.'
 export const PASSWORD_CONFIRMATION_MESSAGE = 'Passwords do not match.'
 
-export const LIMIT_COMMON_FILE_SIZE = 10485760
+export const LIMIT_COMMON_FILE_SIZE = 31457280
 export const ALLOW_COMMON_FILE_TYPES = [
   'image/jpeg',
   'image/png',
@@ -14,12 +14,12 @@ export const ALLOW_COMMON_FILE_TYPES = [
   'image/svg+xml'
 ]
 
-export const singleFileValidator = (file) => {
+export const imageFileValidator = (file) => {
   if (!file || !file.name || !file.size || !file.type) {
     return 'File cannot be blank.'
   }
   if (file.size > LIMIT_COMMON_FILE_SIZE) {
-    return 'Maximum file size exceeded. (10MB)'
+    return 'Maximum file size exceeded. (30MB)'
   }
   if (!ALLOW_COMMON_FILE_TYPES.includes(file.type)) {
     return 'File type is invalid. Only accept image type.'
@@ -40,9 +40,9 @@ export const multipleFileValidator = (files) => {
       continue
     }
     if (file.size > LIMIT_COMMON_FILE_SIZE) {
-      errors.push(`${file.name}: Maximum file size exceeded. (10MB)`)
+      return 'Maximum file size exceeded. (30MB)'
     }
   }
 
-  return errors.length > 0 ? errors : null
+  return null
 }

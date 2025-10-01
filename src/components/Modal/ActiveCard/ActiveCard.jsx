@@ -11,7 +11,7 @@ import AttachmentIcon from '@mui/icons-material/Attachment'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
-import { singleFileValidator, multipleFileValidator } from '~/utils/validators'
+import { imageFileValidator, multipleFileValidator } from '~/utils/validators'
 import { toast } from 'react-toastify'
 import UserGroup from './UserGroup/UserGroup'
 import DescriptionMdEditor from './Description/DescriptionMdEditor'
@@ -108,7 +108,7 @@ const ActiveCard = () => {
   }
 
   const onUploadCardCover = (event) => {
-    const error = singleFileValidator(event.target?.files[0])
+    const error = imageFileValidator(event.target?.files[0])
     if (error) {
       toast.error(error)
       return
@@ -208,7 +208,7 @@ const ActiveCard = () => {
           position: 'relative',
           width: 1070,
           minHeight: 'auto',
-          maxHeight: 625,
+          maxHeight: 620,
           bgcolor: 'white',
           boxShadow: 24,
           borderRadius: '8px',
@@ -234,10 +234,10 @@ const ActiveCard = () => {
             fontSize="medium"
             onClick={handleCloseModal}
             sx={{
-              color: (theme) => theme.palette.mode === 'dark' ? 'grey.400' : 'grey.600',
+              color: 'error.main',
               cursor: 'pointer',
               '&:hover': {
-                color: (theme) => theme.palette.mode === 'dark' ? 'grey.200' : 'grey.800'
+                color: 'error.light'
               }
             }}
           />

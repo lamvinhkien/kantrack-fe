@@ -40,7 +40,7 @@ const AutoCompleteSearchBoard = () => {
 
   return (
     <Autocomplete
-      sx={{ width: 500 }}
+      sx={{ maxWidth: 700, width: '100%' }}
       id="asynchronous-search-board"
       noOptionsText={!boards ? 'Type to search board...' : 'No board found!'}
       isOptionEqualToValue={(option, value) => option._id === value._id}
@@ -55,8 +55,9 @@ const AutoCompleteSearchBoard = () => {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Search board"
+          placeholder="Search board"
           size="small"
+          variant="outlined"
           InputProps={{
             ...params.InputProps,
             startAdornment: (
@@ -66,19 +67,17 @@ const AutoCompleteSearchBoard = () => {
             ),
             endAdornment: (
               <>
-                {loading ? <CircularProgress sx={{ color: 'white' }} size={20} /> : null}
-                {params.InputProps.endAdornment}
+                {loading && <CircularProgress sx={{ color: 'white' }} size={20} />}
               </>
             )
           }}
           sx={{
-            '& label': { color: 'white' },
             '& input': { color: 'white' },
-            '& label.Mui-focused': { color: 'white' },
             '& .MuiOutlinedInput-root': {
-              '& fieldset': { borderColor: 'white' },
-              '&:hover fieldset': { borderColor: 'white' },
-              '&.Mui-focused fieldset': { borderColor: 'white' }
+              '& fieldset': { border: 'none' },
+              '&:hover fieldset': { border: 'none' },
+              '&.Mui-focused fieldset': { border: 'none' },
+              borderBottom: '1px solid rgba(255,255,255,0.3)'
             },
             '& .MuiSvgIcon-root': { color: 'white' }
           }}

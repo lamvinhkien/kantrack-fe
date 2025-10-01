@@ -13,7 +13,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import MailIcon from '@mui/icons-material/Mail'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
-import { FIELD_REQUIRED_MESSAGE, singleFileValidator } from '~/utils/validators'
+import { FIELD_REQUIRED_MESSAGE, imageFileValidator } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 
@@ -38,7 +38,7 @@ const AccountTab = () => {
   }
 
   const uploadAvatar = (e) => {
-    const error = singleFileValidator(e.target?.files[0])
+    const error = imageFileValidator(e.target?.files[0])
     if (error) {
       toast.error(error)
       return

@@ -33,7 +33,9 @@ const AppBar = () => {
         <Dashboard />
       </Box>
 
-      <AutoCompleteSearchBoard />
+      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+        <AutoCompleteSearchBoard sx={{ maxWidth: 500, width: '100%' }} />
+      </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <ModeSelect />
