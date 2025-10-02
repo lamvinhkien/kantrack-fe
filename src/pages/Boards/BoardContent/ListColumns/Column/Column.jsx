@@ -52,12 +52,18 @@ const Column = ({ column }) => {
     setAnchorEl(null)
   }
 
-  const orderedCards = column.cards
+  const orderedCards = column.cards.map((card) => {
+    return {
+      ...card,
+      columnTitle: column?.title
+    }
+  })
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
+
   const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('Please enter card title.')

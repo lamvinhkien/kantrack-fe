@@ -2,7 +2,6 @@ import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
-import CancelIcon from '@mui/icons-material/Cancel'
 import Stack from '@mui/material/Stack'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import LogoutIcon from '@mui/icons-material/Logout'
@@ -35,8 +34,7 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 import ListAttachment from './Attachment/ListAttachment'
 import { useConfirm } from 'material-ui-confirm'
-import IconButton from '@mui/material/IconButton'
-import CloseIcon from '@mui/icons-material/Close'
+import HeaderCover from './HeaderCover/HeaderCover'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -98,9 +96,9 @@ const ActiveCard = () => {
 
   const callApiUpdateCard = async (updateData) => {
     const updatedCard = await updateCardDetailsAPI(activeCard._id, updateData)
-    dispatch(updateCurrentActiveCard(updatedCard))
+    dispatch(updateCurrentActiveCard({ ...updatedCard, columnTitle: activeCard.columnTitle }))
     dispatch(updateCardInBoard(updatedCard))
-    socketIoInstance.emit('FE_UPDATE_CARD', { cardId: activeCard._id, card: updatedCard })
+    socketIoInstance.emit('FE_UPDATE_CARD', { cardId: activeCard._id, card: { ...updatedCard, columnTitle: activeCard.columnTitle } })
   }
 
   const onUpdateCardTitle = (newTitle) => {
@@ -126,8 +124,8 @@ const ActiveCard = () => {
 
   const onDeleteCardCover = (cover) => {
     confirmDeleteCardCover({
-      title: 'Delete card cover?',
-      description: 'This action will permanently delete your card cover, are you sure?',
+      title: 'Remove card cover?',
+      description: 'This action will permanently remove your card cover, are you sure?',
       confirmationText: 'Confirm',
       cancellationText: 'Cancel',
       confirmationButtonProps: { color: 'error' }
@@ -179,6 +177,10 @@ const ActiveCard = () => {
     await callApiUpdateCard({ action, newAttachment: data })
   }
 
+  const onDeleteCard = async () => {
+
+  }
+
   useEffect(() => {
     if (isShowModalActiveCard === true) {
       if (!socketIoInstance) return
@@ -211,7 +213,6 @@ const ActiveCard = () => {
           maxHeight: 620,
           bgcolor: 'white',
           boxShadow: 24,
-          borderRadius: '8px',
           border: 'none',
           outline: 0,
           margin: '50px auto',
@@ -221,89 +222,13 @@ const ActiveCard = () => {
             theme.palette.mode === 'dark' ? '#1E2A36' : '#fff'
         }}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '8px',
-            right: '14px',
-            cursor: 'pointer',
-            zIndex: 10
-          }}
-        >
-          <CancelIcon
-            fontSize="medium"
-            onClick={handleCloseModal}
-            sx={{
-              color: 'error.main',
-              cursor: 'pointer',
-              '&:hover': {
-                color: 'error.light'
-              }
-            }}
-          />
-        </Box>
-
-        {activeCard?.cover?.attachment && activeCard?.cover?.publicId && (
-          <Box
-            sx={{
-              borderColor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
-              position: 'relative',
-              width: '100%',
-              height: '260px',
-              overflow: 'hidden',
-              cursor: 'pointer',
-              '&:hover img.foreground': { opacity: 0.7 },
-              '&:hover .delete-icon': { opacity: 1 }
-            }}
-          >
-            <img
-              src={activeCard.cover.attachment}
-              alt="bg-blur"
-              style={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                filter: 'blur(20px)',
-                transform: 'scale(1.1)',
-                zIndex: 0
-              }}
-            />
-
-            <img
-              src={activeCard.cover.attachment}
-              alt="card-cover"
-              className="foreground"
-              style={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                transition: 'opacity 0.3s ease',
-                zIndex: 1
-              }}
-            />
-
-            <IconButton
-              className="delete-icon"
-              onClick={() => onDeleteCardCover(activeCard.cover)}
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'rgba(255, 0, 0, 0.6)',
-                color: 'white',
-                opacity: 0,
-                transition: 'opacity 0.3s ease',
-                zIndex: 2,
-                '&:hover': { bgcolor: 'rgba(255, 0, 0, 0.8)' }
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        )}
+        <HeaderCover
+          columnTitle={activeCard?.columnTitle}
+          cover={activeCard?.cover}
+          handleDeleteCardCover={onDeleteCardCover}
+          handleDeleteCard={onDeleteCard}
+          handleCloseModal={handleCloseModal}
+        />
 
         <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
           <Box
