@@ -35,7 +35,7 @@ const BoardType = ({ boardType, onChangeBoardType }) => {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            px: 1.5,
+            px: 1,
             py: 0.5,
             borderRadius: 1,
             cursor: 'pointer',

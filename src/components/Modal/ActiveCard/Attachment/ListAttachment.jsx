@@ -66,8 +66,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments, handleAd
 
   const handleRemoveAttachment = (action) => {
     toast.promise(
-      handleUpdateCardAttachments(action, selectedAttachment)
-        .then(() => toast.success('Attachment removed.')),
+      handleUpdateCardAttachments(action, selectedAttachment),
       { pending: 'Removing...' }
     )
     setAnchorPopoverElement(null)

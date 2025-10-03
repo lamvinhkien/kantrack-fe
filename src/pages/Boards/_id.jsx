@@ -38,6 +38,8 @@ const Board = () => {
     socketIoInstance.on('BE_DELETE_COLUMN_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_UPDATE_COLUMN_TITLE_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_ADD_CARD_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_DELETE_CARD_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_UPDATE_CARD_IN_BOARD', onReceiveNewBoard)
 
     return () => {
       if (boardId) socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
@@ -48,6 +50,8 @@ const Board = () => {
       socketIoInstance.off('BE_DELETE_COLUMN_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_UPDATE_COLUMN_TITLE_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_ADD_CARD_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_DELETE_CARD_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_UPDATE_CARD_IN_BOARD', onReceiveNewBoard)
     }
   }, [dispatch, boardId])
 

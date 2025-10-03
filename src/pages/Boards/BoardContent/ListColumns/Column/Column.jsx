@@ -70,7 +70,7 @@ const Column = ({ column }) => {
       return
     }
 
-    const newCardData = { title: newCardTitle, columnId: column._id }
+    const newCardData = { title: newCardTitle.trim(), columnId: column._id }
 
     const createdCard = await createNewCardAPI({ ...newCardData, boardId: board._id })
 
@@ -102,20 +102,24 @@ const Column = ({ column }) => {
       cancellationText: 'Cancel',
       confirmationButtonProps: { color: 'error' }
     }).then(() => {
-      const newBoard = { ...board }
-      newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
-      newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c.id !== column._id)
-      dispatch(updateCurrentActiveBoard(newBoard))
+      toast.promise(
+        deleteColumnDetailsAPI(column._id)
+          .then(res => {
+            const newBoard = { ...board }
+            newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+            newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c.id !== column._id)
+            dispatch(updateCurrentActiveBoard(newBoard))
+            socketIoInstance.emit('FE_DELETE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+            toast.success(res?.deleteResult)
+          }),
+        { pending: 'Deleting...' }
+      )
 
-      deleteColumnDetailsAPI(column._id).then(res => {
-        socketIoInstance.emit('FE_DELETE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
-        toast.success(res?.deleteResult)
-      })
     }).catch(() => { })
   }
 
   const onUpdateColumnTitle = (newTitle) => {
-    updateColumnDetailsAPI(column._id, { title: newTitle }).then(() => {
+    updateColumnDetailsAPI(column._id, { title: newTitle.trim() }).then(() => {
       const newBoard = cloneDeep(board)
       const columnToUpdate = newBoard.columns.find(c => c._id === column._id)
       if (columnToUpdate) columnToUpdate.title = newTitle

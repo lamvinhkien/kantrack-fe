@@ -22,9 +22,9 @@ import {
   updateCurrentActiveCard,
   clearAndHideCurrentActiveCard
 } from '~/redux/activeCard/activeCardSlice'
-import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { updateCardInBoard, selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import { updateCardDetailsAPI } from '~/apis'
+import { updateCardDetailsAPI, deleteCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 import { useEffect } from 'react'
@@ -35,6 +35,8 @@ import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 import ListAttachment from './Attachment/ListAttachment'
 import { useConfirm } from 'material-ui-confirm'
 import HeaderCover from './HeaderCover/HeaderCover'
+import { cloneDeep } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatters'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -85,10 +87,12 @@ const getScrollbarStyles = (theme) => ({
 
 const ActiveCard = () => {
   const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
   const currentUser = useSelector(selectCurrentUser)
   const activeCard = useSelector(selectCurrentActiveCard)
   const isShowModalActiveCard = useSelector(selectIsShowModalActiveCard)
   const confirmDeleteCardCover = useConfirm()
+  const confirmDeleteCard = useConfirm()
 
   const handleCloseModal = () => {
     dispatch(clearAndHideCurrentActiveCard())
@@ -98,7 +102,17 @@ const ActiveCard = () => {
     const updatedCard = await updateCardDetailsAPI(activeCard._id, updateData)
     dispatch(updateCurrentActiveCard({ ...updatedCard, columnTitle: activeCard.columnTitle }))
     dispatch(updateCardInBoard(updatedCard))
-    socketIoInstance.emit('FE_UPDATE_CARD', { cardId: activeCard._id, card: { ...updatedCard, columnTitle: activeCard.columnTitle } })
+    socketIoInstance.emit('FE_UPDATE_ACTIVE_CARD', { cardId: activeCard._id, card: { ...updatedCard, columnTitle: activeCard.columnTitle } })
+
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === activeCard.columnId)
+    if (columnToUpdate) {
+      columnToUpdate.cards = columnToUpdate.cards.map(card =>
+        card._id === activeCard._id ? updatedCard : card
+      )
+    }
+    dispatch(updateCurrentActiveBoard(newBoard))
+    socketIoInstance.emit('FE_UPDATE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
   }
 
   const onUpdateCardTitle = (newTitle) => {
@@ -178,7 +192,36 @@ const ActiveCard = () => {
   }
 
   const onDeleteCard = async () => {
+    confirmDeleteCard({
+      title: 'Delete card?',
+      description: 'This action will permanently delete your card, are you sure?',
+      confirmationText: 'Confirm',
+      cancellationText: 'Cancel',
+      confirmationButtonProps: { color: 'error' }
+    }).then(() => {
+      toast.promise(
+        deleteCardDetailsAPI(activeCard?._id)
+          .then((res) => {
+            const newBoard = cloneDeep(board)
+            const columnToUpdate = newBoard.columns.find(column => column._id === activeCard.columnId)
+            if (columnToUpdate) {
+              columnToUpdate.cards = columnToUpdate.cards.filter(card => card._id !== activeCard._id)
+              columnToUpdate.cardOrderIds = columnToUpdate.cardOrderIds.filter(card => card._id !== activeCard._id)
 
+              if (columnToUpdate.cards.length === 0) {
+                columnToUpdate.cards = [generatePlaceholderCard(columnToUpdate)]
+                columnToUpdate.cardOrderIds = [generatePlaceholderCard(columnToUpdate)._id]
+              }
+            }
+            dispatch(updateCurrentActiveBoard(newBoard))
+            socketIoInstance.emit('FE_DELETE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+            toast.success(res.deleteResult)
+            handleCloseModal()
+          }),
+        { pending: 'Deleting...' }
+      )
+
+    }).catch(() => { })
   }
 
   useEffect(() => {
@@ -189,12 +232,12 @@ const ActiveCard = () => {
         if (newCard._id === activeCard._id) dispatch(updateCurrentActiveCard(newCard))
       }
 
-      if (activeCard._id) socketIoInstance.emit('FE_JOIN_CARD', activeCard._id)
-      socketIoInstance.on('BE_UPDATE_CARD', onReceiveNewCard)
+      if (activeCard._id) socketIoInstance.emit('FE_JOIN_ACTIVE_CARD', activeCard._id)
+      socketIoInstance.on('BE_UPDATE_ACTIVE_CARD', onReceiveNewCard)
 
       return () => {
-        if (activeCard._id) socketIoInstance.emit('FE_LEAVE_CARD', activeCard._id)
-        socketIoInstance.off('BE_UPDATE_CARD', onReceiveNewCard)
+        if (activeCard._id) socketIoInstance.emit('FE_LEAVE_ACTIVE_CARD', activeCard._id)
+        socketIoInstance.off('BE_UPDATE_ACTIVE_CARD', onReceiveNewCard)
       }
     }
   }, [dispatch, activeCard?._id, isShowModalActiveCard])
