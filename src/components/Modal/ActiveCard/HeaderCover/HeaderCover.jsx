@@ -1,4 +1,4 @@
-import CancelIcon from '@mui/icons-material/Cancel'
+import CloseIcon from '@mui/icons-material/Close'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
@@ -26,22 +26,58 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
         sx={{
           position: 'absolute',
           top: '14px',
+          left: '30px',
+          zIndex: 10
+        }}
+      >
+        <Box sx={{
+          bgcolor: 'grey.800',
+          padding: '3px 10px 3px 10px', borderRadius: 2
+        }}
+        >
+          <Typography variant='span' sx={{ fontWeight: 500, color: 'white', fontSize: '14px' }}>
+            {columnTitle}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '14px',
           right: '20px',
           cursor: 'pointer',
           zIndex: 10,
           display: 'flex',
-          gap: 2
+          gap: 1.5
         }}
       >
-        <IconButton onClick={handleOpenMenu} sx={{ p: 0 }}>
-          <MoreHorizIcon
-            sx={{
-              fontSize: 28,
-              color: (theme) =>
-                theme.palette.mode === 'dark' ? 'grey.400' : 'grey.800',
-              '&:hover': { color: 'grey.600' }
-            }}
-          />
+        <IconButton
+          onClick={handleOpenMenu}
+          sx={{
+            p: 0.5,
+            bgcolor: 'grey.800',
+            color: 'white',
+            '&:hover': {
+              bgcolor: 'grey.700'
+            }
+          }}
+        >
+          <MoreHorizIcon sx={{ fontSize: 24 }} />
+        </IconButton>
+
+        <IconButton
+          onClick={handleCloseModal}
+          sx={{
+            p: 0.5,
+            bgcolor: 'grey.800',
+            color: 'white',
+            '&:hover': {
+              bgcolor: 'grey.700'
+            }
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 24 }} />
         </IconButton>
 
         <Menu
@@ -69,42 +105,16 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
               handleDeleteCard()
               handleCloseMenu()
             }}
-            sx={{ fontSize: 14 }}
+            sx={{
+              fontSize: 14,
+              mt: 1,
+              '&:hover': { color: 'error.main', '& .delete-forever-icon': { color: 'error.main' } }
+            }}
           >
             <DeleteForeverIcon fontSize="small" sx={{ mr: 1 }} />
             Delete card
           </MenuItem>
         </Menu>
-
-        <IconButton onClick={handleCloseModal} sx={{ p: 0 }}>
-          <CancelIcon
-            sx={{
-              fontSize: 28,
-              color: (theme) =>
-                theme.palette.mode === 'dark' ? 'grey.400' : 'grey.800',
-              '&:hover': { color: 'grey.600' }
-            }}
-          />
-        </IconButton>
-      </Box>
-
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '14px',
-          left: '30px',
-          zIndex: 10
-        }}
-      >
-        <Box sx={{
-          bgcolor: 'grey.800',
-          padding: '2px 8px 2px 8px', borderRadius: 2
-        }}
-        >
-          <Typography variant='span' sx={{ fontWeight: 500, color: 'white', fontSize: '14px' }}>
-            {columnTitle}
-          </Typography>
-        </Box>
       </Box>
 
       {cover?.attachment && cover?.publicId
@@ -112,31 +122,50 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
         <>
           <Box
             sx={{
-              borderBottom: 1,
-              borderColor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
               position: 'relative',
               width: '100%',
-              height: '150px',
-              minHeight: '150px',
-              maxHeight: '150px',
+              height: 150,
               overflow: 'hidden',
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
+              borderBottom: 1,
+              borderColor: (theme) =>
+                theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
             }}
           >
-            <Box
-              component="img"
-              onClick={() => setPreviewFile(cover)}
-              src={cover?.attachment}
-              alt="card-cover"
-              sx={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                cursor: 'pointer',
-                transition: 'opacity 0.3s ease',
-                '&:hover': { opacity: 0.7 }
-              }}
-            />
+            {cover?.attachment && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundImage: `url(${cover.attachment})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  filter: 'blur(20px) brightness(0.8)',
+                  transform: 'scale(1.2)',
+                  transition: 'filter 0.3s ease'
+                }}
+              />
+            )}
+
+            {cover?.attachment && (
+              <Box
+                component="img"
+                onClick={() => setPreviewFile(cover)}
+                src={cover.attachment}
+                alt="card-cover"
+                sx={{
+                  position: 'relative',
+                  zIndex: 1,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  cursor: 'pointer',
+                  transition: 'opacity 0.3s ease',
+                  '&:hover': { opacity: 0.7 }
+                }}
+              />
+            )}
           </Box>
           <PreviewAttachment att={previewFile} onClose={() => setPreviewFile(null)} />
         </>

@@ -173,10 +173,7 @@ const Column = ({ column }) => {
                 }
               }}
             >
-              <MenuItem
-                onClick={toggleOpenNewCardForm}
-                sx={{ '&:hover': { color: 'success.light', '& .add-card-icon': { color: 'success.light' } } }}
-              >
+              <MenuItem onClick={toggleOpenNewCardForm}>
                 <ListItemIcon><AddCardIcon className='add-card-icon' fontSize="small" /></ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>

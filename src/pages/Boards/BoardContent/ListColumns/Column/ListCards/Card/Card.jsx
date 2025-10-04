@@ -1,7 +1,6 @@
 import { Card as MuiCard } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
 import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
@@ -11,6 +10,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useDispatch } from 'react-redux'
 import { showModalActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import Box from '@mui/material/Box'
 
 const Card = ({ card }) => {
   const dispatch = useDispatch()
@@ -47,15 +47,35 @@ const Card = ({ card }) => {
         overflow: 'unset',
         display: card?.FE_PlaceholderCard ? 'none' : 'block',
         border: '1px solid transparent',
-        '&:hover': { borderColor: theme => theme.palette.primary.main }
+        '&:hover': { borderColor: theme => theme.palette.primary.main },
+        borderRadius: '4px'
       }}>
       {card?.cover?.attachment &&
-        <CardMedia
-          component="img"
-          image={card?.cover?.attachment}
-          alt="card cover"
-          sx={{ width: '100%', height: '150px', objectFit: 'cover' }}
-        />
+        <Box sx={{ position: 'relative', width: '100%', height: 150, overflow: 'hidden', borderRadius: '4px 4px 0px 0px' }}>
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: `url(${card?.cover?.attachment})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(20px) brightness(0.8)',
+              transform: 'scale(1.2)'
+            }}
+          />
+          <Box
+            component="img"
+            src={card?.cover?.attachment}
+            alt="card cover"
+            sx={{
+              position: 'relative',
+              zIndex: 1,
+              width: '100%',
+              height: 150,
+              objectFit: 'contain'
+            }}
+          />
+        </Box>
       }
       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
         <Typography>{card?.title}</Typography>

@@ -54,7 +54,7 @@ const AddAttachment = ({ open, anchorEl, onClose, handleAddCardAttachment }) => 
           <Typography variant="span">Attach</Typography>
         </Box>
 
-        <Button component='label' variant='outlined'>
+        <Button component='label' variant='contained'>
           Choose a file
           <VisuallyHiddenInput type="file" multiple onChange={handleAddFile} />
         </Button>
@@ -93,7 +93,7 @@ const AddAttachment = ({ open, anchorEl, onClose, handleAddCardAttachment }) => 
           />
 
           <Box display="flex" justifyContent="flex-end" gap={1}>
-            <Button variant="outlined" onClick={onClose}>
+            <Button variant="text" color='inherit' onClick={onClose}>
               Cancel
             </Button>
             <Button variant="contained" type='submit'>

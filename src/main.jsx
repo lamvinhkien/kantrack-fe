@@ -26,10 +26,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <ConfirmProvider defaultOptions={{
               dialogProps: { maxWidth: 'xs' },
-              confirmationButtonProps: { color: 'primary', variant: 'outlined' },
+              confirmationButtonProps: { color: 'primary', variant: 'contained' },
               cancellationButtonProps: { color: 'inherit' },
               allowClose: false,
-              buttonOrder: ['confirm', 'cancel']
+              buttonOrder: ['cancel', 'confirm']
             }}>
               <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
               <CssBaseline />

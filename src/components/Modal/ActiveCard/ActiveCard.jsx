@@ -313,7 +313,7 @@ const ActiveCard = () => {
               </SidebarItem>
 
               <SidebarItem className='active' onClick={editDatePopover.openPopover}>
-                <WatchLaterOutlinedIcon fontSize="small" /> Dates
+                <WatchLaterOutlinedIcon fontSize="small" /> Date
               </SidebarItem>
 
               {activeCard?.attachments?.length === 0 &&

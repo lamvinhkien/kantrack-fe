@@ -84,7 +84,10 @@ const InviteBoardUser = ({ boardId }) => {
               <FieldErrorAlert errors={errors} fieldName={'inviteeEmail'} />
             </Box>
 
-            <Box sx={{ alignSelf: 'flex-end' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignSelf: 'flex-end', gap: 1 }}>
+              <Button variant="text" color='inherit' onClick={handleTogglePopover}>
+                Cancel
+              </Button>
               <Button
                 className="interceptor-loading"
                 type="submit"

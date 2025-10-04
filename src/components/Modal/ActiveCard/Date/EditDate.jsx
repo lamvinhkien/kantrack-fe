@@ -13,7 +13,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { useState } from 'react'
 import moment from 'moment'
 
-const EditDate = ({ open, anchorEl, onClose, handleEditDate }) => {
+const EditDate = ({ open, anchorEl, onClose, handleEditCardDate }) => {
   const { mode } = useColorScheme()
   const popoverId = open ? 'card-edit-date-popover' : undefined
 
@@ -35,7 +35,7 @@ const EditDate = ({ open, anchorEl, onClose, handleEditDate }) => {
       dueTime: data.dueTime?.format('HH:mm'),
       reminder: data.reminder
     }
-    handleEditDate(payload)
+    handleEditCardDate(payload)
     onClose()
     reset()
   }
@@ -164,7 +164,7 @@ const EditDate = ({ open, anchorEl, onClose, handleEditDate }) => {
             Save
           </Button>
           <Button
-            variant="outlined"
+            variant="contained"
             color="error"
             fullWidth
             onClick={() => {
