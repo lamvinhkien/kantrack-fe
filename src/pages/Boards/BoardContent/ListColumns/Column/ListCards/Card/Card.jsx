@@ -51,8 +51,10 @@ const Card = ({ card }) => {
       }}>
       {card?.cover?.attachment &&
         <CardMedia
-          sx={{ height: 140 }}
+          component="img"
           image={card?.cover?.attachment}
+          alt="card cover"
+          sx={{ width: '100%', height: '150px', objectFit: 'cover' }}
         />
       }
       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>

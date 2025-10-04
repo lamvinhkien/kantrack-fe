@@ -37,6 +37,10 @@ import { useConfirm } from 'material-ui-confirm'
 import HeaderCover from './HeaderCover/HeaderCover'
 import { cloneDeep } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
+import AddIcon from '@mui/icons-material/Add'
+import Button from '@mui/material/Button'
+import usePopover from '~/customHooks/usePopover'
+import EditDate from './Date/EditDate'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -93,6 +97,9 @@ const ActiveCard = () => {
   const isShowModalActiveCard = useSelector(selectIsShowModalActiveCard)
   const confirmDeleteCardCover = useConfirm()
   const confirmDeleteCard = useConfirm()
+
+  const addAttachmentPopover = usePopover()
+  const editDatePopover = usePopover()
 
   const handleCloseModal = () => {
     dispatch(clearAndHideCurrentActiveCard())
@@ -224,6 +231,10 @@ const ActiveCard = () => {
     }).catch(() => { })
   }
 
+  const onUpdateCardDate = async () => {
+
+  }
+
   useEffect(() => {
     if (isShowModalActiveCard === true) {
       if (!socketIoInstance) return
@@ -250,37 +261,20 @@ const ActiveCard = () => {
     >
       <Box
         sx={{
-          position: 'relative',
-          width: 1070,
-          minHeight: 'auto',
-          maxHeight: 620,
-          bgcolor: 'white',
-          boxShadow: 24,
-          border: 'none',
-          outline: 0,
-          margin: '50px auto',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#1E2A36' : '#fff'
+          position: 'relative', width: 1070, minHeight: 'auto', maxHeight: 620, bgcolor: 'white',
+          boxShadow: 24, border: 'none', outline: 0, margin: '50px auto', display: 'flex', flexDirection: 'column',
+          backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1E2A36' : '#fff'
         }}
       >
-        <HeaderCover
-          columnTitle={activeCard?.columnTitle}
-          cover={activeCard?.cover}
-          handleDeleteCardCover={onDeleteCardCover}
-          handleDeleteCard={onDeleteCard}
-          handleCloseModal={handleCloseModal}
+        <HeaderCover columnTitle={activeCard?.columnTitle} cover={activeCard?.cover}
+          handleDeleteCardCover={onDeleteCardCover} handleDeleteCard={onDeleteCard} handleCloseModal={handleCloseModal}
         />
 
         <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
           <Box
             sx={(theme) => ({
-              flex: 7,
-              padding: '10px 30px 30px 30px',
-              overflowY: 'auto',
-              minHeight: 0,
-              ...getScrollbarStyles(theme)
+              flex: 7, padding: '10px 30px 30px 30px',
+              overflowY: 'auto', minHeight: 0, ...getScrollbarStyles(theme)
             })}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -318,9 +312,15 @@ const ActiveCard = () => {
                 <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
               </SidebarItem>
 
-              <SidebarItem className='active'>
-                <WatchLaterOutlinedIcon fontSize="small" /> Deadline
+              <SidebarItem className='active' onClick={editDatePopover.openPopover}>
+                <WatchLaterOutlinedIcon fontSize="small" /> Dates
               </SidebarItem>
+
+              {activeCard?.attachments?.length === 0 &&
+                <SidebarItem className='active' component="label" onClick={addAttachmentPopover.openPopover}>
+                  <AttachmentIcon fontSize="small" /> Attachment
+                </SidebarItem>
+              }
             </Stack>
 
             <Box sx={{ mt: 3 }}>
@@ -342,18 +342,30 @@ const ActiveCard = () => {
               />
             </Box>
 
-            <Box sx={{ mt: 5 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <AttachmentIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Attachment</Typography>
+            {activeCard?.attachments?.length > 0 &&
+              <Box sx={{ mt: 5 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <AttachmentIcon />
+                    <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Attachment</Typography>
+                  </Box>
+                  <Button
+                    onClick={addAttachmentPopover.openPopover}
+                    type="button"
+                    variant="contained"
+                    color="info"
+                    size="small"
+                    startIcon={<AddIcon />}
+                  >
+                    Add
+                  </Button>
+                </Box>
+                <ListAttachment
+                  ListAttachments={activeCard?.attachments}
+                  handleUpdateCardAttachments={onUpdateCardAttachments}
+                />
               </Box>
-              <AddAttachment handleAddCardAttachment={onAddCardAttachments} />
-              <ListAttachment
-                ListAttachments={activeCard?.attachments}
-                handleUpdateCardAttachments={onUpdateCardAttachments}
-                handleAddCardAttachment={onAddCardAttachments}
-              />
-            </Box>
+            }
           </Box>
 
           <Box
@@ -378,6 +390,19 @@ const ActiveCard = () => {
             </Box>
           </Box>
         </Box>
+
+        <AddAttachment
+          open={addAttachmentPopover.isOpen}
+          anchorEl={addAttachmentPopover.anchorEl}
+          onClose={addAttachmentPopover.closePopover}
+          handleAddCardAttachment={onAddCardAttachments}
+        />
+        <EditDate
+          open={editDatePopover.isOpen}
+          anchorEl={editDatePopover.anchorEl}
+          onClose={editDatePopover.closePopover}
+          handleEditCardDate={onUpdateCardDate}
+        />
       </Box>
     </Modal>
   )

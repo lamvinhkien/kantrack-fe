@@ -76,9 +76,9 @@ const PreviewAttachment = ({ att, onClose }) => {
             fontWeight: 600, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis',
             whiteSpace: 'nowrap', textAlign: 'center', fontSize: '22px'
           }}
-          title={att.displayText}
+          title={att.displayText || 'Card Cover'}
         >
-          {att.displayText}
+          {att.displayText || 'Card Cover'}
         </Typography>
 
         <Typography

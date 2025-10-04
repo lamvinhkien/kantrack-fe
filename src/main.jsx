@@ -10,6 +10,8 @@ import { ConfirmProvider } from 'material-ui-confirm'
 import { store } from '~/redux/store'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
 const persistor = persistStore(store)
@@ -21,18 +23,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <PersistGate persistor={persistor}>
       <BrowserRouter basename='/'>
         <CssVarsProvider theme={theme}>
-          <ConfirmProvider defaultOptions={{
-            dialogProps: { maxWidth: 'xs' },
-            confirmationButtonProps: { color: 'primary', variant: 'outlined' },
-            cancellationButtonProps: { color: 'inherit' },
-            allowClose: false,
-            buttonOrder: ['confirm', 'cancel']
-          }}>
-            <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
-            <CssBaseline />
-            <App />
-            <ToastContainer position='bottom-left' theme="colored" autoClose={3500} />
-          </ConfirmProvider>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <ConfirmProvider defaultOptions={{
+              dialogProps: { maxWidth: 'xs' },
+              confirmationButtonProps: { color: 'primary', variant: 'outlined' },
+              cancellationButtonProps: { color: 'inherit' },
+              allowClose: false,
+              buttonOrder: ['confirm', 'cancel']
+            }}>
+              <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
+              <CssBaseline />
+              <App />
+              <ToastContainer position='bottom-left' theme="colored" autoClose={3500} />
+            </ConfirmProvider>
+          </LocalizationProvider>
         </CssVarsProvider>
       </BrowserRouter>
     </PersistGate>

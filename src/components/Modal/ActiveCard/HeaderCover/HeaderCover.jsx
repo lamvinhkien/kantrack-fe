@@ -5,10 +5,12 @@ import { useState } from 'react'
 import { Box, IconButton, Menu, MenuItem } from '@mui/material'
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import PreviewAttachment from '../Attachment/PreviewAttachment'
 
 const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCard, handleCloseModal }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
+  const [previewFile, setPreviewFile] = useState(null)
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -107,28 +109,37 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
 
       {cover?.attachment && cover?.publicId
         ?
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderColor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
-            position: 'relative',
-            width: '100%',
-            height: '260px',
-            overflow: 'hidden',
-            bgcolor: (theme) => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
-          }}
-        >
-          <img
-            src={cover?.attachment}
-            alt="card-cover"
-            style={{
+        <>
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
               position: 'relative',
               width: '100%',
-              height: '100%',
-              objectFit: 'contain'
+              height: '150px',
+              minHeight: '150px',
+              maxHeight: '150px',
+              overflow: 'hidden',
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
             }}
-          />
-        </Box>
+          >
+            <Box
+              component="img"
+              onClick={() => setPreviewFile(cover)}
+              src={cover?.attachment}
+              alt="card-cover"
+              sx={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                cursor: 'pointer',
+                transition: 'opacity 0.3s ease',
+                '&:hover': { opacity: 0.7 }
+              }}
+            />
+          </Box>
+          <PreviewAttachment att={previewFile} onClose={() => setPreviewFile(null)} />
+        </>
         :
         <Box sx={{
           minHeight: 56,
