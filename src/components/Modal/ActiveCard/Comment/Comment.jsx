@@ -16,7 +16,7 @@ const Comment = ({ cardComments = [], onAddCardComment }) => {
       if (!event.target?.value) return
 
       const commentToAdd = {
-        userAvatar: currentUser?.avatar?.attachment,
+        userAvatar: currentUser?.avatar?.url,
         userDisplayName: currentUser?.displayName,
         content: event.target.value.trim()
       }
@@ -33,7 +33,7 @@ const Comment = ({ cardComments = [], onAddCardComment }) => {
         <Avatar
           sx={{ width: 30, height: 30, cursor: 'pointer' }}
           alt={currentUser?.displayName}
-          src={currentUser?.avatar?.attachment}
+          src={currentUser?.avatar?.url}
         />
         <TextField
           fullWidth

@@ -27,7 +27,7 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
               value={cardDescription}
               onChange={setCardDescription}
               previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
-              height={200}
+              height={220}
               preview="edit"
             />
           </Box>

@@ -42,7 +42,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
     setAnchorPopoverElement(event.currentTarget)
     setSelectedAttachment(att)
     setModePopover('main')
-    reset({ newLink: att.attachment, newDisplayText: att.displayText })
+    reset({ newLink: att.url, newDisplayText: att.displayText })
   }
 
   const handleClosePopover = () => {
@@ -83,10 +83,10 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                 disablePadding
                 sx={{ mt: 1.5, gap: 2, pr: 1, display: 'flex', alignItems: 'center' }}
               >
-                {isImageUrl(att.attachment) ? (
+                {isImageUrl(att.url) ? (
                   <Box
                     component="img"
-                    src={att.attachment}
+                    src={att.url}
                     alt={att.displayText || `File ${idx + 1}`}
                     sx={{
                       width: 45,
@@ -97,7 +97,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                     }}
                     onClick={() => setPreviewFile(att)}
                   />
-                ) : isVideoUrl(att.attachment) ? (
+                ) : isVideoUrl(att.url) ? (
                   <Box
                     onClick={() => setPreviewFile(att)}
                     sx={{
@@ -130,7 +130,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                       cursor: 'pointer'
                     }}
                   >
-                    {getFileExtension(att.attachment)}
+                    {getFileExtension(att.url)}
                   </Box>
                 )}
                 <MuiLink
@@ -149,7 +149,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                       textOverflow: 'ellipsis'
                     }}
                   >
-                    {att.displayText || att.attachment}
+                    {att.displayText || att.url}
                   </Typography>
                   {att.uploadedAt && (
                     <Typography sx={{ color: mode === 'dark' ? 'grey.500' : 'grey.600' }}>
@@ -193,18 +193,18 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
                 <Box
                   component="img"
-                  src={`https://www.google.com/s2/favicons?sz=64&domain_url=${att.attachment}`}
+                  src={`https://www.google.com/s2/favicons?sz=64&domain_url=${att.url}`}
                   alt="favicon"
                   sx={{ width: 22, height: 22 }}
                 />
                 <MuiLink
-                  href={att.attachment}
+                  href={att.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}
                 >
                   <ListItemText
-                    primary={att.displayText || att.attachment}
+                    primary={att.displayText || att.url}
                     primaryTypographyProps={{
                       noWrap: true,
                       sx: {
@@ -245,7 +245,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
             </MenuItem>
             {selectedAttachment?.type === 'file' && (
               <MenuItem component="a" download
-                href={getDownloadUrl(selectedAttachment?.attachment, selectedAttachment?.displayText)}
+                href={getDownloadUrl(selectedAttachment?.url, selectedAttachment?.displayText)}
               >
                 <Typography>Download</Typography>
               </MenuItem>
@@ -296,7 +296,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
 
         {modePopover === 'remove' && (
           <Box sx={{ p: 2, width: 220 }}>
-            <Typography sx={{ mb: 2 }}>Remove this attachment?</Typography>
+            <Typography sx={{ mb: 2 }}>Remove this url?</Typography>
             <Stack direction="row" spacing={1} justifyContent="flex-end">
               <Button size="small" color='inherit' onClick={() => setModePopover('main')}>Cancel</Button>
               <Button size="small" variant="contained" color="error" onClick={() => handleRemoveAttachment(CARD_ATTACHMENT_ACTIONS.REMOVE)}>Remove</Button>

@@ -87,7 +87,7 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          {cover?.attachment && cover?.publicId && (
+          {cover?.url && cover?.publicId && (
             <MenuItem
               onClick={() => {
                 handleDeleteCardCover(cover)
@@ -117,7 +117,7 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
         </Menu>
       </Box>
 
-      {cover?.attachment && cover?.publicId
+      {cover?.url && cover?.publicId
         ?
         <>
           <Box
@@ -125,6 +125,8 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
               position: 'relative',
               width: '100%',
               height: 150,
+              minHeight: 150,
+              maxHeight: 150,
               overflow: 'hidden',
               borderBottom: 1,
               borderColor: (theme) =>
@@ -133,26 +135,26 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
                 theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
             }}
           >
-            {cover?.attachment && (
+            {cover?.url && (
               <Box
                 sx={{
                   position: 'absolute',
                   inset: 0,
-                  backgroundImage: `url(${cover.attachment})`,
+                  backgroundImage: `url(${cover.url})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  filter: 'blur(20px) brightness(0.8)',
+                  filter: 'blur(15px) brightness(0.6)',
                   transform: 'scale(1.2)',
                   transition: 'filter 0.3s ease'
                 }}
               />
             )}
 
-            {cover?.attachment && (
+            {cover?.url && (
               <Box
                 component="img"
                 onClick={() => setPreviewFile(cover)}
-                src={cover.attachment}
+                src={cover.url}
                 alt="card-cover"
                 sx={{
                   position: 'relative',

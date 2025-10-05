@@ -77,7 +77,7 @@ const AccountTab = () => {
             <Avatar
               sx={{ width: 84, height: 84, mb: 1 }}
               alt={currentUser?.displayName}
-              src={currentUser?.avatar?.attachment}
+              src={currentUser?.avatar?.url}
             />
             <Tooltip title="Upload a new image to update your avatar immediately.">
               <Button

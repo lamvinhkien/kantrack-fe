@@ -8,9 +8,9 @@ import { getDownloadUrl, formatFileSize, isImageUrl, isPdfUrl, isVideoUrl } from
 const PreviewAttachment = ({ att, onClose }) => {
   if (!att) return null
 
-  const isImage = isImageUrl(att.attachment)
-  const isPdf = isPdfUrl(att.attachment)
-  const isVideo = isVideoUrl(att.attachment)
+  const isImage = isImageUrl(att.url)
+  const isPdf = isPdfUrl(att.url)
+  const isVideo = isVideoUrl(att.url)
 
   return (
     <Dialog
@@ -19,7 +19,7 @@ const PreviewAttachment = ({ att, onClose }) => {
         sx: { backgroundColor: 'transparent', boxShadow: 'none' }
       }}
       BackdropProps={{
-        sx: { backgroundColor: 'rgba(0, 0, 0, 0.82)' }
+        sx: { backgroundColor: 'rgba(0, 0, 0, 0.8)' }
       }}
     >
       <IconButton onClick={onClose} sx={{ position: 'absolute', top: 4, right: 4, color: 'white' }}>
@@ -34,17 +34,17 @@ const PreviewAttachment = ({ att, onClose }) => {
         }}
       >
         {isImage && (
-          <img src={att.attachment} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src={att.url} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         )}
 
         {isPdf && (
-          <iframe key={att.attachment} src={att.attachment}
+          <iframe key={att.url} src={att.url}
             width="100%" height="100%" style={{ border: 'none' }} title="PDF Preview" allowFullScreen
           />
         )}
 
         {isVideo && (
-          <video key={att.attachment} src={att.attachment}
+          <video key={att.url} src={att.url}
             width="100%" height="100%" style={{ maxHeight: '100%' }} controls autoPlay
           />
         )}
@@ -54,7 +54,7 @@ const PreviewAttachment = ({ att, onClose }) => {
             <Typography variant="caption" sx={{ fontWeight: 'bold', color: 'white', fontSize: '22px' }}>
               There is no preview available for this attachment.
             </Typography>
-            <Button sx={{ mt: 1, gap: 1 }} href={getDownloadUrl(att.attachment, att.displayText)}
+            <Button sx={{ mt: 1, gap: 1 }} href={getDownloadUrl(att.url, att.displayText)}
               download variant="contained" component='a'
             >
               <FileDownloadIcon fontSize="small" />
@@ -76,9 +76,9 @@ const PreviewAttachment = ({ att, onClose }) => {
             fontWeight: 600, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis',
             whiteSpace: 'nowrap', textAlign: 'center', fontSize: '22px'
           }}
-          title={att.displayText || 'Card Cover'}
+          title={att.displayText || ''}
         >
-          {att.displayText || 'Card Cover'}
+          {att.displayText || ''}
         </Typography>
 
         <Typography
@@ -94,7 +94,7 @@ const PreviewAttachment = ({ att, onClose }) => {
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
             component="a"
-            href={getDownloadUrl(att.attachment, att.displayText)}
+            href={getDownloadUrl(att.url, att.displayText)}
             download
             variant="outlined"
             sx={{

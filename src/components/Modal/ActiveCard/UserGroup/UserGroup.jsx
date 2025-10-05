@@ -40,7 +40,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
             <Avatar
               sx={{ width: 34, height: 34, cursor: 'pointer' }}
               alt={user?.displayName}
-              src={user?.avatar?.attachment}
+              src={user?.avatar?.url}
             />
           </Tooltip>
         )
@@ -97,7 +97,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
                   <Avatar
                     sx={{ width: 34, height: 34 }}
                     alt={user?.displayName}
-                    src={user?.avatar?.attachment}
+                    src={user?.avatar?.url}
                   />
                 </Badge>
               </Tooltip>

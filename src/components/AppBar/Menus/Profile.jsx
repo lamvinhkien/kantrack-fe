@@ -51,7 +51,7 @@ const Profile = () => {
             aria-expanded={open ? 'true' : undefined}
             sx={{ padding: 0 }}
           >
-            <Avatar sx={{ width: 35, height: 35 }} alt={currentUser?.displayName} src={currentUser?.avatar?.attachment} />
+            <Avatar sx={{ width: 35, height: 35 }} alt={currentUser?.displayName} src={currentUser?.avatar?.url} />
           </IconButton>
         </Tooltip>
       </Box>
@@ -67,7 +67,7 @@ const Profile = () => {
         <MenuItem component={Link} to="/settings/account" sx={{ mb: 1 }} >
           <ListItemIcon>
             <Avatar
-              src={currentUser?.avatar?.attachment}
+              src={currentUser?.avatar?.url}
               alt={currentUser?.displayName}
               sx={{ width: 28, height: 28 }}
             />

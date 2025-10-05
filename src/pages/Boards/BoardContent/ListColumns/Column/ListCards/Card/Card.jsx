@@ -50,32 +50,18 @@ const Card = ({ card }) => {
         '&:hover': { borderColor: theme => theme.palette.primary.main },
         borderRadius: '4px'
       }}>
-      {card?.cover?.attachment &&
-        <Box sx={{ position: 'relative', width: '100%', height: 150, overflow: 'hidden', borderRadius: '4px 4px 0px 0px' }}>
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: `url(${card?.cover?.attachment})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'blur(20px) brightness(0.8)',
-              transform: 'scale(1.2)'
-            }}
-          />
-          <Box
-            component="img"
-            src={card?.cover?.attachment}
-            alt="card cover"
-            sx={{
-              position: 'relative',
-              zIndex: 1,
-              width: '100%',
-              height: 150,
-              objectFit: 'contain'
-            }}
-          />
-        </Box>
+      {card?.cover?.url &&
+        <Box
+          component="img"
+          src={card?.cover?.url}
+          alt="card cover"
+          sx={{
+            width: '100%',
+            height: 150,
+            objectFit: 'cover',
+            borderRadius: '4px 4px 0 0'
+          }}
+        />
       }
       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
         <Typography>{card?.title}</Typography>
