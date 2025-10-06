@@ -21,31 +21,66 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
   }
 
   const board = useSelector(selectCurrentActiveBoard)
-  const FE_CardMembers = cardMemberIds.map(id => board.FE_allUsers.find(user => user._id === id))
+  const FE_CardMembers = cardMemberIds
+    .map(id => board.FE_allUsers.find(user => user._id === id))
+    .filter(Boolean)
 
   const handleUpdateCardMembers = (user) => {
     const incomingMemberInfo = {
       userId: user._id,
-      action: cardMemberIds.includes(user._id) ? CARD_MEMBER_ACTIONS.REMOVE : CARD_MEMBER_ACTIONS.ADD
+      action: cardMemberIds.includes(user._id)
+        ? CARD_MEMBER_ACTIONS.REMOVE
+        : CARD_MEMBER_ACTIONS.ADD
     }
-
     onUpdateCardMembers(incomingMemberInfo)
   }
 
-  return (
-    <Box sx={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-      {FE_CardMembers.map((user, index) => {
-        return (
-          <Tooltip title={user?.displayName} key={index}>
-            <Avatar
-              sx={{ width: 34, height: 34, cursor: 'pointer' }}
-              alt={user?.displayName}
-              src={user?.avatar?.url}
-            />
-          </Tooltip>
-        )
-      })}
+  const MAX_DISPLAY = 5
+  const visibleMembers = FE_CardMembers.slice(0, MAX_DISPLAY)
+  const remainingCount = FE_CardMembers.length - MAX_DISPLAY
 
+  return (
+    <Box sx={{ display: 'flex', gap: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* Hiển thị tối đa 6 avatar */}
+      {visibleMembers.map((user, index) => (
+        <Tooltip title={user?.displayName} key={index}>
+          <Avatar
+            sx={{ width: 36, height: 36, cursor: 'pointer' }}
+            alt={user?.displayName}
+            src={user?.avatar?.url}
+          />
+        </Tooltip>
+      ))}
+
+      {/* Nếu còn dư, hiển thị +n */}
+      {remainingCount > 0 && (
+        <Tooltip title={`${remainingCount} more members`}>
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              fontWeight: '600',
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? '#2f3542'
+                  : theme.palette.grey[300],
+              color: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? '#ffffffcc'
+                  : '#172b4d'
+            }}
+          >
+            +{remainingCount}
+          </Box>
+        </Tooltip>
+      )}
+
+      {/* Nút Add luôn hiển thị */}
       <Tooltip title="Add new member">
         <Box
           aria-describedby={popoverId}
@@ -60,11 +95,17 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
             fontSize: '14px',
             fontWeight: '600',
             borderRadius: '50%',
-            color: (theme) => theme.palette.mode === 'dark' ? '#90caf9' : '#172b4d',
-            bgcolor: (theme) => theme.palette.mode === 'dark' ? '#2f3542' : theme.palette.grey[200],
+            color: (theme) =>
+              theme.palette.mode === 'dark' ? '#90caf9' : '#172b4d',
+            bgcolor: (theme) =>
+              theme.palette.mode === 'dark'
+                ? '#2f3542'
+                : theme.palette.grey[200],
             '&:hover': {
-              color: (theme) => theme.palette.mode === 'dark' ? '#000000de' : '#0c66e4',
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#90caf9' : '#e9f2ff'
+              color: (theme) =>
+                theme.palette.mode === 'dark' ? '#000000de' : '#0c66e4',
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark' ? '#90caf9' : '#e9f2ff'
             }
           }}
         >
@@ -72,6 +113,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         </Box>
       </Tooltip>
 
+      {/* Popover chọn thành viên */}
       <Popover
         id={popoverId}
         open={isOpenPopover}
@@ -79,30 +121,28 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         onClose={handleTogglePopover}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Box sx={{ p: 2, maxWidth: '260px', display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-          {
-            board.FE_allUsers.map((user, index) =>
-              <Tooltip title={user?.displayName} key={index}>
-                <Badge
-                  sx={{ cursor: 'pointer' }}
-                  overlap="rectangular"
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  badgeContent={
-                    cardMemberIds.includes(user._id)
-                      ? <CheckCircleIcon fontSize="small" sx={{ color: '#27ae60' }} />
-                      : null
-                  }
-                  onClick={() => handleUpdateCardMembers(user)}
-                >
-                  <Avatar
-                    sx={{ width: 34, height: 34 }}
-                    alt={user?.displayName}
-                    src={user?.avatar?.url}
-                  />
-                </Badge>
-              </Tooltip>
-            )
-          }
+        <Box sx={{ p: 1.5, maxWidth: '260px', display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+          {board.FE_allUsers.map((user, index) => (
+            <Tooltip title={user?.displayName} key={index}>
+              <Badge
+                sx={{ cursor: 'pointer' }}
+                overlap="rectangular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={
+                  cardMemberIds.includes(user._id)
+                    ? <CheckCircleIcon fontSize="small" sx={{ color: '#27ae60' }} />
+                    : null
+                }
+                onClick={() => handleUpdateCardMembers(user)}
+              >
+                <Avatar
+                  sx={{ width: 36, height: 36 }}
+                  alt={user?.displayName}
+                  src={user?.avatar?.url}
+                />
+              </Badge>
+            </Tooltip>
+          ))}
         </Box>
       </Popover>
     </Box>

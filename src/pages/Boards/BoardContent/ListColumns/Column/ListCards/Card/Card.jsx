@@ -1,18 +1,18 @@
-import { Card as MuiCard } from '@mui/material'
-import CardActions from '@mui/material/CardActions'
-import CardContent from '@mui/material/CardContent'
+import { Card as MuiCard, CardActions, CardContent, Typography, Button, Box } from '@mui/material'
 import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
-import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useDispatch } from 'react-redux'
 import { showModalActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
-import Box from '@mui/material/Box'
+import { useColorScheme } from '@mui/material/styles'
+import moment from 'moment'
 
 const Card = ({ card }) => {
+  const { mode } = useColorScheme()
   const dispatch = useDispatch()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -28,19 +28,42 @@ const Card = ({ card }) => {
     border: isDragging ? '1px solid #1976d2' : undefined
   }
 
-  const shouldShowCardActions = () => {
-    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
-  }
-
-  const setActiveCard = () => {
+  const handleOpenCard = () => {
     dispatch(updateCurrentActiveCard(card))
     dispatch(showModalActiveCard())
   }
 
+  const dueDate = card?.dates?.dueDate ? moment(card.dates.dueDate) : null
+  const dueTime = card?.dates?.dueTime || null
+  const today = moment()
+
+  let dueDateTime = dueDate
+  if (dueDate && dueTime) {
+    dueDateTime = moment(`${dueDate.format('YYYY-MM-DD')} ${dueTime}`, 'YYYY-MM-DD HH:mm')
+  }
+
+  let statusColor = ''
+
+  if (card?.complete) {
+    statusColor = '#b3e863ff'
+  } else if (dueDateTime && dueDateTime.isBefore(today)) {
+    statusColor = '#f87168'
+  } else if (dueDateTime && dueDateTime.diff(today, 'hours') <= 24) {
+    statusColor = '#fbc828'
+  }
+
+  const shouldShowCardActions =
+    !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
+
+  const checkColor = mode === 'dark' ? '#b3e863ff' : '#47ad4eff'
+
   return (
     <MuiCard
-      onClick={setActiveCard}
-      ref={setNodeRef} style={dndKitCardStyles} {...attributes} {...listeners}
+      onClick={handleOpenCard}
+      ref={setNodeRef}
+      style={dndKitCardStyles}
+      {...attributes}
+      {...listeners}
       sx={{
         cursor: 'pointer',
         boxShadow: '0 1px 1px rgba(0, 0, 0, 0.2)',
@@ -48,12 +71,13 @@ const Card = ({ card }) => {
         display: card?.FE_PlaceholderCard ? 'none' : 'block',
         border: '1px solid transparent',
         '&:hover': { borderColor: theme => theme.palette.primary.main },
-        borderRadius: '4px'
-      }}>
-      {card?.cover?.url &&
+        borderRadius: 1
+      }}
+    >
+      {card?.cover?.url && (
         <Box
           component="img"
-          src={card?.cover?.url}
+          src={card.cover.url}
           alt="card cover"
           sx={{
             width: '100%',
@@ -62,17 +86,76 @@ const Card = ({ card }) => {
             borderRadius: '4px 4px 0 0'
           }}
         />
-      }
+      )}
+
       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-        <Typography>{card?.title}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 1 }}>
+          {card?.complete && <CheckCircleIcon sx={{ color: checkColor, fontSize: 20 }} />}
+          <Typography sx={{ fontWeight: 500 }}>{card?.title}</Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 1,
+            mt: 0.5
+          }}
+        >
+          {(card?.dates?.startDate || card?.dates?.dueDate) && (
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                px: 1,
+                py: 0.3,
+                borderRadius: 1.5,
+                backgroundColor: statusColor || 'rgba(0,0,0,0.1)',
+                gap: 0.5,
+                minWidth: 80,
+                color: 'grey.900'
+              }}
+            >
+              <WatchLaterOutlinedIcon sx={{ fontSize: 16 }} />
+              <Typography
+                variant="body2"
+                sx={{
+                  color: card.complete ? 'black' : 'inherit',
+                  fontWeight: 500
+                }}
+              >
+                {dueDate.format('DD/MM')}
+              </Typography>
+            </Box>
+          )}
+
+          {shouldShowCardActions && (
+            <CardActions sx={{ p: 0, gap: 0.5 }}>
+              {!!card?.memberIds?.length && (
+                <Button size="small" startIcon={<GroupIcon />} sx={{ minWidth: 0, p: '2px 6px' }}>
+                  {card.memberIds.length}
+                </Button>
+              )}
+              {!!card?.comments?.length && (
+                <Button size="small" startIcon={<CommentIcon />} sx={{ minWidth: 0, p: '2px 6px' }}>
+                  {card.comments.length}
+                </Button>
+              )}
+              {!!card?.attachments?.length && (
+                <Button
+                  size="small"
+                  startIcon={<AttachmentIcon />}
+                  sx={{ minWidth: 0, p: '2px 6px' }}
+                >
+                  {card.attachments.length}
+                </Button>
+              )}
+            </CardActions>
+          )}
+        </Box>
       </CardContent>
-      {shouldShowCardActions() &&
-        <CardActions sx={{ p: '0 4px 8px 4px' }}>
-          {!!card?.memberIds?.length && <Button size="small" startIcon={<GroupIcon />}>{card?.memberIds?.length}</Button>}
-          {!!card?.comments?.length && <Button size="small" startIcon={<CommentIcon />}>{card?.comments?.length}</Button>}
-          {!!card?.attachments?.length && <Button size="small" startIcon={<AttachmentIcon />}>{card?.attachments?.length}</Button>}
-        </CardActions>
-      }
     </MuiCard>
   )
 }

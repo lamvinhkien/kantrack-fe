@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
-import CreditCardIcon from '@mui/icons-material/CreditCard'
 import Stack from '@mui/material/Stack'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import LogoutIcon from '@mui/icons-material/Logout'
@@ -9,7 +8,6 @@ import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
 import AttachmentIcon from '@mui/icons-material/Attachment'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
-import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { imageFileValidator, multipleFileValidator } from '~/utils/validators'
 import { toast } from 'react-toastify'
 import UserGroup from './UserGroup/UserGroup'
@@ -22,7 +20,7 @@ import {
   updateCurrentActiveCard,
   clearAndHideCurrentActiveCard
 } from '~/redux/activeCard/activeCardSlice'
-import { updateCardInBoard, selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { updateCardDetailsAPI, deleteCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
@@ -41,6 +39,8 @@ import AddIcon from '@mui/icons-material/Add'
 import Button from '@mui/material/Button'
 import usePopover from '~/customHooks/usePopover'
 import EditDate from './Date/EditDate'
+import DateInfo from './Date/DateInfo'
+import Title from './Title/Title'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -108,7 +108,6 @@ const ActiveCard = () => {
   const callApiUpdateCard = async (updateData) => {
     const updatedCard = await updateCardDetailsAPI(activeCard._id, updateData)
     dispatch(updateCurrentActiveCard({ ...updatedCard, columnTitle: activeCard.columnTitle }))
-    dispatch(updateCardInBoard(updatedCard))
     socketIoInstance.emit('FE_UPDATE_ACTIVE_CARD', { cardId: activeCard._id, card: { ...updatedCard, columnTitle: activeCard.columnTitle } })
 
     const newBoard = cloneDeep(board)
@@ -124,6 +123,10 @@ const ActiveCard = () => {
 
   const onUpdateCardTitle = (newTitle) => {
     callApiUpdateCard({ title: newTitle.trim() })
+  }
+
+  const onUpdateComplete = (complete) => {
+    callApiUpdateCard({ complete: complete })
   }
 
   const onUploadCardCover = (event) => {
@@ -231,8 +234,8 @@ const ActiveCard = () => {
     }).catch(() => { })
   }
 
-  const onUpdateCardDate = async () => {
-
+  const onUpdateCardDate = async (data) => {
+    await callApiUpdateCard({ dates: data })
   }
 
   useEffect(() => {
@@ -261,32 +264,31 @@ const ActiveCard = () => {
     >
       <Box
         sx={{
-          position: 'relative', width: 1070, minHeight: 'auto', maxHeight: 620, bgcolor: 'white',
+          position: 'relative', width: 1080, minHeight: 'auto', maxHeight: 620, bgcolor: 'white',
           boxShadow: 24, border: 'none', outline: 0, margin: '50px auto', display: 'flex', flexDirection: 'column',
           backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1E2A36' : '#fff'
         }}
       >
-        <HeaderCover columnTitle={activeCard?.columnTitle} cover={activeCard?.cover}
+        <HeaderCover columnTitle={activeCard?.columnTitle} cover={activeCard?.cover} complete={activeCard?.complete}
           handleDeleteCardCover={onDeleteCardCover} handleDeleteCard={onDeleteCard} handleCloseModal={handleCloseModal}
+          handleUpdateComplete={onUpdateComplete}
         />
 
         <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
           <Box
             sx={(theme) => ({
-              flex: 7, padding: '10px 30px 30px 30px',
+              flex: 7.3, padding: '10px 30px 30px 30px',
               overflowY: 'auto', minHeight: 0, ...getScrollbarStyles(theme)
             })}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CreditCardIcon />
-              <ToggleFocusInput
-                inputFontSize='22px'
-                value={activeCard?.title}
-                onChangedValue={onUpdateCardTitle}
-              />
-            </Box>
+            <Title
+              title={activeCard?.title}
+              complete={activeCard?.complete}
+              onUpdateCardTitle={onUpdateCardTitle}
+              onUpdateComplete={onUpdateComplete}
+            />
 
-            <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+            <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
               {
                 activeCard?.memberIds?.includes(currentUser._id)
                   ?
@@ -312,9 +314,11 @@ const ActiveCard = () => {
                 <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
               </SidebarItem>
 
-              <SidebarItem className='active' onClick={editDatePopover.openPopover}>
-                <WatchLaterOutlinedIcon fontSize="small" /> Date
-              </SidebarItem>
+              {!activeCard?.dates?.dueDate &&
+                <SidebarItem className='active' onClick={editDatePopover.openPopover}>
+                  <WatchLaterOutlinedIcon fontSize="small" /> Dates
+                </SidebarItem>
+              }
 
               {activeCard?.attachments?.length === 0 &&
                 <SidebarItem className='active' component="label" onClick={addAttachmentPopover.openPopover}>
@@ -323,12 +327,25 @@ const ActiveCard = () => {
               }
             </Stack>
 
-            <Box sx={{ mt: 3 }}>
-              <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
-              <UserGroup
-                cardMemberIds={activeCard?.memberIds}
-                onUpdateCardMembers={onUpdateCardMembers}
-              />
+            <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Box>
+                <Typography sx={{ fontWeight: 600, color: 'primary.main', mb: 1 }}>Members</Typography>
+                <UserGroup
+                  cardMemberIds={activeCard?.memberIds}
+                  onUpdateCardMembers={onUpdateCardMembers}
+                />
+              </Box>
+
+              {activeCard?.dates?.dueDate && (
+                <Box>
+                  <Typography sx={{ fontWeight: 600, color: 'primary.main', mb: 1 }}>Dates</Typography>
+                  <DateInfo
+                    dates={activeCard?.dates}
+                    complete={activeCard?.complete}
+                    onClick={editDatePopover.openPopover}
+                  />
+                </Box>
+              )}
             </Box>
 
             <Box sx={{ mt: 5 }}>
@@ -370,7 +387,7 @@ const ActiveCard = () => {
 
           <Box
             sx={(theme) => ({
-              flex: 5,
+              flex: 4.7,
               padding: '12px 20px 20px 20px',
               overflowY: 'auto',
               minHeight: 0,
@@ -398,6 +415,7 @@ const ActiveCard = () => {
           handleAddCardAttachment={onAddCardAttachments}
         />
         <EditDate
+          dates={activeCard?.dates}
           open={editDatePopover.isOpen}
           anchorEl={editDatePopover.anchorEl}
           onClose={editDatePopover.closePopover}

@@ -6,8 +6,10 @@ import { Box, IconButton, Menu, MenuItem } from '@mui/material'
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import PreviewAttachment from '../Attachment/PreviewAttachment'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import UnpublishedIcon from '@mui/icons-material/Unpublished'
 
-const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCard, handleCloseModal }) => {
+const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, handleDeleteCard, handleCloseModal, handleUpdateComplete }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const [previewFile, setPreviewFile] = useState(null)
@@ -87,13 +89,35 @@ const HeaderCover = ({ columnTitle, cover, handleDeleteCardCover, handleDeleteCa
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
+          <MenuItem
+            onClick={() => {
+              handleUpdateComplete(!complete)
+              handleCloseMenu()
+            }}
+            sx={{ fontSize: 14 }}
+          >
+            {
+              complete
+                ?
+                <>
+                  <UnpublishedIcon fontSize="small" sx={{ mr: 1 }} />
+                  Mark incomplete
+                </>
+                :
+                <>
+                  <CheckCircleIcon fontSize="small" sx={{ mr: 1 }} />
+                  Mark complete
+                </>
+            }
+          </MenuItem>
+
           {cover?.url && cover?.publicId && (
             <MenuItem
               onClick={() => {
                 handleDeleteCardCover(cover)
                 handleCloseMenu()
               }}
-              sx={{ fontSize: 14 }}
+              sx={{ fontSize: 14, mt: 1 }}
             >
               <ImageNotSupportedIcon fontSize="small" sx={{ mr: 1 }} />
               Remove cover

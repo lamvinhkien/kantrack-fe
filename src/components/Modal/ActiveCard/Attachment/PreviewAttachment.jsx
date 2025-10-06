@@ -99,10 +99,10 @@ const PreviewAttachment = ({ att, onClose }) => {
             variant="outlined"
             sx={{
               color: 'white',
-              borderColor: 'transparent',
+              border: 'none',
               textTransform: 'none',
               '&:hover': {
-                borderColor: 'white',
+                border: 'none',
                 backgroundColor: 'rgba(255,255,255,0.08)'
               }
             }}
@@ -116,10 +116,10 @@ const PreviewAttachment = ({ att, onClose }) => {
             variant="outlined"
             sx={{
               color: 'white',
-              borderColor: 'transparent',
+              border: 'none',
               textTransform: 'none',
               '&:hover': {
-                borderColor: 'white',
+                border: 'none',
                 backgroundColor: 'rgba(255,255,255,0.08)'
               }
             }}
