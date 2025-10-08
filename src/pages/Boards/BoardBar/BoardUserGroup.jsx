@@ -37,8 +37,8 @@ const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
             aria-describedby={popoverId}
             onClick={handleTogglePopover}
             sx={{
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -46,8 +46,14 @@ const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
               fontSize: '14px',
               fontWeight: '500',
               borderRadius: '50%',
-              color: 'white',
-              backgroundColor: '#a4b0be'
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? '#2a303bff'
+                  : theme.palette.grey[300],
+              color: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? '#ffffffcc'
+                  : '#172b4d'
             }}
           >
             +{boardUsers.length - limit}
@@ -62,7 +68,7 @@ const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
         onClose={handleTogglePopover}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Box sx={{ p: 2, maxWidth: '235px', display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        <Box sx={{ p: 2, maxWidth: '250px', display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
           {boardUsers.map((user, index) => (
             <Tooltip title={user?.displayName} key={index}>
               <Avatar

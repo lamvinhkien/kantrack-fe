@@ -391,7 +391,7 @@ const ActiveCard = () => {
               padding: '12px 20px 20px 20px',
               overflowY: 'auto',
               minHeight: 0,
-              bgcolor: theme => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100',
+              bgcolor: theme => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.200',
               ...getScrollbarStyles(theme)
             })}
           >

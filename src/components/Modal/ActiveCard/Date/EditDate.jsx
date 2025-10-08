@@ -17,7 +17,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
   const { mode } = useColorScheme()
   const popoverId = open ? 'card-edit-date-popover' : undefined
 
-  // 🧭 Default values (nếu card đã có dates thì load vào)
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       startDate: dates?.startDate ? moment(dates.startDate) : null,
@@ -32,7 +31,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
   const [hasStartDate, setHasStartDate] = useState(!!dates?.startDate)
 
   useEffect(() => {
-    // Reset khi dates thay đổi (VD: mở card khác)
     reset({
       startDate: dates?.startDate ? moment(dates.startDate) : null,
       dueDate: dates?.dueDate ? moment(dates.dueDate) : moment(),
@@ -44,7 +42,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
     setHasStartDate(!!dates?.startDate)
   }, [dates, reset])
 
-  // 🧮 Map "5m" => 5, "1h" => 60...
   const mapStringToMinutes = (value) => {
     const map = {
       '5m': 5,
@@ -56,7 +53,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
     return map[value] || 0
   }
 
-  // 🧮 Map ngược lại (dùng khi fill form)
   function mapMinutesToString(minutes) {
     const map = {
       5: '5m',
@@ -68,7 +64,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
     return map[minutes] || 'None'
   }
 
-  // 🧠 Parse reminder thành object để backend hiểu
   const parseReminder = (value, dueDate, dueTime) => {
     if (!value || value === 'None') {
       return {

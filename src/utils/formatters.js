@@ -1,4 +1,7 @@
 import { slugify } from 'transliteration'
+import moment from 'moment'
+
+moment.locale('en')
 
 export const capitalizeFirstLetter = (val) => {
   if (!val) return ''
@@ -67,4 +70,37 @@ export const formatFileSize = (bytes) => {
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
   if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB'
   return (bytes / 1024 / 1024 / 1024).toFixed(1) + ' GB'
+}
+
+export const renderTime = (time, options = {}) => {
+  const {
+    showExactAfterDays = 2,
+    locale = moment.locale(),
+    showSeconds = false
+  } = options
+
+  if (!time) return ''
+
+  const now = moment()
+  const target = moment(time).locale(locale)
+
+  const diffSeconds = now.diff(target, 'seconds')
+  const diffMinutes = now.diff(target, 'minutes')
+  const diffHours = now.diff(target, 'hours')
+  const diffDays = now.diff(target, 'days')
+
+  if (diffSeconds < 60) {
+    if (showSeconds) return `${diffSeconds} second${diffSeconds !== 1 ? 's' : ''} ago`
+    return 'Just now'
+  }
+
+  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`
+  if (diffHours < 24) return target.fromNow()
+  if (diffDays < showExactAfterDays) return target.fromNow()
+
+  const format = target.year() === now.year()
+    ? 'DD/MM, HH:mm'
+    : 'DD/MM/YYYY, HH:mm'
+
+  return target.format(format)
 }

@@ -27,7 +27,7 @@ const AppBar = () => {
         <Link to='/'>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <SvgIcon component={TrelloIcon} inheritViewBox sx={{ color: 'white', fontSize: '1.4rem' }} />
-            <Typography variant='span' sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>TaskFlow</Typography>
+            <Typography variant='span' sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>KanTrack</Typography>
           </Box>
         </Link>
         <Dashboard />

@@ -44,7 +44,7 @@ const DateInfo = ({ dates, complete, onClick }) => {
       : formattedDue
   }
 
-  const formattedTime = dueTime ? ` - ${dueTime.format('HH:mm')}` : ''
+  const formattedTime = dueTime ? `, ${dueTime.format('HH:mm')}` : ''
 
   return (
     <Box

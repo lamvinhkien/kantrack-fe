@@ -2,8 +2,8 @@ import { Dialog, DialogContent, DialogTitle, Button, Typography, Box } from '@mu
 import CloseIcon from '@mui/icons-material/Close'
 import { IconButton } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import moment from 'moment'
 import { getDownloadUrl, formatFileSize, isImageUrl, isPdfUrl, isVideoUrl } from '~/utils/formatters'
+import { renderTime } from '~/utils/formatters'
 
 const PreviewAttachment = ({ att, onClose }) => {
   if (!att) return null
@@ -88,7 +88,7 @@ const PreviewAttachment = ({ att, onClose }) => {
             whiteSpace: 'nowrap', textAlign: 'center'
           }}
         >
-          Added {moment(att.uploadedAt).format('lll')} • {formatFileSize(att.size)}
+          Added {renderTime(att.uploadedAt)} • {formatFileSize(att.size)}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2 }}>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import moment from 'moment'
 import Badge from '@mui/material/Badge'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Box from '@mui/material/Box'
@@ -23,6 +22,7 @@ import {
 import { socketIoInstance } from '~/socketClient'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
+import { renderTime } from '~/utils/formatters'
 
 const BOARD_INVITATION_STATUS = {
   PENDING: 'PENDING',
@@ -159,7 +159,7 @@ const Notifications = () => {
 
                     <Box sx={{ textAlign: 'right' }}>
                       <Typography variant="span" sx={{ fontSize: '13px' }}>
-                        {moment(notification.createdAt).format('lll')}
+                        {renderTime(notification.createdAt)}
                       </Typography>
                     </Box>
                   </Box>

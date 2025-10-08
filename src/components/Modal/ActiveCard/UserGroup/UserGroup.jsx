@@ -41,24 +41,22 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
 
   return (
     <Box sx={{ display: 'flex', gap: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
-      {/* Hiển thị tối đa 6 avatar */}
       {visibleMembers.map((user, index) => (
         <Tooltip title={user?.displayName} key={index}>
           <Avatar
-            sx={{ width: 36, height: 36, cursor: 'pointer' }}
+            sx={{ width: 34, height: 34, cursor: 'pointer' }}
             alt={user?.displayName}
             src={user?.avatar?.url}
           />
         </Tooltip>
       ))}
 
-      {/* Nếu còn dư, hiển thị +n */}
       {remainingCount > 0 && (
         <Tooltip title={`${remainingCount} more members`}>
           <Box
             sx={{
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -80,14 +78,13 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         </Tooltip>
       )}
 
-      {/* Nút Add luôn hiển thị */}
       <Tooltip title="Add new member">
         <Box
           aria-describedby={popoverId}
           onClick={handleTogglePopover}
           sx={{
-            width: 36,
-            height: 36,
+            width: 34,
+            height: 34,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -113,7 +110,6 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         </Box>
       </Tooltip>
 
-      {/* Popover chọn thành viên */}
       <Popover
         id={popoverId}
         open={isOpenPopover}
@@ -121,7 +117,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         onClose={handleTogglePopover}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Box sx={{ p: 1.5, maxWidth: '260px', display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+        <Box sx={{ p: 2, maxWidth: '250px', display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
           {board.FE_allUsers.map((user, index) => (
             <Tooltip title={user?.displayName} key={index}>
               <Badge
@@ -136,7 +132,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
                 onClick={() => handleUpdateCardMembers(user)}
               >
                 <Avatar
-                  sx={{ width: 36, height: 36 }}
+                  sx={{ width: 34, height: 34 }}
                   alt={user?.displayName}
                   src={user?.avatar?.url}
                 />

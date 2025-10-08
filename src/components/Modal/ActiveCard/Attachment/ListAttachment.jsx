@@ -11,7 +11,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import MenuList from '@mui/material/MenuList'
-import moment from 'moment'
 import TextField from '@mui/material/TextField'
 import { CARD_ATTACHMENT_ACTIONS } from '~/utils/constants'
 import { useForm } from 'react-hook-form'
@@ -22,6 +21,7 @@ import { useColorScheme } from '@mui/material/styles'
 import { getDownloadUrl, isImageUrl, isVideoUrl, getFileExtension } from '~/utils/formatters'
 import { toast } from 'react-toastify'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
+import { renderTime } from '~/utils/formatters'
 
 const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
   const { mode } = useColorScheme()
@@ -153,7 +153,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                   </Typography>
                   {att.uploadedAt && (
                     <Typography sx={{ color: mode === 'dark' ? 'grey.500' : 'grey.600' }}>
-                      {moment(att.uploadedAt).format('lll')}
+                      {renderTime(att.uploadedAt)}
                     </Typography>
                   )}
                 </MuiLink>

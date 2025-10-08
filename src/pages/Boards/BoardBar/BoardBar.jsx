@@ -34,7 +34,7 @@ const BoardBar = ({ board }) => {
       bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#293A4A' : '#155DA9'),
       '&::-webkit-scrollbar-track': { m: 2 }
     }}>
-      <Box sx={{ minWidth: '300px' }}>
+      <Box sx={{ minWidth: '400px' }}>
         <ToggleFocusInput
           value={board?.title}
           onChangedValue={onUpdateBoardTitle}

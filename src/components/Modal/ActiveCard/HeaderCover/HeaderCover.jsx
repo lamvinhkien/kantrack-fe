@@ -156,7 +156,7 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
               borderColor: (theme) =>
                 theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
               bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
+                theme.palette.mode === 'dark' ? '#151a1f' : 'grey.200'
             }}
           >
             {cover?.url && (
@@ -202,7 +202,7 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
           width: '100%',
           borderBottom: 1,
           borderColor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
-          bgcolor: (theme) => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.100'
+          bgcolor: (theme) => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.200'
         }}>
         </Box>
       }
