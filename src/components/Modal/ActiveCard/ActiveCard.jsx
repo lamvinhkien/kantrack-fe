@@ -166,8 +166,8 @@ const ActiveCard = () => {
     callApiUpdateCard({ description: newDescription.trim() })
   }
 
-  const onAddCardComment = async (commentToAdd) => {
-    await callApiUpdateCard({ commentToAdd })
+  const onUpdateCardComment = async (action, comment) => {
+    await callApiUpdateCard({ action, comment })
   }
 
   const onUpdateCardMembers = async (incomingMemberInfo) => {
@@ -402,7 +402,7 @@ const ActiveCard = () => {
               </Box>
               <Comment
                 cardComments={activeCard?.comments}
-                onAddCardComment={onAddCardComment}
+                handleUpdateCardComment={onUpdateCardComment}
               />
             </Box>
           </Box>

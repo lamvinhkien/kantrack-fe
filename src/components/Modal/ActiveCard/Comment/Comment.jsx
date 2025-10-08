@@ -1,22 +1,35 @@
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
+import IconButton from '@mui/material/IconButton'
+import CircularProgress from '@mui/material/CircularProgress'
+import SendIcon from '@mui/icons-material/Send'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+import Popover from '@mui/material/Popover'
+import Button from '@mui/material/Button'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
-import IconButton from '@mui/material/IconButton'
-import SendIcon from '@mui/icons-material/Send'
-import CircularProgress from '@mui/material/CircularProgress'
-import { useState } from 'react'
 import { renderTime } from '~/utils/formatters'
+import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
 
-const Comment = ({ cardComments = [], onAddCardComment }) => {
+const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
   const currentUser = useSelector(selectCurrentUser)
   const board = useSelector(selectCurrentActiveBoard)
   const [commentInput, setCommentInput] = useState('')
   const [isPosting, setIsPosting] = useState(false)
+
+  const [loadingEditId, setLoadingEditId] = useState(null)
+  const [loadingDeleteId, setLoadingDeleteId] = useState(null)
+
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editContent, setEditContent] = useState('')
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [selectedComment, setSelectedComment] = useState(null)
 
   const handleSendComment = async () => {
     const content = commentInput.trim()
@@ -29,7 +42,7 @@ const Comment = ({ cardComments = [], onAddCardComment }) => {
 
     try {
       setIsPosting(true)
-      await onAddCardComment(commentToAdd)
+      await handleUpdateCardComment(CARD_COMMENT_ACTIONS.ADD, commentToAdd)
       setCommentInput('')
     } finally {
       setIsPosting(false)
@@ -40,6 +53,57 @@ const Comment = ({ cardComments = [], onAddCardComment }) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       handleSendComment()
+    }
+  }
+
+  const handleEditClick = (comment) => {
+    setEditingCommentId(comment.commentId)
+    setEditContent(comment.content)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null)
+    setEditContent('')
+  }
+
+  const handleSaveEdit = async (comment) => {
+    const newContent = editContent.trim()
+    if (!newContent) return
+
+    try {
+      setLoadingEditId(comment.commentId)
+      await handleUpdateCardComment(CARD_COMMENT_ACTIONS.EDIT, {
+        ...comment,
+        content: newContent
+      })
+      handleCancelEdit()
+    } finally {
+      setLoadingEditId(null)
+    }
+  }
+
+  const handleDeleteClick = (event, comment) => {
+    setAnchorEl(event.currentTarget)
+    setSelectedComment(comment)
+  }
+
+  const handleClosePopover = () => {
+    setAnchorEl(null)
+    setSelectedComment(null)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!selectedComment) return
+
+    const commentToDelete = selectedComment
+
+    handleClosePopover()
+    setLoadingDeleteId(commentToDelete.commentId)
+
+    try {
+      await handleUpdateCardComment(CARD_COMMENT_ACTIONS.REMOVE, commentToDelete)
+    } finally {
+      setLoadingDeleteId(null)
     }
   }
 
@@ -123,58 +187,146 @@ const Comment = ({ cardComments = [], onAddCardComment }) => {
         </Typography>
       )}
 
-      {renderComments.map((comment, index) => (
-        <Box
-          sx={{ display: 'flex', gap: 1, width: '100%', mt: 2 }}
-          key={index}
-        >
-          <Tooltip title={comment.userDisplayName}>
-            <Avatar
-              sx={{ width: 30, height: 30, cursor: 'pointer' }}
-              alt={comment.userDisplayName}
-              src={comment.userAvatar}
-            />
-          </Tooltip>
+      {renderComments.map((comment) => {
+        const isOwner = comment.userId === currentUser?._id
+        const isEditing = editingCommentId === comment.commentId
+        const isEditLoading = loadingEditId === comment.commentId
 
-          <Box sx={{ width: 'inherit' }}>
-            <Typography
-              component="span"
-              sx={{
-                fontWeight: 'bold',
-                mr: 1,
-                color: theme => theme.palette.mode === 'dark' ? 'grey.500' : 'grey.700'
-              }}
-            >
-              {comment.userDisplayName}
-            </Typography>
+        return (
+          <Box
+            sx={{ display: 'flex', gap: 1, width: '100%', mt: 2 }}
+            key={comment.commentId}
+          >
+            <Tooltip title={comment.userDisplayName}>
+              <Avatar
+                sx={{ width: 30, height: 30, cursor: 'pointer' }}
+                alt={comment.userDisplayName}
+                src={comment.userAvatar}
+              />
+            </Tooltip>
 
-            <Typography
-              variant='caption'
-              sx={{
-                color: theme => theme.palette.mode === 'dark' ? 'grey.500' : 'grey.700'
-              }}
-            >
-              {renderTime(comment.commentedAt)}
-            </Typography>
+            <Box sx={{ width: 'inherit' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography
+                  component="span"
+                  sx={{
+                    fontWeight: 'bold',
+                    color: (theme) =>
+                      theme.palette.mode === 'dark' ? 'grey.500' : 'grey.700'
+                  }}
+                >
+                  {comment.userDisplayName}
+                </Typography>
 
-            <Box
-              sx={{
-                display: 'block',
-                bgcolor: (theme) =>
-                  theme.palette.mode === 'dark' ? '#1e242aff' : 'white',
-                p: '8px 12px',
-                mt: '4px',
-                borderRadius: 1,
-                wordBreak: 'break-word',
-                boxShadow: '0 0 1px rgba(0, 0, 0, 0.2)',
-                fontSize: '14px'
-              }}
-            >
-              {comment.content}
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: (theme) =>
+                      theme.palette.mode === 'dark' ? 'grey.500' : 'grey.700'
+                  }}
+                >
+                  {renderTime(comment.commentedAt)}
+                </Typography>
+
+                {isOwner && !isEditing && (
+                  <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleEditClick(comment)}
+                      disabled={loadingDeleteId === comment.commentId}
+                    >
+                      <EditIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+
+                    {loadingDeleteId === comment.commentId ? (
+                      <CircularProgress size={16} sx={{ ml: 0.5 }} />
+                    ) : (
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleDeleteClick(e, comment)}
+                        disabled={loadingDeleteId === comment.commentId}
+                      >
+                        <DeleteIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    )}
+                  </Box>
+                )}
+              </Box>
+
+              {isEditing ? (
+                <Box sx={{ mt: 1 }}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    size="small"
+                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
+                    <Button size="small" onClick={handleCancelEdit} disabled={isEditLoading}>
+                      Cancel
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      onClick={() => handleSaveEdit(comment)}
+                      disabled={isEditLoading}
+                    >
+                      {isEditLoading ? <CircularProgress size={16} color="inherit" /> : 'Save'}
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'block',
+                    bgcolor: (theme) =>
+                      theme.palette.mode === 'dark' ? '#1e242aff' : 'white',
+                    p: '8px 12px',
+                    mt: '4px',
+                    borderRadius: 1,
+                    wordBreak: 'break-word',
+                    boxShadow: '0 0 1px rgba(0, 0, 0, 0.2)',
+                    fontSize: '14px'
+                  }}
+                >
+                  {comment.content}
+                </Box>
+              )}
             </Box>
           </Box>
+        )
+      })}
+
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClosePopover}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Box sx={{ p: 2, maxWidth: 220 }}>
+          <Typography sx={{ fontSize: '14px', mb: 1 }}>
+            Delete this comment?
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Button size="small" onClick={handleClosePopover}>Cancel</Button>
+            <Button
+              size="small"
+              variant="contained"
+              color="error"
+              onClick={handleConfirmDelete}
+              disabled={loadingDeleteId === selectedComment?.commentId}
+            >
+              {loadingDeleteId === selectedComment?.commentId ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </Box>
         </Box>
-      ))}
+      </Popover>
     </Box>
   )
 }

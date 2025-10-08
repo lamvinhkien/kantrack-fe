@@ -91,7 +91,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
     }
   }
 
-  // 📤 Submit form
   const onSubmit = (data) => {
     const payload = {
       startDate: hasStartDate ? data.startDate?.toDate() : null,
@@ -154,20 +153,35 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
               sx={{ p: 0.5 }}
             />
 
+            {/* Start Date */}
             <Controller
               name="startDate"
               control={control}
-              render={({ field }) => (
-                <DatePicker
-                  value={field.value}
-                  onChange={field.onChange}
-                  format="DD-MM-YYYY"
-                  disabled={!hasStartDate}
-                  slotProps={{
-                    textField: { size: 'small', fullWidth: true }
-                  }}
-                  maxDate={watch('dueDate')}
-                />
+              rules={{
+                validate: (value) => {
+                  if (hasStartDate && !value) return 'Required.'
+                  if (hasStartDate && !moment(value, true).isValid()) return 'Invalid.'
+                  return true
+                }
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <DatePicker
+                    value={field.value}
+                    onChange={field.onChange}
+                    format="DD-MM-YYYY"
+                    disabled={!hasStartDate}
+                    slotProps={{
+                      textField: {
+                        size: 'small',
+                        fullWidth: true,
+                        error: !!error,
+                        helperText: error?.message
+                      }
+                    }}
+                    maxDate={watch('dueDate')}
+                  />
+                </>
               )}
             />
           </Box>
@@ -181,33 +195,63 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
 
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
+              {/* Due Time */}
               <Controller
                 name="dueTime"
                 control={control}
-                render={({ field }) => (
+                rules={{
+                  required: 'Required.',
+                  validate: (value) => {
+                    if (!value) return 'Required.'
+                    if (!moment(value, 'HH:mm', true).isValid()) return 'Invalid.'
+                    return true
+                  }
+                }}
+                render={({ field, fieldState: { error } }) => (
                   <TimePicker
                     value={field.value}
                     onChange={field.onChange}
                     ampm={false}
                     format="HH:mm"
                     slotProps={{
-                      textField: { size: 'small', fullWidth: true }
+                      textField: {
+                        size: 'small',
+                        fullWidth: true,
+                        error: !!error,
+                        helperText: error?.message
+                      }
                     }}
                   />
                 )}
               />
             </Box>
             <Box sx={{ flex: 1.5 }}>
+              {/* Due Date */}
               <Controller
                 name="dueDate"
                 control={control}
-                render={({ field }) => (
+                rules={{
+                  required: 'Required.',
+                  validate: (value) => {
+                    if (!value) return 'Required.'
+                    if (!moment(value, true).isValid()) return 'Invalid.'
+                    if (hasStartDate && watch('startDate') && moment(value).isBefore(watch('startDate')))
+                      return 'Due date cannot be before start date.'
+                    return true
+                  }
+                }}
+                render={({ field, fieldState: { error } }) => (
                   <DatePicker
                     value={field.value}
                     onChange={field.onChange}
                     format="DD-MM-YYYY"
                     slotProps={{
-                      textField: { size: 'small', fullWidth: true }
+                      textField: {
+                        size: 'small',
+                        fullWidth: true,
+                        error: !!error,
+                        helperText: error?.message
+                      }
                     }}
                     minDate={hasStartDate ? watch('startDate') : undefined}
                   />

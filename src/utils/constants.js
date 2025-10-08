@@ -10,4 +10,6 @@ export const CARD_MEMBER_ACTIONS = { ADD: 'ADD', REMOVE: 'REMOVE' }
 
 export const CARD_ATTACHMENT_ACTIONS = { EDIT: 'EDIT', REMOVE: 'REMOVE' }
 
+export const CARD_COMMENT_ACTIONS = { ADD: 'ADD', EDIT: 'EDIT', REMOVE: 'REMOVE' }
+
 export const SETUP_2FA_ACTIONS = { ENABLE: 'Enable', DISABLE: 'Disable' }
