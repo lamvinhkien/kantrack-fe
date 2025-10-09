@@ -329,7 +329,7 @@ const ActiveCard = () => {
 
             <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
               <Box>
-                <Typography sx={{ fontWeight: 600, color: 'primary.main', mb: 1 }}>Members</Typography>
+                <Typography sx={{ fontWeight: 'bold', mb: 1 }}>Members</Typography>
                 <UserGroup
                   cardMemberIds={activeCard?.memberIds}
                   onUpdateCardMembers={onUpdateCardMembers}
@@ -338,7 +338,7 @@ const ActiveCard = () => {
 
               {activeCard?.dates?.dueDate && (
                 <Box>
-                  <Typography sx={{ fontWeight: 600, color: 'primary.main', mb: 1 }}>Dates</Typography>
+                  <Typography sx={{ fontWeight: 'bold', mb: 1 }}>Dates</Typography>
                   <DateInfo
                     dates={activeCard?.dates}
                     complete={activeCard?.complete}

@@ -3,7 +3,8 @@ import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useDispatch } from 'react-redux'
@@ -122,11 +123,8 @@ const Card = ({ card }) => {
           </Typography>
         </Box>
 
-        {(card?.dates?.startDate ||
-          card?.dates?.dueDate ||
-          card?.memberIds?.length > 0 ||
-          card?.comments?.length > 0 ||
-          card?.attachments?.length > 0) &&
+        {(card?.dates?.startDate || card?.dates?.dueDate || card?.memberIds?.length > 0 ||
+          card?.comments?.length > 0 || card?.attachments?.length > 0) &&
           (
             <Box
               sx={{
@@ -135,7 +133,7 @@ const Card = ({ card }) => {
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
                 gap: 1,
-                mt: 0.5
+                mt: 1
               }}
             >
               {(card?.dates?.startDate || card?.dates?.dueDate) && (
@@ -143,16 +141,20 @@ const Card = ({ card }) => {
                   sx={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    px: 1,
+                    px: statusColor ? 1 : 0,
+                    py: statusColor ? 0.2 : 0,
                     borderRadius: 1.5,
-                    backgroundColor: statusColor || 'rgba(0,0,0,0.1)',
+                    backgroundColor: statusColor,
                     gap: 0.5,
                     minWidth: 80,
-                    color: 'grey.900',
+                    color: statusColor ? 'grey.900' : 'primary.main',
                     flexShrink: 0
                   }}
                 >
-                  <WatchLaterOutlinedIcon sx={{ fontSize: 16 }} />
+                  {statusColor
+                    ? <AccessTimeIcon sx={{ fontSize: 16 }} />
+                    : <AccessTimeFilledIcon sx={{ fontSize: 16 }} />
+                  }
                   <Typography
                     variant="body2"
                     sx={{

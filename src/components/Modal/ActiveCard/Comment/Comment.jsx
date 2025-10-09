@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
@@ -16,6 +16,7 @@ import { selectCurrentUser } from '~/redux/user/userSlice'
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { renderTime } from '~/utils/formatters'
 import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
+import { toast } from 'react-toastify'
 
 const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
   const currentUser = useSelector(selectCurrentUser)
@@ -33,7 +34,9 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
 
   const handleSendComment = async () => {
     const content = commentInput.trim()
-    if (!content || isPosting) return
+    if (!content) {
+      return
+    }
 
     const commentToAdd = {
       userId: currentUser?._id,
@@ -68,7 +71,10 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
 
   const handleSaveEdit = async (comment) => {
     const newContent = editContent.trim()
-    if (!newContent) return
+    if (!newContent) {
+      toast.error('Comment cannot be empty.')
+      return
+    }
 
     try {
       setLoadingEditId(comment.commentId)
@@ -106,6 +112,16 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
       setLoadingDeleteId(null)
     }
   }
+
+  const inputEditRef = useRef(null)
+  useEffect(() => {
+    if (editingCommentId && inputEditRef.current) {
+      const length = inputEditRef.current.value.length
+      inputEditRef.current.setSelectionRange(length, length)
+      inputEditRef.current.focus()
+    }
+  }, [editingCommentId])
+
 
   const renderComments = cardComments.map((comment) => {
     const user = board?.FE_allUsers?.find((u) => u._id === comment.userId)
@@ -206,7 +222,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
             </Tooltip>
 
             <Box sx={{ width: 'inherit' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'start', gap: 1, height: '24px' }}>
                 <Typography
                   component="span"
                   sx={{
@@ -221,6 +237,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                 <Typography
                   variant="caption"
                   sx={{
+                    mt: '0.6px',
                     color: (theme) =>
                       theme.palette.mode === 'dark' ? 'grey.500' : 'grey.700'
                   }}
@@ -258,12 +275,14 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                   <TextField
                     fullWidth
                     multiline
+                    autoFocus
+                    inputRef={inputEditRef}
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     size="small"
                   />
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
-                    <Button size="small" onClick={handleCancelEdit} disabled={isEditLoading}>
+                    <Button size="small" color='inherit' onClick={handleCancelEdit} disabled={isEditLoading}>
                       Cancel
                     </Button>
                     <Button
@@ -305,12 +324,12 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Box sx={{ p: 2, maxWidth: 220 }}>
-          <Typography sx={{ fontSize: '14px', mb: 1 }}>
+        <Box sx={{ p: 2, width: 220 }}>
+          <Typography sx={{ fontSize: '14px', mb: 2 }}>
             Delete this comment?
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button size="small" onClick={handleClosePopover}>Cancel</Button>
+            <Button size="small" color='inherit' onClick={handleClosePopover}>Cancel</Button>
             <Button
               size="small"
               variant="contained"

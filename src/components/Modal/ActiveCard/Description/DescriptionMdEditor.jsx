@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useColorScheme } from '@mui/material/styles'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
@@ -13,9 +13,17 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
   const [cardDescription, setCardDescription] = useState(cardDescriptionProp)
 
   const updateCardDescription = () => {
+    if (cardDescription.trim() === cardDescriptionProp?.trim()) {
+      setMarkdownEditMode(false)
+      return
+    }
     setMarkdownEditMode(false)
     handleUpdateCardDescription(cardDescription)
   }
+
+  useEffect(() => {
+    setCardDescription(cardDescriptionProp)
+  }, [cardDescriptionProp])
 
   return (
     <Box sx={{ mt: -4 }}>

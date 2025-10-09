@@ -97,7 +97,7 @@ const AddAttachment = ({ open, anchorEl, onClose, handleAddCardAttachment }) => 
               Cancel
             </Button>
             <Button variant="contained" type='submit'>
-              Insert
+              Add
             </Button>
           </Box>
         </form>
