@@ -24,9 +24,11 @@ import { createNewCardAPI, deleteColumnDetailsAPI, updateColumnDetailsAPI } from
 import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
-import { socketIoInstance } from '~/socketClient'
+import { socketIoInstance } from '~/socketio/socketClient'
+import { useTranslation } from 'react-i18next'
 
 const Column = ({ column }) => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
 
@@ -66,7 +68,7 @@ const Column = ({ column }) => {
 
   const addNewCard = async () => {
     if (!newCardTitle) {
-      toast.error('Please enter card title.')
+      toast.error(t('enter_card_title'))
       return
     }
 
@@ -96,10 +98,10 @@ const Column = ({ column }) => {
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
-      title: 'Delete Column?',
-      description: 'This action will permanently delete your Column and its Card! Are you sure?',
-      confirmationText: 'Confirm',
-      cancellationText: 'Cancel',
+      title: t('delete_column'),
+      description: t('confirm_delete_column'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
       confirmationButtonProps: { color: 'error' }
     }).then(() => {
       toast.promise(
@@ -112,7 +114,7 @@ const Column = ({ column }) => {
             socketIoInstance.emit('FE_DELETE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
             toast.success(res?.deleteResult)
           }),
-        { pending: 'Deleting...' }
+        { pending: t('deleting') }
       )
 
     }).catch(() => { })
@@ -151,7 +153,7 @@ const Column = ({ column }) => {
         }}>
           <ToggleFocusInput value={column?.title} onChangedValue={onUpdateColumnTitle} data-no-dnd="true" />
           <Box>
-            <Tooltip title="More options">
+            <Tooltip title={t('more_options')}>
               <ExpandMoreIcon
                 sx={{ color: 'text.primary', cursor: 'pointer' }}
                 id="column-dropdown"
@@ -175,7 +177,7 @@ const Column = ({ column }) => {
             >
               <MenuItem onClick={toggleOpenNewCardForm}>
                 <ListItemIcon><AddCardIcon className='add-card-icon' fontSize="small" /></ListItemIcon>
-                <ListItemText>Add new card</ListItemText>
+                <ListItemText>{t('add_new_card')}</ListItemText>
               </MenuItem>
               <Divider />
               <MenuItem
@@ -183,7 +185,7 @@ const Column = ({ column }) => {
                 sx={{ '&:hover': { color: 'error.main', '& .delete-forever-icon': { color: 'error.main' } } }}
               >
                 <ListItemIcon><DeleteForeverIcon className='delete-forever-icon' fontSize="small" /></ListItemIcon>
-                <ListItemText>Delete this column</ListItemText>
+                <ListItemText>{t('delete_column')}</ListItemText>
               </MenuItem>
             </Menu>
           </Box>
@@ -205,8 +207,8 @@ const Column = ({ column }) => {
               alignItems: 'center',
               justifyContent: 'space-between'
             }}>
-              <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm} >Add new card</Button>
-              <Tooltip title="Drag to move">
+              <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm}>{t('add_new_card')}</Button>
+              <Tooltip title={t('drag_to_move')}>
                 <DragHandleIcon sx={{
                   cursor: 'pointer',
                   color: 'text.primary'
@@ -224,7 +226,7 @@ const Column = ({ column }) => {
                 value={newCardTitle}
                 onChange={(event) => setNewCardTitle(event.target.value)}
                 id="outlined-search"
-                label="Enter card title"
+                label={t('enter_card_title')}
                 type="text"
                 size='small'
                 variant="outlined"
@@ -260,7 +262,7 @@ const Column = ({ column }) => {
                     '&:hover': { bgcolor: theme => theme.palette.success.main }
                   }}
                 >
-                  Add
+                  {t('add')}
                 </Button>
                 <CloseIcon
                   data-no-dnd="true"

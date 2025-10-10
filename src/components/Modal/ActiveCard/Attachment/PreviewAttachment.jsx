@@ -4,8 +4,11 @@ import { IconButton } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import { getDownloadUrl, formatFileSize, isImageUrl, isPdfUrl, isVideoUrl } from '~/utils/formatters'
 import { renderTime } from '~/utils/formatters'
+import { useTranslation } from 'react-i18next'
 
 const PreviewAttachment = ({ att, onClose }) => {
+  const { t } = useTranslation()
+
   if (!att) return null
 
   const isImage = isImageUrl(att.url)
@@ -39,7 +42,7 @@ const PreviewAttachment = ({ att, onClose }) => {
 
         {isPdf && (
           <iframe key={att.url} src={att.url}
-            width="100%" height="100%" style={{ border: 'none' }} title="PDF Preview" allowFullScreen
+            width="100%" height="100%" style={{ border: 'none' }} title={t('pdfPreview')} allowFullScreen
           />
         )}
 
@@ -52,13 +55,13 @@ const PreviewAttachment = ({ att, onClose }) => {
         {!isImage && !isPdf && !isVideo && (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <Typography variant="caption" sx={{ fontWeight: 'bold', color: 'white', fontSize: '22px' }}>
-              There is no preview available for this attachment.
+              {t('noPreview')}
             </Typography>
             <Button sx={{ mt: 1, gap: 1 }} href={getDownloadUrl(att.url, att.displayText)}
               download variant="contained" component='a'
             >
               <FileDownloadIcon fontSize="small" />
-              Download file
+              {t('downloadFile')}
             </Button>
           </Box>
         )}
@@ -88,7 +91,7 @@ const PreviewAttachment = ({ att, onClose }) => {
             whiteSpace: 'nowrap', textAlign: 'center'
           }}
         >
-          Added {renderTime(att.uploadedAt)} • {formatFileSize(att.size)}
+          {t('added')} {renderTime(att.uploadedAt)} • {formatFileSize(att.size)}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -108,7 +111,7 @@ const PreviewAttachment = ({ att, onClose }) => {
             }}
             startIcon={<FileDownloadIcon />}
           >
-            Download
+            {t('download')}
           </Button>
 
           <Button
@@ -125,7 +128,7 @@ const PreviewAttachment = ({ att, onClose }) => {
             }}
             startIcon={<CloseIcon />}
           >
-            Close
+            {t('close')}
           </Button>
         </Box>
       </DialogTitle>

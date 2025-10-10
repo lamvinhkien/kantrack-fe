@@ -12,8 +12,10 @@ import { selectCurrentUser, logoutUserAPI } from '~/redux/user/userSlice'
 import { useConfirm } from 'material-ui-confirm'
 import { Link } from 'react-router-dom'
 import ListItemText from '@mui/material/ListItemText'
+import { useTranslation } from 'react-i18next'
 
 const Profile = () => {
+  const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -29,10 +31,10 @@ const Profile = () => {
   const confirmLogout = useConfirm()
   const handleLogout = () => {
     confirmLogout({
-      title: 'Log Out',
-      description: 'Are you sure log out of your account?',
-      confirmationText: 'Confirm',
-      cancellationText: 'Cancel',
+      title: t('logout'),
+      description: t('confirm_logout'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
       confirmationButtonProps: { color: 'error' }
     })
       .then(() => { dispatch(logoutUserAPI()) })
@@ -42,7 +44,7 @@ const Profile = () => {
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip title="Account">
+        <Tooltip title={t('account')}>
           <IconButton
             onClick={handleClick}
             size="small"
@@ -72,7 +74,7 @@ const Profile = () => {
               sx={{ width: 28, height: 28 }}
             />
           </ListItemIcon>
-          <ListItemText primary="Profile" />
+          <ListItemText primary={t('profile')} />
         </MenuItem>
         <MenuItem
           onClick={handleLogout}
@@ -81,7 +83,7 @@ const Profile = () => {
           <ListItemIcon>
             <Logout className='logout-icon' fontSize="small" />
           </ListItemIcon>
-          Logout
+          {t('logout')}
         </MenuItem>
       </Menu>
     </React.Fragment>

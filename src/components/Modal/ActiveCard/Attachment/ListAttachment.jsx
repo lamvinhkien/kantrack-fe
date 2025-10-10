@@ -22,8 +22,12 @@ import { getDownloadUrl, isImageUrl, isVideoUrl, getFileExtension } from '~/util
 import { toast } from 'react-toastify'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import { renderTime } from '~/utils/formatters'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
+import { useTranslation } from 'react-i18next'
 
 const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
+  const { t } = useTranslation()
   const { mode } = useColorScheme()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const [selectedAttachment, setSelectedAttachment] = useState(null)
@@ -65,7 +69,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
   const handleRemoveAttachment = (action) => {
     toast.promise(
       handleUpdateCardAttachments(action, selectedAttachment),
-      { pending: 'Removing...' }
+      { pending: t('removing') }
     )
     setAnchorPopoverElement(null)
     setSelectedAttachment(null)
@@ -76,7 +80,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
       {files.length > 0 && (
         <>
           <List sx={{ mt: 1 }}>
-            <Typography sx={{ fontWeight: '500' }}>Files</Typography>
+            <Typography sx={{ fontWeight: '500' }}>{t('files')}</Typography>
             {files.map((att, idx) => (
               <ListItem
                 key={`file-${idx}`}
@@ -87,7 +91,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                   <Box
                     component="img"
                     src={att.url}
-                    alt={att.displayText || `File ${idx + 1}`}
+                    alt={att.displayText || `${t('file')} ${idx + 1}`}
                     sx={{
                       width: 45,
                       height: 45,
@@ -175,7 +179,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
 
       {links.length > 0 && (
         <List sx={{ mt: files.length > 0 ? 0 : 1 }}>
-          <Typography sx={{ fontWeight: '500' }}>Links</Typography>
+          <Typography sx={{ fontWeight: '500' }}>{t('links')}</Typography>
           {links.map((att, idx) => (
             <ListItem
               key={`link-${idx}`}
@@ -241,44 +245,77 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
         {modePopover === 'main' && (
           <MenuList>
             <MenuItem onClick={() => setModePopover('edit')}>
-              <Typography>Edit</Typography>
+              <Typography>{t('edit')}</Typography>
             </MenuItem>
             {selectedAttachment?.type === 'file' && (
               <MenuItem component="a" download
                 href={getDownloadUrl(selectedAttachment?.url, selectedAttachment?.displayText)}
               >
-                <Typography>Download</Typography>
+                <Typography>{t('download')}</Typography>
               </MenuItem>
             )}
             <MenuItem onClick={() => setModePopover('remove')}>
-              <Typography color="error.light">Remove</Typography>
+              <Typography color="error.light">{t('remove')}</Typography>
             </MenuItem>
           </MenuList>
         )}
 
         {modePopover === 'edit' && (
           <Box sx={{ p: 2, width: 350 }}>
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+                mb: 2.5,
+                pb: 1
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                {t('editAttachment')}
+              </Typography>
+
+              <IconButton
+                size="small"
+                onClick={handleClosePopover}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: -8,
+                  bottom: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
             <form onSubmit={handleSubmit((data) => handleEditDisplayText(CARD_ATTACHMENT_ACTIONS.EDIT, data))}>
               {selectedAttachment?.type === 'link'
                 ?
                 <>
-                  <TextField fullWidth size="medium" label="Link"
+                  <TextField fullWidth size="small" label={t('link')} multiline
                     error={!!errors['newLink']}
                     {...register('newLink', {
                       required: FIELD_REQUIRED_MESSAGE,
                       pattern: {
                         value: /^(https?:\/\/[^\s$.?#].[^\s]*)$/i,
-                        message: 'Please enter a valid URL'
+                        message: t('enterValidUrl')
                       }
                     })}
                   />
                   <FieldErrorAlert errors={errors} fieldName={'newLink'} />
-                  <TextField label='Display text' size='medium' fullWidth sx={{ mt: 2 }} {...register('newDisplayText')} />
+                  <TextField label={t('displayText')} size='small' multiline fullWidth sx={{ mt: 2 }} {...register('newDisplayText')} />
                 </>
                 :
                 <TextField
-                  fullWidth size="medium"
-                  label='File name'
+                  fullWidth
+                  multiline
+                  size="small"
+                  label={t('fileName')}
                   error={!!errors['newDisplayText']}
                   {...register('newDisplayText', {
                     required: FIELD_REQUIRED_MESSAGE
@@ -287,8 +324,8 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
               }
               <FieldErrorAlert errors={errors} fieldName={'newDisplayText'} />
               <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1 }}>
-                <Button size="small" color='inherit' onClick={() => setModePopover('main')}>Cancel</Button>
-                <Button size="small" variant="contained" type='submit'>Save</Button>
+                <Button size="small" color='inherit' onClick={() => setModePopover('main')}>{t('cancel')}</Button>
+                <Button size="small" variant="contained" type='submit'>{t('save')}</Button>
               </Stack>
             </form>
           </Box>
@@ -296,10 +333,10 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
 
         {modePopover === 'remove' && (
           <Box sx={{ p: 2, width: 220 }}>
-            <Typography sx={{ mb: 2 }}>Remove this url?</Typography>
+            <Typography sx={{ mb: 2 }}>{t('removeThisAttach')}</Typography>
             <Stack direction="row" spacing={1} justifyContent="flex-end">
-              <Button size="small" color='inherit' onClick={() => setModePopover('main')}>Cancel</Button>
-              <Button size="small" variant="contained" color="error" onClick={() => handleRemoveAttachment(CARD_ATTACHMENT_ACTIONS.REMOVE)}>Remove</Button>
+              <Button size="small" color='inherit' onClick={() => setModePopover('main')}>{t('cancel')}</Button>
+              <Button size="small" variant="contained" color="error" onClick={() => handleRemoveAttachment(CARD_ATTACHMENT_ACTIONS.REMOVE)}>{t('remove')}</Button>
             </Stack>
           </Box>
         )}

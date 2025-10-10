@@ -6,15 +6,19 @@ import {
   MenuItem,
   Popover,
   TextField,
-  Typography
+  Typography,
+  IconButton
 } from '@mui/material'
 import { DatePicker, TimePicker } from '@mui/x-date-pickers'
 import { useForm, Controller } from 'react-hook-form'
 import { useState, useEffect } from 'react'
+import CloseIcon from '@mui/icons-material/Close'
 import moment from 'moment'
+import { useTranslation } from 'react-i18next'
 
 const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
   const { mode } = useColorScheme()
+  const { t } = useTranslation()
   const popoverId = open ? 'card-edit-date-popover' : undefined
 
   const { control, handleSubmit, reset, watch } = useForm({
@@ -136,14 +140,46 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
           width: 320,
           bgcolor: mode === 'dark' ? 'grey.900' : 'background.paper',
           display: 'flex',
-          flexDirection: 'column',
-          gap: 2.5
+          flexDirection: 'column'
         }}
       >
+        {/* Header */}
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            mb: 1,
+            pb: 1
+          }}
+        >
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            {t('setDates')}
+          </Typography>
+
+          <IconButton
+            size="small"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: -8,
+              bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+
         {/* Start Date */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5 }}>
           <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Start date
+            {t('startDate')}
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -152,61 +188,41 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
               onChange={(e) => setHasStartDate(e.target.checked)}
               sx={{ p: 0.5 }}
             />
-
-            {/* Start Date */}
             <Controller
               name="startDate"
               control={control}
-              rules={{
-                validate: (value) => {
-                  if (hasStartDate && !value) return 'Required.'
-                  if (hasStartDate && !moment(value, true).isValid()) return 'Invalid.'
-                  return true
-                }
-              }}
               render={({ field, fieldState: { error } }) => (
-                <>
-                  <DatePicker
-                    value={field.value}
-                    onChange={field.onChange}
-                    format="DD-MM-YYYY"
-                    disabled={!hasStartDate}
-                    slotProps={{
-                      textField: {
-                        size: 'small',
-                        fullWidth: true,
-                        error: !!error,
-                        helperText: error?.message
-                      }
-                    }}
-                    maxDate={watch('dueDate')}
-                  />
-                </>
+                <DatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  format="DD-MM-YYYY"
+                  disabled={!hasStartDate}
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      fullWidth: true,
+                      error: !!error,
+                      helperText: error?.message
+                    }
+                  }}
+                  maxDate={watch('dueDate')}
+                />
               )}
             />
           </Box>
         </Box>
 
         {/* Due Date & Time */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5 }}>
           <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Due date
+            {t('dueDate')}
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
-              {/* Due Time */}
               <Controller
                 name="dueTime"
                 control={control}
-                rules={{
-                  required: 'Required.',
-                  validate: (value) => {
-                    if (!value) return 'Required.'
-                    if (!moment(value, 'HH:mm', true).isValid()) return 'Invalid.'
-                    return true
-                  }
-                }}
                 render={({ field, fieldState: { error } }) => (
                   <TimePicker
                     value={field.value}
@@ -226,20 +242,9 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
               />
             </Box>
             <Box sx={{ flex: 1.5 }}>
-              {/* Due Date */}
               <Controller
                 name="dueDate"
                 control={control}
-                rules={{
-                  required: 'Required.',
-                  validate: (value) => {
-                    if (!value) return 'Required.'
-                    if (!moment(value, true).isValid()) return 'Invalid.'
-                    if (hasStartDate && watch('startDate') && moment(value).isBefore(watch('startDate')))
-                      return 'Due date cannot be before start date.'
-                    return true
-                  }
-                }}
                 render={({ field, fieldState: { error } }) => (
                   <DatePicker
                     value={field.value}
@@ -262,9 +267,9 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
         </Box>
 
         {/* Reminder */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5 }}>
           <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Set due date reminder
+            {t('setDueDateReminder')}
           </Typography>
 
           <Controller
@@ -272,39 +277,31 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
             control={control}
             render={({ field }) => (
               <TextField {...field} select size="small" fullWidth>
-                <MenuItem value="None">None</MenuItem>
-                <MenuItem value="5m">5 minutes before</MenuItem>
-                <MenuItem value="10m">10 minutes before</MenuItem>
-                <MenuItem value="30m">30 minutes before</MenuItem>
-                <MenuItem value="1h">1 hour before</MenuItem>
-                <MenuItem value="1d">1 day before</MenuItem>
+                <MenuItem value="None">{t('none')}</MenuItem>
+                <MenuItem value="5m">{t('5MinutesBefore')}</MenuItem>
+                <MenuItem value="10m">{t('10MinutesBefore')}</MenuItem>
+                <MenuItem value="30m">{t('30MinutesBefore')}</MenuItem>
+                <MenuItem value="1h">{t('1HourBefore')}</MenuItem>
+                <MenuItem value="1d">{t('1DayBefore')}</MenuItem>
               </TextField>
             )}
           />
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Email reminders will be sent to all members of this card.
+            {t('emailReminderInfo')}
           </Typography>
         </Box>
 
         {/* Actions */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleSubmit(onSubmit)}
-          >
-            Save
+          <Button variant="contained" color="primary" fullWidth onClick={handleSubmit(onSubmit)}>
+            {t('save')}
           </Button>
-          <Button
-            variant="contained"
-            color="error"
-            fullWidth
-            onClick={handleRemove}
-          >
-            Remove
-          </Button>
+          {dates?.dueDate && (
+            <Button variant="contained" color="error" fullWidth onClick={handleRemove}>
+              {t('remove')}
+            </Button>
+          )}
         </Box>
       </Box>
     </Popover>

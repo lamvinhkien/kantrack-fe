@@ -26,7 +26,7 @@ import { updateCardDetailsAPI, deleteCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 import { useEffect } from 'react'
-import { socketIoInstance } from '~/socketClient'
+import { socketIoInstance } from '~/socketio/socketClient'
 import AddAttachment from './Attachment/AddAttachment'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
@@ -41,6 +41,9 @@ import usePopover from '~/customHooks/usePopover'
 import EditDate from './Date/EditDate'
 import DateInfo from './Date/DateInfo'
 import Title from './Title/Title'
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
+import { useTranslation } from 'react-i18next'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -90,6 +93,7 @@ const getScrollbarStyles = (theme) => ({
 })
 
 const ActiveCard = () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
   const currentUser = useSelector(selectCurrentUser)
@@ -140,24 +144,24 @@ const ActiveCard = () => {
 
     toast.promise(
       callApiUpdateCard(reqData)
-        .then(() => toast.success('Upload complete.'))
+        .then(() => toast.success(t('upload_success')))
         .finally(() => { event.target.value = '' }),
-      { pending: 'Updating...' }
+      { pending: t('updating') }
     )
   }
 
   const onDeleteCardCover = (cover) => {
     confirmDeleteCardCover({
-      title: 'Remove card cover?',
-      description: 'This action will permanently remove your card cover, are you sure?',
-      confirmationText: 'Confirm',
-      cancellationText: 'Cancel',
+      title: t('remove_cover'),
+      description: t('confirm_remove_cover'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
       confirmationButtonProps: { color: 'error' }
     }).then(() => {
       toast.promise(
         callApiUpdateCard({ coverToDelete: cover })
-          .then(() => toast.success('Cover removed.')),
-        { pending: 'Removing...' }
+          .then(() => toast.success(t('cover_removed'))),
+        { pending: t('removing') }
       )
     }).catch(() => { })
   }
@@ -187,8 +191,8 @@ const ActiveCard = () => {
 
       toast.promise(
         callApiUpdateCard(reqData)
-          .then(() => toast.success('Upload complete.')),
-        { pending: 'Updating...' }
+          .then(() => toast.success(t('upload_success'))),
+        { pending: t('upading') }
       )
     }
 
@@ -203,10 +207,10 @@ const ActiveCard = () => {
 
   const onDeleteCard = async () => {
     confirmDeleteCard({
-      title: 'Delete card?',
-      description: 'This action will permanently delete your card, are you sure?',
-      confirmationText: 'Confirm',
-      cancellationText: 'Cancel',
+      title: t('delete_card'),
+      description: t('confirm_delete_card'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
       confirmationButtonProps: { color: 'error' }
     }).then(() => {
       toast.promise(
@@ -228,7 +232,7 @@ const ActiveCard = () => {
             toast.success(res.deleteResult)
             handleCloseModal()
           }),
-        { pending: 'Deleting...' }
+        { pending: t('deleting') }
       )
 
     }).catch(() => { })
@@ -297,7 +301,7 @@ const ActiveCard = () => {
                     onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.REMOVE })}
                   >
                     <LogoutIcon fontSize="small" />
-                    Left
+                    {t('left')}
                   </SidebarItem>
                   :
                   <SidebarItem
@@ -305,31 +309,34 @@ const ActiveCard = () => {
                     onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.ADD })}
                   >
                     <PersonOutlinedIcon fontSize="small" />
-                    Join
+                    {t('join')}
                   </SidebarItem>
               }
 
               <SidebarItem className='active' component="label">
-                <ImageOutlinedIcon fontSize="small" /> Cover
+                <ImageOutlinedIcon fontSize="small" /> {t('cover')}
                 <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
               </SidebarItem>
 
               {!activeCard?.dates?.dueDate &&
                 <SidebarItem className='active' onClick={editDatePopover.openPopover}>
-                  <WatchLaterOutlinedIcon fontSize="small" /> Dates
+                  <WatchLaterOutlinedIcon fontSize="small" /> {t('dates')}
                 </SidebarItem>
               }
 
               {activeCard?.attachments?.length === 0 &&
                 <SidebarItem className='active' component="label" onClick={addAttachmentPopover.openPopover}>
-                  <AttachmentIcon fontSize="small" /> Attachment
+                  <AttachmentIcon fontSize="small" /> {t('attachment')}
                 </SidebarItem>
               }
             </Stack>
 
             <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
               <Box>
-                <Typography sx={{ fontWeight: 'bold', mb: 1 }}>Members</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                  <GroupOutlinedIcon fontSize='small' />
+                  <Typography sx={{ fontWeight: 'bold' }}>{t('member')}</Typography>
+                </Box>
                 <UserGroup
                   cardMemberIds={activeCard?.memberIds}
                   onUpdateCardMembers={onUpdateCardMembers}
@@ -338,7 +345,10 @@ const ActiveCard = () => {
 
               {activeCard?.dates?.dueDate && (
                 <Box>
-                  <Typography sx={{ fontWeight: 'bold', mb: 1 }}>Dates</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                    <AccessAlarmIcon fontSize='small' />
+                    <Typography sx={{ fontWeight: 'bold' }}>{t('dates')}</Typography>
+                  </Box>
                   <DateInfo
                     dates={activeCard?.dates}
                     complete={activeCard?.complete}
@@ -351,7 +361,7 @@ const ActiveCard = () => {
             <Box sx={{ mt: 5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <SubjectRoundedIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Description</Typography>
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>{t('description')}</Typography>
               </Box>
               <DescriptionMdEditor
                 cardDescriptionProp={activeCard?.description}
@@ -364,7 +374,7 @@ const ActiveCard = () => {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <AttachmentIcon />
-                    <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>Attachment</Typography>
+                    <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>{t('attachment')}</Typography>
                   </Box>
                   <Button
                     onClick={addAttachmentPopover.openPopover}
@@ -374,7 +384,7 @@ const ActiveCard = () => {
                     size="small"
                     startIcon={<AddIcon />}
                   >
-                    Add
+                    {t('add')}
                   </Button>
                 </Box>
                 <ListAttachment
@@ -398,7 +408,7 @@ const ActiveCard = () => {
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <DvrOutlinedIcon />
-                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>Comments</Typography>
+                <Typography variant="span" sx={{ fontWeight: '600', fontSize: '20px' }}>{t('comment')}</Typography>
               </Box>
               <Comment
                 cardComments={activeCard?.comments}

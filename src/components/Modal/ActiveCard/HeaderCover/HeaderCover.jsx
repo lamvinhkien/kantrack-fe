@@ -8,8 +8,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import PreviewAttachment from '../Attachment/PreviewAttachment'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import UnpublishedIcon from '@mui/icons-material/Unpublished'
+import { useTranslation } from 'react-i18next'
 
 const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, handleDeleteCard, handleCloseModal, handleUpdateComplete }) => {
+  const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const [previewFile, setPreviewFile] = useState(null)
@@ -101,12 +103,12 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
                 ?
                 <>
                   <UnpublishedIcon fontSize="small" sx={{ mr: 1 }} />
-                  Mark incomplete
+                  {t('mark_incomplete')}
                 </>
                 :
                 <>
                   <CheckCircleIcon fontSize="small" sx={{ mr: 1 }} />
-                  Mark complete
+                  {t('mark_complete')}
                 </>
             }
           </MenuItem>
@@ -120,7 +122,7 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
               sx={{ fontSize: 14, mt: 1 }}
             >
               <ImageNotSupportedIcon fontSize="small" sx={{ mr: 1 }} />
-              Remove cover
+              {t('remove_cover')}
             </MenuItem>
           )}
 
@@ -136,7 +138,7 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
             }}
           >
             <DeleteForeverIcon fontSize="small" sx={{ mr: 1 }} />
-            Delete card
+            {t('delete_card')}
           </MenuItem>
         </Menu>
       </Box>

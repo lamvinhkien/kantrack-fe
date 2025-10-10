@@ -17,6 +17,7 @@ import { persistStore } from 'redux-persist'
 const persistor = persistStore(store)
 import { injectStore } from '~/utils/authorizeAxios'
 injectStore(store)
+import '~/i18n'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>

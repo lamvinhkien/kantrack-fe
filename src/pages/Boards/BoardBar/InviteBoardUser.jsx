@@ -10,9 +10,11 @@ import { useForm } from 'react-hook-form'
 import { EMAIL_RULE, FIELD_REQUIRED_MESSAGE, EMAIL_RULE_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { inviteUserToBoardAPI } from '~/apis'
-import { socketIoInstance } from '~/socketClient'
+import { socketIoInstance } from '~/socketio/socketClient'
+import { useTranslation } from 'react-i18next'
 
 const InviteBoardUser = ({ boardId }) => {
+  const { t } = useTranslation()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'invite-board-user-popover' : undefined
@@ -33,7 +35,7 @@ const InviteBoardUser = ({ boardId }) => {
 
   return (
     <Box>
-      <Tooltip title="Invite user to this board!">
+      <Tooltip title={t('invite_user')}>
         <Box
           onClick={handleTogglePopover}
           sx={{
@@ -52,7 +54,7 @@ const InviteBoardUser = ({ boardId }) => {
         >
           <PersonAddIcon />
           <Typography variant="body2" fontWeight={500}>
-            Invite
+            {t('invite')}
           </Typography>
         </Box>
       </Tooltip>
@@ -67,12 +69,14 @@ const InviteBoardUser = ({ boardId }) => {
       >
         <form onSubmit={handleSubmit(submitInviteUserToBoard)} style={{ width: '320px' }}>
           <Box sx={{ p: '15px 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="span" sx={{ fontWeight: 'bold', fontSize: '16px' }}>Invite User To This Board!</Typography>
+            <Typography variant="span" sx={{ fontWeight: 'bold', fontSize: '16px' }}>{t('invite_user')}</Typography>
             <Box>
               <TextField
+                size='small'
                 autoFocus
+                multiline
                 fullWidth
-                label="Enter email to invite..."
+                label={t('enter_email')}
                 type="text"
                 variant="outlined"
                 {...register('inviteeEmail', {
@@ -83,10 +87,9 @@ const InviteBoardUser = ({ boardId }) => {
               />
               <FieldErrorAlert errors={errors} fieldName={'inviteeEmail'} />
             </Box>
-
             <Box sx={{ display: 'flex', justifyContent: 'center', alignSelf: 'flex-end', gap: 1 }}>
               <Button variant="text" color='inherit' onClick={handleTogglePopover}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 className="interceptor-loading"
@@ -94,7 +97,7 @@ const InviteBoardUser = ({ boardId }) => {
                 variant="contained"
                 color="info"
               >
-                Invite
+                {t('invite')}
               </Button>
             </Box>
           </Box>

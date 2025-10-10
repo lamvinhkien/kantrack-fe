@@ -5,10 +5,11 @@ import rehypeSanitize from 'rehype-sanitize'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import EditNoteIcon from '@mui/icons-material/EditNote'
+import { useTranslation } from 'react-i18next'
 
 const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription }) => {
   const { mode } = useColorScheme()
-
+  const { t } = useTranslation()
   const [markdownEditMode, setMarkdownEditMode] = useState(false)
   const [cardDescription, setCardDescription] = useState(cardDescriptionProp)
 
@@ -36,7 +37,7 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
               onChange={setCardDescription}
               previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
               height={220}
-              preview="edit"
+              preview={t('edit')}
             />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
@@ -50,7 +51,7 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
               size="small"
               color="inherit"
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={updateCardDescription}
@@ -60,7 +61,7 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
               size="small"
               color="info"
             >
-              Save
+              {t('save')}
             </Button>
           </Box>
         </Box>
@@ -75,7 +76,7 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
             size="small"
             startIcon={<EditNoteIcon />}
           >
-            Edit
+            {t('edit')}
           </Button>
           <Box
             data-color-mode={mode}
@@ -83,7 +84,7 @@ const DescriptionMdEditor = ({ cardDescriptionProp, handleUpdateCardDescription 
             onClick={() => { if (!cardDescription) setMarkdownEditMode(true) }}
           >
             <MDEditor.Markdown
-              source={cardDescription ? cardDescription : 'Add a more detailed description...'}
+              source={cardDescription ? cardDescription : t('add_description')}
               style={{
                 whiteSpace: 'pre-wrap',
                 padding: !cardDescription ? '12px' : '0px',

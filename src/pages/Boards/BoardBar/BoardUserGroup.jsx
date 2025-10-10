@@ -3,8 +3,10 @@ import Box from '@mui/material/Box'
 import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
 import Popover from '@mui/material/Popover'
+import { useTranslation } from 'react-i18next'
 
 const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
+  const { t } = useTranslation()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'board-all-users-popover' : undefined
@@ -32,7 +34,7 @@ const BoardUserGroup = ({ boardUsers = [], limit = 5 }) => {
 
       {
         boardUsers.length > limit &&
-        <Tooltip title="Show more">
+        <Tooltip title={t('show_more')}>
           <Box
             aria-describedby={popoverId}
             onClick={handleTogglePopover}

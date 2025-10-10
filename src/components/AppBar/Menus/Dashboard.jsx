@@ -8,8 +8,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Link } from 'react-router-dom'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import HomeIcon from '@mui/icons-material/Home'
+import { useTranslation } from 'react-i18next'
 
 const Dashboard = () => {
+  const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -30,7 +32,7 @@ const Dashboard = () => {
         endIcon={<ExpandMoreIcon />}
         sx={{ color: 'white' }}
       >
-        Dashboard
+        {t('dashboard')}
       </Button>
       <Menu
         id="menu-dashboard"
@@ -47,13 +49,13 @@ const Dashboard = () => {
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="Home" />
+          <ListItemText primary={t('home')} />
         </MenuItem>
         <MenuItem component={Link} to="/boards">
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="Boards" />
+          <ListItemText primary={t('boards')} />
         </MenuItem>
       </Menu>
     </>

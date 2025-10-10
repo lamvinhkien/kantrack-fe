@@ -289,7 +289,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                       size="small"
                       variant="contained"
                       onClick={() => handleSaveEdit(comment)}
-                      disabled={isEditLoading}
+                      disabled={isEditLoading || !editContent}
                     >
                       {isEditLoading ? <CircularProgress size={16} color="inherit" /> : 'Save'}
                     </Button>

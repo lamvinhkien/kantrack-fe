@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
-import Badge from '@mui/material/Badge'
+import {
+  Badge,
+  Box,
+  Typography,
+  Tooltip,
+  IconButton,
+  Button,
+  Chip,
+  Menu,
+  MenuItem,
+  Divider
+} from '@mui/material'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Tooltip from '@mui/material/Tooltip'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Divider from '@mui/material/Divider'
 import GroupAddIcon from '@mui/icons-material/GroupAdd'
 import DoneIcon from '@mui/icons-material/Done'
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
@@ -19,10 +22,11 @@ import {
   selectCurrentNotifications,
   addNotification
 } from '~/redux/notifications/notificationsSlice'
-import { socketIoInstance } from '~/socketClient'
+import { socketIoInstance } from '~/socketio/socketClient'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { renderTime } from '~/utils/formatters'
+import { useTranslation } from 'react-i18next'
 
 const BOARD_INVITATION_STATUS = {
   PENDING: 'PENDING',
@@ -31,23 +35,33 @@ const BOARD_INVITATION_STATUS = {
 }
 
 const Notifications = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  const [anchorEl, setAnchorEl] = useState(null)
-  const open = Boolean(anchorEl)
+  const dispatch = useDispatch()
+  const notifications = useSelector(selectCurrentNotifications)
+  const currentUser = useSelector(selectCurrentUser)
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [hover, setHover] = useState(false)
+  const [disableUntil, setDisableUntil] = useState(0)
   const [newNotification, setNewNotification] = useState(false)
-  const handleClickNotificationIcon = (event) => {
-    setAnchorEl(event.currentTarget)
+
+  const menuOpen = Boolean(anchorEl)
+  const now = Date.now()
+  const tooltipAllowed = now > disableUntil
+  const tooltipOpen = hover && !menuOpen && tooltipAllowed
+
+  const handleOpenMenu = (e) => {
+    setAnchorEl(e.currentTarget)
+    setDisableUntil(Date.now() + 1000)
     setNewNotification(false)
   }
 
-  const handleClose = () => {
+  const handleCloseMenu = () => {
     setAnchorEl(null)
+    setDisableUntil(Date.now() + 600)
+    setHover(false)
   }
-
-  const notifications = useSelector(selectCurrentNotifications)
-  const currentUser = useSelector(selectCurrentUser)
-  const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(fetchInvitationsAPI())
@@ -64,7 +78,6 @@ const Notifications = () => {
     return () => {
       socketIoInstance.off('BE_USER_INVITED_TO_BOARD', onReceiveNewInvitation)
     }
-
   }, [dispatch, currentUser._id])
 
   const updateBoardInvitation = (invitationId, status) => {
@@ -77,97 +90,143 @@ const Notifications = () => {
   }
 
   return (
-    <Box>
-      <Tooltip title="Notifications">
-        <Badge
-          color="warning"
-          variant={newNotification ? 'dot' : 'none'}
-          sx={{ cursor: 'pointer' }}
-          id="basic-button-open-notification"
-          aria-controls={open ? 'basic-notification-drop-down' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClickNotificationIcon}
+    <Box
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      sx={{ mr: 0.5 }}
+    >
+      <Tooltip
+        title={t('notification')}
+        arrow
+        placement="bottom"
+        open={tooltipOpen}
+      >
+        <IconButton
+          color="inherit"
+          onClick={handleOpenMenu}
+          sx={{ color: 'white' }}
         >
-          <NotificationsNoneIcon sx={{
-            color: newNotification ? 'yellow' : 'white'
-          }} />
-        </Badge>
+          <Badge
+            color="warning"
+            variant={newNotification ? 'dot' : 'none'}
+          >
+            <NotificationsNoneIcon
+              fontSize="medium"
+              sx={{
+                color: newNotification ? 'yellow' : 'white'
+              }}
+            />
+          </Badge>
+        </IconButton>
       </Tooltip>
 
       <Menu
-        sx={{ mt: 2 }}
-        id="basic-notification-drop-down"
         anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{ 'aria-labelledby': 'basic-button-open-notification' }}
+        open={menuOpen}
+        onClose={handleCloseMenu}
+        MenuListProps={{ 'aria-labelledby': 'notification-menu-button' }}
       >
-        {
-          !notifications || notifications.length === 0
-            ?
-            <MenuItem sx={{ minWidth: 200 }}>You do not have any new notifications.</MenuItem>
-            :
-            notifications.map((notification, index) => (
-              <Box key={index}>
-                <MenuItem
-                  key={index}
+        {!notifications || notifications.length === 0 ? (
+          <MenuItem sx={{ minWidth: 200 }}>
+            {t('no_notification')}
+          </MenuItem>
+        ) : (
+          notifications.map((notification, index) => (
+            <Box key={index}>
+              <MenuItem
+                sx={{
+                  minWidth: 200,
+                  maxWidth: 360,
+                  overflowY: 'auto'
+                }}
+              >
+                <Box
                   sx={{
-                    minWidth: 200,
-                    maxWidth: 360,
-                    overflowY: 'auto'
+                    maxWidth: '100%',
+                    wordBreak: 'break-word',
+                    whiteSpace: 'pre-wrap',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1
                   }}
                 >
-                  <Box sx={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'pre-wrap', display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box><GroupAddIcon fontSize="small" /></Box>
-                      <Box><strong>{notification.inviter?.displayName}</strong> had invited you to join the board <strong>{notification.board?.title}</strong></Box>
-                    </Box>
-
-                    {
-                      notification.boardInvitation.status === BOARD_INVITATION_STATUS.PENDING &&
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-end' }}>
-                        <Button
-                          className="interceptor-loading"
-                          type="submit"
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          onClick={() => updateBoardInvitation(notification._id, BOARD_INVITATION_STATUS.ACCEPTED)}
-                        >
-                          Accept
-                        </Button>
-                        <Button
-                          className="interceptor-loading"
-                          type="submit"
-                          variant="contained"
-                          color="error"
-                          size="small"
-                          onClick={() => updateBoardInvitation(notification._id, BOARD_INVITATION_STATUS.REJECTED)}
-                        >
-                          Reject
-                        </Button>
-                      </Box>
-                    }
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-end' }}>
-                      {notification.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED &&
-                        <Chip icon={<DoneIcon />} label="Accepted" color="success" size="small" />}
-                      {notification.boardInvitation.status === BOARD_INVITATION_STATUS.REJECTED &&
-                        <Chip icon={<NotInterestedIcon />} label="Rejected" color="error" size="small" />}
-                    </Box>
-
-                    <Box sx={{ textAlign: 'right' }}>
-                      <Typography variant="span" sx={{ fontSize: '13px' }}>
-                        {renderTime(notification.createdAt)}
-                      </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <GroupAddIcon fontSize="small" />
+                    <Box>
+                      <strong>{notification.inviter?.displayName}</strong> {t('invited_board')}{' '}
+                      <strong>{notification.board?.title}</strong>
                     </Box>
                   </Box>
-                </MenuItem>
-                {index !== (notifications?.length - 1) && <Divider />}
-              </Box>
-            ))
-        }
+
+                  {notification.boardInvitation.status === BOARD_INVITATION_STATUS.PENDING && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        justifyContent: 'flex-end'
+                      }}
+                    >
+                      <Button
+                        className="interceptor-loading"
+                        type="submit"
+                        variant="contained"
+                        color="success"
+                        size="small"
+                        onClick={() =>
+                          updateBoardInvitation(
+                            notification._id,
+                            BOARD_INVITATION_STATUS.ACCEPTED
+                          )
+                        }
+                      >
+                        {t('accept')}
+                      </Button>
+                      <Button
+                        className="interceptor-loading"
+                        type="submit"
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        onClick={() =>
+                          updateBoardInvitation(
+                            notification._id,
+                            BOARD_INVITATION_STATUS.REJECTED
+                          )
+                        }
+                      >
+                        {t('reject')}
+                      </Button>
+                    </Box>
+                  )}
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      justifyContent: 'flex-end'
+                    }}
+                  >
+                    {notification.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED && (
+                      <Chip icon={<DoneIcon />} label={t('accepted')} color="success" size="small" />
+                    )}
+                    {notification.boardInvitation.status === BOARD_INVITATION_STATUS.REJECTED && (
+                      <Chip icon={<NotInterestedIcon />} label={t('rejected')} color="error" size="small" />
+                    )}
+                  </Box>
+
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="span" sx={{ fontSize: '13px' }}>
+                      {renderTime(notification.createdAt)}
+                    </Typography>
+                  </Box>
+                </Box>
+              </MenuItem>
+              {index !== notifications.length - 1 && <Divider />}
+            </Box>
+          ))
+        )}
       </Menu>
     </Box>
   )

@@ -10,7 +10,7 @@ import { cloneDeep } from 'lodash'
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
-import { socketIoInstance } from '~/socketClient'
+import { socketIoInstance } from '~/socketio/socketClient'
 
 const Board = () => {
   const dispatch = useDispatch()

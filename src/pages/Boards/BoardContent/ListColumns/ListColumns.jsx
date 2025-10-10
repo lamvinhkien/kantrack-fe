@@ -12,9 +12,11 @@ import { generatePlaceholderCard } from '~/utils/formatters'
 import { cloneDeep } from 'lodash'
 import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import { socketIoInstance } from '~/socketClient'
+import { socketIoInstance } from '~/socketio/socketClient'
+import { useTranslation } from 'react-i18next'
 
 const ListColumns = ({ columns }) => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
 
@@ -24,7 +26,7 @@ const ListColumns = ({ columns }) => {
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const addNewColumn = async () => {
     if (!newColumnTitle) {
-      toast.error('Please enter column title.')
+      toast.error(t('enter_column_title'))
       return
     }
 
@@ -81,7 +83,7 @@ const ListColumns = ({ columns }) => {
               }}
               startIcon={<NoteAddIcon />}
             >
-              Add new column
+              {t('add_new_column')}
             </Button>
           </Box>
           :
@@ -101,7 +103,7 @@ const ListColumns = ({ columns }) => {
               value={newColumnTitle}
               onChange={(event) => setNewColumnTitle(event.target.value)}
               id="outlined-search"
-              label="Enter column title"
+              label={t('enter_column_title')}
               type="text"
               size='small'
               variant="outlined"
@@ -117,7 +119,7 @@ const ListColumns = ({ columns }) => {
                 }
               }}
             />
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1 }}>
               <Button
                 className='interceptor-loading'
                 onClick={addNewColumn}
@@ -129,7 +131,7 @@ const ListColumns = ({ columns }) => {
                   '&:hover': { bgcolor: theme => theme.palette.success.main }
                 }}
               >
-                Add Column
+                {t('add')}
               </Button>
               <CloseIcon
                 sx={{
