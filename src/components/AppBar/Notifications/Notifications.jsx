@@ -35,7 +35,7 @@ const BOARD_INVITATION_STATUS = {
 }
 
 const Notifications = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const notifications = useSelector(selectCurrentNotifications)
@@ -218,7 +218,7 @@ const Notifications = () => {
 
                   <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="span" sx={{ fontSize: '13px' }}>
-                      {renderTime(notification.createdAt)}
+                      {renderTime(notification.createdAt, { locale: i18n.language })}
                     </Typography>
                   </Box>
                 </Box>

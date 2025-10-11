@@ -9,8 +9,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { useSelector } from 'react-redux'
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
+import { useTranslation } from 'react-i18next'
 
 const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
+  const { t } = useTranslation()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'card-all-users-popover' : undefined
@@ -52,7 +54,9 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
       ))}
 
       {remainingCount > 0 && (
-        <Tooltip title={`${remainingCount} more members`}>
+        <Tooltip
+          title={t('more_members', { count: remainingCount })}
+        >
           <Box
             sx={{
               width: 34,
@@ -78,7 +82,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         </Tooltip>
       )}
 
-      <Tooltip title="Add new member">
+      <Tooltip title={t('add_new_member')}>
         <Box
           aria-describedby={popoverId}
           onClick={handleTogglePopover}

@@ -7,7 +7,7 @@ import { renderTime } from '~/utils/formatters'
 import { useTranslation } from 'react-i18next'
 
 const PreviewAttachment = ({ att, onClose }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (!att) return null
 
@@ -91,7 +91,7 @@ const PreviewAttachment = ({ att, onClose }) => {
             whiteSpace: 'nowrap', textAlign: 'center'
           }}
         >
-          {t('added')} {renderTime(att.uploadedAt)} • {formatFileSize(att.size)}
+          {renderTime(att.uploadedAt, { locale: i18n.language })} &nbsp; <strong>•</strong> &nbsp; {formatFileSize(att.size)}
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2 }}>

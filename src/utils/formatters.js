@@ -1,47 +1,49 @@
 import { slugify } from 'transliteration'
 import moment from 'moment'
 import 'moment/locale/vi'
-import 'moment/locale/en-gb' // để đảm bảo locale en đầy đủ
+import 'moment/locale/en-gb'
 
 export const renderTime = (time, options = {}) => {
   const {
     showExactAfterDays = 2,
-    locale = moment.locale(), // mặc định lấy locale hiện tại
+    locale = moment.locale(),
     showSeconds = false
   } = options
 
   if (!time) return ''
 
   const now = moment()
-  const target = moment(time).locale(locale) // set locale object
+  const target = moment(time).locale(locale)
 
   const diffSeconds = now.diff(target, 'seconds')
   const diffMinutes = now.diff(target, 'minutes')
   const diffHours = now.diff(target, 'hours')
-  const diffDays = now.diff(target, 'days')
+  const diffDaysFloat = now.diff(target, 'hours') / 24
+  const diffDays = Math.round(diffDaysFloat)
 
+  // === Dưới 1 phút ===
   if (diffSeconds < 60) {
-    if (showSeconds) {
+    if (showSeconds)
       return locale === 'vi'
         ? `${diffSeconds} giây trước`
         : `${diffSeconds} second${diffSeconds !== 1 ? 's' : ''} ago`
-    }
     return locale === 'vi' ? 'Vừa xong' : 'Just now'
   }
 
-  if (diffMinutes < 60) {
+  if (diffMinutes < 60)
     return locale === 'vi'
       ? `${diffMinutes} phút trước`
       : `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`
-  }
 
-  if (diffHours < 24) {
-    return locale === 'vi' ? target.fromNow(true) + ' trước' : target.fromNow()
-  }
+  if (diffHours < 24)
+    return locale === 'vi'
+      ? `${diffHours} giờ trước`
+      : target.fromNow()
 
-  if (diffDays < showExactAfterDays) {
-    return locale === 'vi' ? target.fromNow(true) + ' trước' : target.fromNow()
-  }
+  if (diffDays < showExactAfterDays)
+    return locale === 'vi'
+      ? `${diffDays} ngày trước`
+      : target.fromNow()
 
   const format = target.year() === now.year()
     ? 'DD/MM, HH:mm'

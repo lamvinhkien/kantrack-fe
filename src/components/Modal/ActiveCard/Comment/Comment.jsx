@@ -17,8 +17,10 @@ import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { renderTime } from '~/utils/formatters'
 import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
+  const { t, i18n } = useTranslation()
   const currentUser = useSelector(selectCurrentUser)
   const board = useSelector(selectCurrentActiveBoard)
   const [commentInput, setCommentInput] = useState('')
@@ -72,7 +74,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
   const handleSaveEdit = async (comment) => {
     const newContent = editContent.trim()
     if (!newContent) {
-      toast.error('Comment cannot be empty.')
+      toast.error(t('empty_comment'))
       return
     }
 
@@ -143,7 +145,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
 
         <TextField
           fullWidth
-          placeholder="Write a comment..."
+          placeholder={t('write_a_comment')}
           type="text"
           variant="outlined"
           multiline
@@ -199,7 +201,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
             color: '#b1b1b1'
           }}
         >
-          No comment found!
+          {t('no_comment_found')}
         </Typography>
       )}
 
@@ -242,7 +244,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                       theme.palette.mode === 'dark' ? 'grey.500' : 'grey.700'
                   }}
                 >
-                  {renderTime(comment.commentedAt)}
+                  {renderTime(comment.commentedAt, { locale: i18n.language })}
                 </Typography>
 
                 {isOwner && !isEditing && (
@@ -282,8 +284,13 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                     size="small"
                   />
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
-                    <Button size="small" color='inherit' onClick={handleCancelEdit} disabled={isEditLoading}>
-                      Cancel
+                    <Button
+                      size="small"
+                      color="inherit"
+                      onClick={handleCancelEdit}
+                      disabled={isEditLoading}
+                    >
+                      {t('cancel')}
                     </Button>
                     <Button
                       size="small"
@@ -291,7 +298,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                       onClick={() => handleSaveEdit(comment)}
                       disabled={isEditLoading || !editContent}
                     >
-                      {isEditLoading ? <CircularProgress size={16} color="inherit" /> : 'Save'}
+                      {isEditLoading ? <CircularProgress size={16} color="inherit" /> : t('save')}
                     </Button>
                   </Box>
                 </Box>
@@ -326,10 +333,12 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
       >
         <Box sx={{ p: 2, width: 220 }}>
           <Typography sx={{ fontSize: '14px', mb: 2 }}>
-            Delete this comment?
+            {t('delete_this_comment_question')}
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button size="small" color='inherit' onClick={handleClosePopover}>Cancel</Button>
+            <Button size="small" color="inherit" onClick={handleClosePopover}>
+              {t('cancel')}
+            </Button>
             <Button
               size="small"
               variant="contained"
@@ -340,7 +349,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
               {loadingDeleteId === selectedComment?.commentId ? (
                 <CircularProgress size={16} color="inherit" />
               ) : (
-                'Delete'
+                t('delete')
               )}
             </Button>
           </Box>

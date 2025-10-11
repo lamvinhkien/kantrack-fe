@@ -74,7 +74,7 @@ const Profile = () => {
               sx={{ width: 28, height: 28 }}
             />
           </ListItemIcon>
-          <ListItemText primary={t('profile')} />
+          <ListItemText primary={t('account')} />
         </MenuItem>
         <MenuItem
           onClick={handleLogout}

@@ -54,7 +54,7 @@ const Language = () => {
         <IconButton
           color="inherit"
           onClick={openMenu}
-          sx={{ color: 'white', fontWeight: 600, fontSize: 16, mr: -0.2 }}
+          sx={{ color: 'white', fontWeight: 600, fontSize: 16, mr: 0.3 }}
         >
           {renderShort(currentLang)}
         </IconButton>

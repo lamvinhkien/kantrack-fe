@@ -16,8 +16,10 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
 import { FIELD_REQUIRED_MESSAGE, imageFileValidator } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
+import { useTranslation } from 'react-i18next'
 
 const AccountTab = () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const currentUser = useSelector(selectCurrentUser)
 
@@ -31,9 +33,9 @@ const AccountTab = () => {
 
     toast.promise(
       dispatch(updateUserAPI({ displayName })),
-      { pending: 'Updating...' }
+      { pending: t('updating') }
     ).then(res => {
-      if (!res.error) toast.success('User info updated.')
+      if (!res.error) toast.success(t('user_info_updated'))
     })
   }
 
@@ -49,29 +51,33 @@ const AccountTab = () => {
 
     toast.promise(
       dispatch(updateUserAPI(reqData)),
-      { pending: 'Updating...' }
+      { pending: t('updating') }
     ).then(res => {
-      if (!res.error) toast.success('Avatar updated.')
+      if (!res.error) toast.success(t('upload_complete'))
       e.target.value = ''
     })
   }
 
   return (
-    <Box sx={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <Box sx={{
-        maxWidth: '1200px',
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 3
-      }}>
+        justifyContent: 'center'
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: '1200px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box>
             <Avatar
@@ -79,18 +85,19 @@ const AccountTab = () => {
               alt={currentUser?.displayName}
               src={currentUser?.avatar?.url}
             />
-            <Tooltip title="Upload a new image to update your avatar immediately.">
+            <Tooltip title={t('upload_avatar_tooltip')}>
               <Button
                 component="label"
                 variant="contained"
                 size="small"
                 startIcon={<CloudUploadIcon />}
               >
-                Upload
+                {t('upload')}
                 <VisuallyHiddenInput type="file" onChange={uploadAvatar} />
               </Button>
             </Tooltip>
           </Box>
+
           <Box>
             <Typography variant="h6">{currentUser?.displayName}</Typography>
             <Typography sx={{ color: 'grey' }}>@{currentUser?.username}</Typography>
@@ -104,7 +111,7 @@ const AccountTab = () => {
                 disabled
                 defaultValue={currentUser?.email}
                 fullWidth
-                label="Your Email"
+                label='Email'
                 type="text"
                 variant="filled"
                 InputProps={{
@@ -122,7 +129,7 @@ const AccountTab = () => {
                 disabled
                 defaultValue={currentUser?.username}
                 fullWidth
-                label="Your Username"
+                label={t('username')}
                 type="text"
                 variant="filled"
                 InputProps={{
@@ -138,7 +145,7 @@ const AccountTab = () => {
             <Box>
               <TextField
                 fullWidth
-                label="Your Display Name"
+                label={t('display_name')}
                 type="text"
                 variant="outlined"
                 InputProps={{
@@ -164,7 +171,7 @@ const AccountTab = () => {
                 color="primary"
                 fullWidth
               >
-                Update
+                {t('update')}
               </Button>
             </Box>
           </Box>

@@ -144,7 +144,7 @@ const ActiveCard = () => {
 
     toast.promise(
       callApiUpdateCard(reqData)
-        .then(() => toast.success(t('upload_success')))
+        .then(() => toast.success(t('upload_complete')))
         .finally(() => { event.target.value = '' }),
       { pending: t('updating') }
     )
@@ -191,8 +191,8 @@ const ActiveCard = () => {
 
       toast.promise(
         callApiUpdateCard(reqData)
-          .then(() => toast.success(t('upload_success'))),
-        { pending: t('upading') }
+          .then(() => toast.success(t('upload_complete'))),
+        { pending: t('updating') }
       )
     }
 

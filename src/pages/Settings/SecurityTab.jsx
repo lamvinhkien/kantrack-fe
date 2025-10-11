@@ -22,35 +22,38 @@ import Setup2FA from '~/components/Modal/2FA/Setup2FA'
 import { alpha } from '@mui/material/styles'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { SETUP_2FA_ACTIONS } from '~/utils/constants'
+import { useTranslation } from 'react-i18next'
 
 const SecurityTab = () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { register, handleSubmit, watch, formState: { errors } } = useForm()
 
   const confirmChangePassword = useConfirm()
   const submitChangePassword = (data) => {
     confirmChangePassword({
-
-      title:
+      title: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <LogoutIcon sx={{ color: 'error.main' }} /> Change Password
-        </Box>,
-      description: 'You have to login again after successfully changing your password. Continue?',
+          <LogoutIcon sx={{ color: 'error.main' }} /> {t('change_password')}
+        </Box>
+      ),
+      description: t('change_password_description'),
       confirmationButtonProps: { color: 'error' },
-      confirmationText: 'Confirm',
-      cancellationText: 'Cancel'
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel')
     })
       .then(() => {
         const { current_password, new_password } = data
-        toast.promise(
-          dispatch(updateUserAPI({ current_password, new_password })),
-          { pending: 'Updating...' }
-        ).then(res => {
-          if (!res.error) {
-            toast.success('Successfully changed your password, please login again.')
-            dispatch(logoutUserAPI(false))
-          }
-        })
+        toast
+          .promise(dispatch(updateUserAPI({ current_password, new_password })), {
+            pending: t('updating')
+          })
+          .then((res) => {
+            if (!res.error) {
+              toast.success(t('change_password_success'))
+              dispatch(logoutUserAPI(false))
+            }
+          })
       })
       .catch(() => { })
   }
@@ -70,13 +73,15 @@ const SecurityTab = () => {
   }
 
   return (
-    <Box sx={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
       <Setup2FA
         isOpen={openSetup2FA}
         toggleOpen={setOpenSetup2FA}
@@ -84,18 +89,23 @@ const SecurityTab = () => {
         action2FA={action2FA}
       />
 
-      <Box sx={{
-        maxWidth: '1200px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 3
-      }}>
+      <Box
+        sx={{
+          maxWidth: '1200px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3
+        }}
+      >
+        {/* ============ 2FA Section ============ */}
         <Box sx={{ width: '400px', display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LockOutlinedIcon />
-            <Typography variant='h6'>Two-Factor Authentication (2FA)</Typography>
+            <Typography variant='h6'>
+              {t('two_factor_authentication_title')}
+            </Typography>
           </Box>
 
           <Alert
@@ -113,15 +123,14 @@ const SecurityTab = () => {
                   : undefined
             })}
           >
-            Account security status:{' '}
+            {t('account_security_status')}{' '}
             <Typography component='span' sx={{ fontWeight: 'bold' }}>
-              Two-Factor Authentication (2FA){' '}
-              {user.require2fa ? 'enabled' : 'not enabled'}.
+              {t('two_factor_authentication_label')}{' '}
+              {user.require2fa ? t('enabled') : t('not_enabled')}.
             </Typography>
           </Alert>
 
-          {user.require2fa
-            ?
+          {user.require2fa ? (
             <Button
               type='button'
               variant='contained'
@@ -129,9 +138,9 @@ const SecurityTab = () => {
               fullWidth
               onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.DISABLE)}
             >
-              Disable 2FA
+              {t('disable_2fa')}
             </Button>
-            :
+          ) : (
             <Button
               type='button'
               variant='contained'
@@ -139,30 +148,33 @@ const SecurityTab = () => {
               fullWidth
               onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.ENABLE)}
             >
-              Enable 2FA
+              {t('enable_2fa')}
             </Button>
-          }
+          )}
         </Box>
 
         <Divider sx={{ width: '100%' }} />
 
+        {/* ============ Change Password Section ============ */}
         <form onSubmit={handleSubmit(submitChangePassword)}>
           <Box sx={{ width: '400px', display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <LockOutlinedIcon />
-              <Typography variant='h6'>Change Your Password</Typography>
+              <Typography variant='h6'>
+                {t('change_password_title')}
+              </Typography>
             </Box>
 
             <Box>
               <TextField
                 fullWidth
-                label="Current Password"
-                type="password"
-                variant="outlined"
+                label={t('current_password')}
+                type='password'
+                variant='outlined'
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <PasswordIcon fontSize="small" />
+                    <InputAdornment position='start'>
+                      <PasswordIcon fontSize='small' />
                     </InputAdornment>
                   )
                 }}
@@ -181,13 +193,13 @@ const SecurityTab = () => {
             <Box>
               <TextField
                 fullWidth
-                label="New Password"
-                type="password"
-                variant="outlined"
+                label={t('new_password')}
+                type='password'
+                variant='outlined'
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <LockIcon fontSize="small" />
+                    <InputAdornment position='start'>
+                      <LockIcon fontSize='small' />
                     </InputAdornment>
                   )
                 }}
@@ -206,20 +218,20 @@ const SecurityTab = () => {
             <Box>
               <TextField
                 fullWidth
-                label="New Password Confirmation"
-                type="password"
-                variant="outlined"
+                label={t('new_password_confirmation')}
+                type='password'
+                variant='outlined'
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <LockResetIcon fontSize="small" />
+                    <InputAdornment position='start'>
+                      <LockResetIcon fontSize='small' />
                     </InputAdornment>
                   )
                 }}
                 {...register('new_password_confirmation', {
                   validate: (value) => {
                     if (value === watch('new_password')) return true
-                    return 'Password confirmation does not match.'
+                    return t('password_confirmation_not_match')
                   }
                 })}
                 error={!!errors['new_password_confirmation']}
@@ -229,13 +241,13 @@ const SecurityTab = () => {
 
             <Box>
               <Button
-                className="interceptor-loading"
-                type="submit"
-                variant="contained"
-                color="primary"
+                className='interceptor-loading'
+                type='submit'
+                variant='contained'
+                color='primary'
                 fullWidth
               >
-                Change
+                {t('update')}
               </Button>
             </Box>
           </Box>

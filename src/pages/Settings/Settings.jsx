@@ -11,6 +11,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import SecurityIcon from '@mui/icons-material/Security'
 import AccountTab from './AccountTab'
 import SecurityTab from './SecurityTab'
+import { useTranslation } from 'react-i18next'
 
 const TABS = {
   ACCOUNT: 'account',
@@ -18,6 +19,8 @@ const TABS = {
 }
 
 const Settings = () => {
+  const { t } = useTranslation()
+
   const location = useLocation()
 
   const getDefaultTabFromURL = () => {
@@ -38,7 +41,7 @@ const Settings = () => {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={handleChangeTab}>
             <Tab
-              label="Account"
+              label={t('account')}
               value={TABS.ACCOUNT}
               icon={<PersonIcon />}
               iconPosition="start"
@@ -46,7 +49,7 @@ const Settings = () => {
               to="/settings/account"
             />
             <Tab
-              label="Security"
+              label={t('security')}
               value={TABS.SECURITY}
               icon={<SecurityIcon />}
               iconPosition="start"

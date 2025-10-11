@@ -27,7 +27,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useTranslation } from 'react-i18next'
 
 const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { mode } = useColorScheme()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const [selectedAttachment, setSelectedAttachment] = useState(null)
@@ -157,7 +157,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                   </Typography>
                   {att.uploadedAt && (
                     <Typography sx={{ color: mode === 'dark' ? 'grey.500' : 'grey.600' }}>
-                      {renderTime(att.uploadedAt)}
+                      {renderTime(att.uploadedAt, { locale: i18n.language })}
                     </Typography>
                   )}
                 </MuiLink>
@@ -308,7 +308,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                     })}
                   />
                   <FieldErrorAlert errors={errors} fieldName={'newLink'} />
-                  <TextField label={t('displayText')} size='small' multiline fullWidth sx={{ mt: 2 }} {...register('newDisplayText')} />
+                  <TextField label={t('displayText')} size='small' multiline fullWidth sx={{ mt: 1.5 }} {...register('newDisplayText')} />
                 </>
                 :
                 <TextField
@@ -323,7 +323,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                 />
               }
               <FieldErrorAlert errors={errors} fieldName={'newDisplayText'} />
-              <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1 }}>
+              <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1.5 }}>
                 <Button size="small" color='inherit' onClick={() => setModePopover('main')}>{t('cancel')}</Button>
                 <Button size="small" variant="contained" type='submit'>{t('save')}</Button>
               </Stack>

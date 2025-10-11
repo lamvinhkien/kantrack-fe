@@ -12,6 +12,7 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { inviteUserToBoardAPI } from '~/apis'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { useTranslation } from 'react-i18next'
+import { Divider } from '@mui/material'
 
 const InviteBoardUser = ({ boardId }) => {
   const { t } = useTranslation()
@@ -67,12 +68,27 @@ const InviteBoardUser = ({ boardId }) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <form onSubmit={handleSubmit(submitInviteUserToBoard)} style={{ width: '320px' }}>
-          <Box sx={{ p: '15px 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="span" sx={{ fontWeight: 'bold', fontSize: '16px' }}>{t('invite_user')}</Typography>
+        <form
+          onSubmit={handleSubmit(submitInviteUserToBoard)}
+          style={{ width: 320 }}
+        >
+          <Box
+            sx={{
+              textAlign: 'center',
+              p: 1.5
+            }}
+          >
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              {t('invite_user')}
+            </Typography>
+          </Box>
+
+          <Divider sx={{ width: '100%', borderBottomWidth: 1 }} />
+
+          <Box sx={{ p: '15px 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             <Box>
               <TextField
-                size='small'
+                size="small"
                 autoFocus
                 multiline
                 fullWidth
@@ -87,8 +103,9 @@ const InviteBoardUser = ({ boardId }) => {
               />
               <FieldErrorAlert errors={errors} fieldName={'inviteeEmail'} />
             </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignSelf: 'flex-end', gap: 1 }}>
-              <Button variant="text" color='inherit' onClick={handleTogglePopover}>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+              <Button variant="text" color="inherit" onClick={handleTogglePopover}>
                 {t('cancel')}
               </Button>
               <Button

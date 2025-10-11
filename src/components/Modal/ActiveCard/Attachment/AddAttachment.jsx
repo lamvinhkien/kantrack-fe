@@ -102,7 +102,7 @@ const AddAttachment = ({ open, anchorEl, onClose, handleAddCardAttachment }) => 
             <Typography variant="span">{t('link')}</Typography>
           </Box>
 
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 1.5 }}>
             <TextField
               label={t('pasteLink')}
               size="small"
@@ -125,7 +125,7 @@ const AddAttachment = ({ open, anchorEl, onClose, handleAddCardAttachment }) => 
             size='small'
             multiline
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ mb: 1.5 }}
             {...register('displayText')}
           />
 
