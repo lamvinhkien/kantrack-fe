@@ -17,29 +17,32 @@ import {
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useDispatch } from 'react-redux'
 import { loginUserAPI } from '~/redux/user/userSlice'
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
+import { useColorScheme } from '@mui/material'
+import { useState } from 'react'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const LoginForm = () => {
+  const { mode } = useColorScheme()
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
+  const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm()
 
   let [searchParams] = useSearchParams()
   const verifiedEmail = searchParams.get('verifiedEmail')
   const registeredEmail = searchParams.get('registeredEmail')
 
-  const submitLogIn = (data) => {
+  const submitLogIn = async (data) => {
     const { email, password } = data
-    toast.promise(
-      dispatch(loginUserAPI({ email, password })),
-      { pending: t('logging') }
-    ).then(res => {
-      if (!res.error) navigate('/')
-    })
+    setLoading(true)
+
+    const res = await dispatch(loginUserAPI({ email, password }))
+    setLoading(false)
+
+    if (!res.error) navigate('/boards')
   }
 
   return (
@@ -56,30 +59,39 @@ const LoginForm = () => {
         sx={{
           width: 400,
           borderRadius: 3,
-          boxShadow: 4,
-          background: 'linear-gradient(135deg, #032141e4, #010a1696)'
+          boxShadow: 4
         }}
       >
-        <CardContent sx={{ p: 4 }}>
-          {/* --- Logo --- */}
+        <CardContent sx={{ px: 4 }}>
+          {/* --- Logo section --- */}
           <Box
             sx={{
+              width: 'calc(100% + 64px)',
+              ml: -4,
+              mr: -4,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              mb: 2,
-              mt: -2
+              mb: 3,
+              mt: -2,
+              py: 1.5,
+              borderRadius: '12px 12px 0 0',
+              background:
+                mode === 'dark'
+                  ? 'linear-gradient(135deg, #34495e, #1a2f45ff)'
+                  : 'linear-gradient(135deg, #1976d2, #3974afff)'
             }}
           >
-            <KanTrackIcon style={{ width: '100%' }} />
+            <KanTrackIcon style={{ width: '85%', color: 'white' }} />
           </Box>
 
           {/* --- Subtitle --- */}
           <Typography
             variant='body2'
-            color='text.secondary'
-            textAlign='center'
-            mb={3}
+            sx={{
+              textAlign: 'center',
+              mb: 2.5
+            }}
           >
             {t('login_subtitle')}
           </Typography>
@@ -146,24 +158,48 @@ const LoginForm = () => {
               fullWidth
               variant='contained'
               color='primary'
+              disabled={loading}
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
                 py: 1,
-                borderRadius: 2
+                borderRadius: 2,
+                backgroundColor: mode === 'dark' ? '#34495e' : '#1976d2',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? '#34495e' : '#1565c0'
+                }
               }}
-              className='interceptor-loading'
             >
-              {t('login_button')}
+              {loading ? (
+                <CircularProgress
+                  size={22}
+                  thickness={5}
+                  sx={{
+                    color: 'white'
+                  }}
+                />
+              ) : (
+                t('login_button')
+              )}
             </Button>
 
-            <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 2.5, borderColor: mode === 'dark' ? 'grey.800' : 'grey.400' }} />
 
-            <Typography textAlign='center' variant='body2'>
-              {t('no_account_message')}{', '}
+            <Typography
+              textAlign='center'
+              variant='body2'
+            >
+              {t('no_account_message')},{' '}
               <Link
                 to='/register'
-                style={{ textDecoration: 'none', color: '#1976d2' }}
+                style={{
+                  color: mode === 'dark' ? '#7dbeffff' : '#3f9fffff',
+                  fontWeight: 500,
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={(e) => (e.target.style.textDecoration = 'underline')}
+                onMouseLeave={(e) => (e.target.style.textDecoration = 'none')}
               >
                 {t('create_account_link')}
               </Link>

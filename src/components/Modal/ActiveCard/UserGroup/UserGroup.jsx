@@ -82,7 +82,7 @@ const UserGroup = ({ cardMemberIds = [], onUpdateCardMembers }) => {
         </Tooltip>
       )}
 
-      <Tooltip title={t('add_new_member')}>
+      <Tooltip title={t('add_member')}>
         <Box
           aria-describedby={popoverId}
           onClick={handleTogglePopover}

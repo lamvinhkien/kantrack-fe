@@ -5,6 +5,7 @@ import NotFound from '~/pages/404/NotFound'
 import AccountVerification from '~/pages/Auth/AccountVerification'
 import Settings from '~/pages/Settings/Settings'
 import Boards from '~/pages/Boards'
+import Home from './pages/Home/Home'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import Require2FA from './components/Modal/2FA/Require2FA'
@@ -20,8 +21,9 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path='/' element={<Home />} />
+
       <Route element={<ProtectedRoute user={currentUser} />}>
-        <Route path='/' element={<Navigate to='/boards' replace={true} />} />
         <Route path='/boards' element={<Boards />} />
         <Route path='/boards/:boardId' element={<Board />} />
         <Route path='/settings/account' element={<Settings />} />

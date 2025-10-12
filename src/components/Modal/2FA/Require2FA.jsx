@@ -10,12 +10,15 @@ import { verify2faAPI } from '~/apis'
 import { updateCurrentUser } from '~/redux/user/userSlice'
 import { useDispatch } from 'react-redux'
 import { useTranslation, Trans } from 'react-i18next'
+import CircularProgress from '@mui/material/CircularProgress'
+import Footer from '~/components/Footer/Footer'
 
 const Require2FA = ({ user }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const handleRequire2FA = () => {
     if (!otpToken) {
@@ -25,11 +28,16 @@ const Require2FA = ({ user }) => {
       return
     }
 
-    verify2faAPI(user?.email, otpToken).then(updatedUser => {
-      dispatch(updateCurrentUser(updatedUser))
-      setConfirmOtpToken('')
-      setError(null)
-    })
+    setLoading(true)
+    verify2faAPI(user?.email, otpToken)
+      .then(updatedUser => {
+        dispatch(updateCurrentUser(updatedUser))
+        setConfirmOtpToken('')
+        setError(null)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -40,7 +48,6 @@ const Require2FA = ({ user }) => {
           width: '100vw',
           height: '100vh',
           bgcolor: 'white',
-          boxShadow: 24,
           borderRadius: 'none',
           border: 'none',
           outline: 0,
@@ -52,7 +59,6 @@ const Require2FA = ({ user }) => {
       >
         <Box
           sx={{
-            pr: 2.5,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -74,11 +80,11 @@ const Require2FA = ({ user }) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 2,
-            p: 1
+            gap: 1.5,
+            mt: 2
           }}
         >
-          <Box sx={{ textAlign: 'center' }}>
+          <Box sx={{ textAlign: 'center', lineHeight: 1.8 }}>
             <Trans
               i18nKey="enter_2fa_code_description"
               values={{ email: user.email }}
@@ -92,16 +98,15 @@ const Require2FA = ({ user }) => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 1,
-              my: 1
+              mt: 1.5
             }}
           >
             <TextField
               autoFocus
               autoComplete="nope"
-              label={t('enter_your_code')}
-              type="text"
+              label={t('enter_code')}
               variant="outlined"
-              sx={{ minWidth: '280px' }}
+              sx={{ minWidth: '200px' }}
               value={otpToken}
               onChange={(e) => setConfirmOtpToken(e.target.value)}
               error={!!error && !otpToken}
@@ -111,19 +116,45 @@ const Require2FA = ({ user }) => {
               type="button"
               variant="contained"
               color="primary"
-              size="large"
+              size="medium"
+              disabled={loading}
+              onClick={handleRequire2FA}
               sx={{
-                textTransform: 'none',
                 minWidth: '120px',
                 height: '55px',
                 fontSize: '1em'
               }}
-              onClick={handleRequire2FA}
             >
-              {t('confirm')}
+              {loading ? (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    color: 'white'
+                  }}
+                />
+              ) : (
+                t('confirm')
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="text"
+              color="error"
+              size="medium"
+              sx={{
+                minWidth: '120px',
+                height: '55px',
+                fontSize: '1em'
+              }}
+              onClick={() => dispatch(updateCurrentUser(null))}
+            >
+              {t('logout')}
             </Button>
           </Box>
         </Box>
+
+        <Footer lineWidth={150} />
       </Box>
     </Modal>
   )

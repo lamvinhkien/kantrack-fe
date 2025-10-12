@@ -2,7 +2,6 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { toast } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
@@ -20,16 +19,27 @@ import Divider from '@mui/material/Divider'
 import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import { useColorScheme } from '@mui/material'
+import { useState } from 'react'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const RegisterForm = () => {
+  const { mode } = useColorScheme()
   const { t } = useTranslation()
   const navigate = useNavigate()
-
+  const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
-  const submitRegister = (data) => {
+
+  const submitRegister = async (data) => {
     const { email, password } = data
-    toast.promise(registerUserAPI({ email, password }), { pending: t('registering') })
-      .then(user => { navigate(`/login?registeredEmail=${user.email}`) })
+    setLoading(true)
+
+    try {
+      const user = await registerUserAPI({ email, password })
+      navigate(`/login?registeredEmail=${user.email}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -46,30 +56,39 @@ const RegisterForm = () => {
         sx={{
           width: 400,
           borderRadius: 3,
-          boxShadow: 4,
-          background: 'linear-gradient(135deg, #032141e4, #010a1696)'
+          boxShadow: 4
         }}
       >
-        <CardContent sx={{ p: 4 }}>
-          {/* --- Logo --- */}
+        <CardContent sx={{ px: 4 }}>
+          {/* --- Logo section --- */}
           <Box
             sx={{
+              width: 'calc(100% + 64px)',
+              ml: -4,
+              mr: -4,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              mb: 2,
-              mt: -2
+              mb: 3,
+              mt: -2,
+              py: 1.5,
+              borderRadius: '12px 12px 0 0',
+              background:
+                mode === 'dark'
+                  ? 'linear-gradient(135deg, #34495e, #1a2f45ff)'
+                  : 'linear-gradient(135deg, #1976d2, #3974afff)'
             }}
           >
-            <KanTrackIcon style={{ width: '100%' }} />
+            <KanTrackIcon style={{ width: '85%', color: 'white' }} />
           </Box>
 
           {/* --- Subtitle --- */}
           <Typography
             variant='body2'
-            color='rgba(255,255,255,0.8)'
-            textAlign='center'
-            mb={3}
+            sx={{
+              textAlign: 'center',
+              mb: 2.5
+            }}
           >
             {t('register_subtitle')}
           </Typography>
@@ -130,10 +149,7 @@ const RegisterForm = () => {
                     value === watch('password') || PASSWORD_CONFIRMATION_MESSAGE
                 })}
               />
-              <FieldErrorAlert
-                errors={errors}
-                fieldName='password_confirmation'
-              />
+              <FieldErrorAlert errors={errors} fieldName='password_confirmation' />
             </Box>
 
             {/* Register Button */}
@@ -142,27 +158,43 @@ const RegisterForm = () => {
               fullWidth
               variant='contained'
               color='primary'
+              disabled={loading}
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
                 py: 1,
                 borderRadius: 2,
+                backgroundColor: mode === 'dark' ? '#34495e' : '#1976d2',
+                color: 'white',
                 '&:hover': {
-                  backgroundColor: (theme) => theme.palette.primary.dark
+                  backgroundColor: mode === 'dark' ? '#34495e' : '#1565c0'
                 }
               }}
-              className='interceptor-loading'
             >
-              {t('register_button')}
+              {loading ? (
+                <CircularProgress
+                  size={22}
+                  thickness={5}
+                  sx={{ color: 'white' }}
+                />
+              ) : (
+                t('register_button')
+              )}
             </Button>
 
-            <Divider sx={{ my: 2, mx: -4 }} />
+            <Divider sx={{ my: 2.5, borderColor: mode === 'dark' ? 'grey.800' : 'grey.400' }} />
 
             <Typography textAlign='center' variant='body2'>
-              {t('already_have_account_message')}{', '}
+              {t('already_have_account_message')},{' '}
               <Link
                 to='/login'
-                style={{ textDecoration: 'none', color: '#1976d2' }}
+                style={{
+                  color: mode === 'dark' ? '#7dbeffff' : '#3f9fffff',
+                  fontWeight: 500,
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={(e) => (e.target.style.textDecoration = 'underline')}
+                onMouseLeave={(e) => (e.target.style.textDecoration = 'none')}
               >
                 {t('login_now_link')}
               </Link>

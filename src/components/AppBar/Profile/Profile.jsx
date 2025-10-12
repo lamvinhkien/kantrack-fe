@@ -11,10 +11,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentUser, logoutUserAPI } from '~/redux/user/userSlice'
 import { useConfirm } from 'material-ui-confirm'
 import { Link } from 'react-router-dom'
-import ListItemText from '@mui/material/ListItemText'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const Profile = () => {
+  const navigate = useNavigate()
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
@@ -37,7 +38,7 @@ const Profile = () => {
       cancellationText: t('cancel'),
       confirmationButtonProps: { color: 'error' }
     })
-      .then(() => { dispatch(logoutUserAPI()) })
+      .then(() => { dispatch(logoutUserAPI()).then(() => navigate('/login')) })
       .catch(() => { })
   }
 
@@ -71,10 +72,10 @@ const Profile = () => {
             <Avatar
               src={currentUser?.avatar?.url}
               alt={currentUser?.displayName}
-              sx={{ width: 28, height: 28 }}
+              sx={{ width: 24, height: 24 }}
             />
           </ListItemIcon>
-          <ListItemText primary={t('account')} />
+          {t('account')}
         </MenuItem>
         <MenuItem
           onClick={handleLogout}

@@ -54,7 +54,10 @@ const Language = () => {
         <IconButton
           color="inherit"
           onClick={openMenu}
-          sx={{ color: 'white', fontWeight: 600, fontSize: 16, mr: 0.3 }}
+          sx={{
+            color: 'white', fontWeight: 600, fontSize: 16, mr: 0.3,
+            '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+          }}
         >
           {renderShort(currentLang)}
         </IconButton>

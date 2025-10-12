@@ -16,7 +16,6 @@ import { selectCurrentUser } from '~/redux/user/userSlice'
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { renderTime } from '~/utils/formatters'
 import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 
 const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
@@ -54,13 +53,6 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
     }
   }
 
-  const handleAddCardComment = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      handleSendComment()
-    }
-  }
-
   const handleEditClick = (comment) => {
     setEditingCommentId(comment.commentId)
     setEditContent(comment.content)
@@ -74,7 +66,6 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
   const handleSaveEdit = async (comment) => {
     const newContent = editContent.trim()
     if (!newContent) {
-      toast.error(t('empty_comment'))
       return
     }
 
@@ -149,7 +140,6 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
           type="text"
           variant="outlined"
           multiline
-          onKeyDown={handleAddCardComment}
           value={commentInput}
           onChange={(e) => setCommentInput(e.target.value)}
           InputProps={{
@@ -296,7 +286,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                       size="small"
                       variant="contained"
                       onClick={() => handleSaveEdit(comment)}
-                      disabled={isEditLoading || !editContent}
+                      disabled={isEditLoading || !editContent.trim()}
                     >
                       {isEditLoading ? <CircularProgress size={16} color="inherit" /> : t('save')}
                     </Button>

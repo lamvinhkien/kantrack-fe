@@ -23,7 +23,7 @@ function FieldErrorAlert({ errors, fieldName }) {
         '.MuiAlert-message': {
           overflow: 'hidden',
           padding: 0,
-          mt: 0.8
+          mt: 0.7
         }
       }}
     >

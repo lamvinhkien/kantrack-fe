@@ -12,12 +12,14 @@ import { get2FA_QRCodeAPI, setup2faAPI } from '~/apis'
 import CircularProgress from '@mui/material/CircularProgress'
 import { SETUP_2FA_ACTIONS } from '~/utils/constants'
 import { useTranslation, Trans } from 'react-i18next'
+import Footer from '~/components/Footer/Footer'
 
 const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
   const { t } = useTranslation()
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
   const [QRCodeImageUrl, setQRCodeImageUrl] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (isOpen && action2FA === SETUP_2FA_ACTIONS.ENABLE) {
@@ -39,12 +41,17 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
       return
     }
 
-    setup2faAPI(otpToken, action2FA).then(updatedUser => {
-      handleSuccessSetup2FA(updatedUser)
-      toast.success(`2FA ${action2FA}d.`)
-      setConfirmOtpToken('')
-      setError(null)
-    })
+    setLoading(true)
+    setup2faAPI(otpToken, action2FA)
+      .then(updatedUser => {
+        handleSuccessSetup2FA(updatedUser)
+        toast.success(`2FA ${action2FA}d.`)
+        setConfirmOtpToken('')
+        setError(null)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -122,7 +129,6 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 2,
             p: 1
           }}
         >
@@ -157,13 +163,13 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 1,
-              my: 1
+              mt: 2
             }}
           >
             <TextField
               autoFocus
               autoComplete="nope"
-              label={t('enter_your_code')}
+              label={t('enter_code')}
               type="text"
               variant="outlined"
               sx={{ minWidth: '280px' }}
@@ -177,17 +183,25 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
               variant="contained"
               color="primary"
               size="large"
+              disabled={loading}
+              onClick={handleConfirmSetup2FA}
               sx={{
                 textTransform: 'none',
                 minWidth: '120px',
                 height: '55px',
-                fontSize: '1em'
+                fontSize: '1em',
+                position: 'relative'
               }}
-              onClick={handleConfirmSetup2FA}
             >
-              {t('confirm')}
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: 'white' }} />
+              ) : (
+                t('confirm')
+              )}
             </Button>
           </Box>
+
+          <Footer lineWidth={100} />
         </Box>
       </Box>
     </Modal>

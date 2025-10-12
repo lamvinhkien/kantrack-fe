@@ -62,7 +62,7 @@ const ModeMenu = () => {
         <IconButton
           color="inherit"
           onClick={openMenu}
-          sx={{ color: 'white' }}
+          sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
         >
           {renderIcon(mode)}
         </IconButton>

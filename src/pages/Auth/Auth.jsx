@@ -11,7 +11,7 @@ const Auth = () => {
   const isRegister = location.pathname === '/register'
 
   const currentUser = useSelector(selectCurrentUser)
-  if (currentUser) return <Navigate to='/' replace={true} />
+  if (currentUser) return <Navigate to='/boards' />
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
