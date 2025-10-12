@@ -5,7 +5,6 @@
   "change_theme": "Change theme mode",
   "dark_mode": "Dark",
   "light_mode": "Light",
-  "system_mode": "System",
   "notification": "Notifications",
   "no_notification": "You do not have any new notifications.",
   "invited_board": "invited you to join the board",
@@ -21,6 +20,7 @@
   "account": "Account",
   "dashboard": "Dashboard",
   "home": "Home",
+  "board": "Board",
   "boards": "Boards",
   "confirm": "Confirm",
   "enter_email": "Enter email",
@@ -149,6 +149,7 @@
   "enter_email_placeholder": "Enter Email",
   "enter_password_confirmation_placeholder": "Enter Password Confirmation",
   "register_button": "Register",
+  "register_now_link": "Register now",
   "login_now_link": "Login now",
   "not_found_title": "404 - Page Not Found",
   "go_home_link": "Go Home",
@@ -164,5 +165,6 @@
   "register_subtitle": "Create a new account to get started",
   "already_have_account_message": "Already have an account?",
   "registering": "Registering...",
-  "register_success_message": "Registration successful! Please verify your email before logging in."
+  "register_success_message": "Registration successful! Please verify your email before logging in.",
+  "slogan": "Organize your work with KanTrack"
 }

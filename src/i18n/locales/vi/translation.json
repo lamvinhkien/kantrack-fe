@@ -5,7 +5,6 @@
   "change_theme": "Thay đổi giao diện",
   "dark_mode": "Tối",
   "light_mode": "Sáng",
-  "system_mode": "Hệ thống",
   "notification": "Thông báo",
   "no_notification": "Bạn không có thông báo mới.",
   "invited_board": "đã mời bạn tham gia vào bảng",
@@ -21,6 +20,7 @@
   "account": "Tài khoản",
   "dashboard": "Tổng quan",
   "home": "Trang chủ",
+  "board": "Bảng",
   "boards": "Danh sách bảng",
   "confirm": "Xác nhận",
   "enter_email": "Nhập email",
@@ -149,6 +149,7 @@
   "enter_password_placeholder": "Nhập Mật khẩu",
   "enter_password_confirmation_placeholder": "Nhập lại Mật khẩu",
   "register_button": "Đăng ký",
+  "register_now_link": "Đăng ký ngay",
   "login_now_link": "Đăng nhập ngay",
   "not_found_title": "404 - Không tìm thấy trang",
   "go_home_link": "Về trang chủ",
@@ -164,5 +165,6 @@
   "register_subtitle": "Tạo tài khoản mới để bắt đầu",
   "already_have_account_message": "Đã có tài khoản?",
   "registering": "Đang đăng ký...",
-  "register_success_message": "Đăng ký thành công! Vui lòng xác minh email trước khi đăng nhập."
+  "register_success_message": "Đăng ký thành công! Vui lòng xác minh email trước khi đăng nhập.",
+  "slogan": "Tổ chức công việc hiệu quả cùng KanTrack"
 }

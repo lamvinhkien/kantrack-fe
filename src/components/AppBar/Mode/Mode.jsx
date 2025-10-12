@@ -7,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
-import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightnessOutlined'
 import { useTranslation } from 'react-i18next'
 
 const ModeMenu = () => {
@@ -42,7 +41,6 @@ const ModeMenu = () => {
     switch (m) {
     case 'light': return <LightModeIcon fontSize="medium" />
     case 'dark': return <DarkModeOutlinedIcon fontSize="medium" />
-    case 'system': return <SettingsBrightnessOutlinedIcon fontSize="medium" />
     default: return null
     }
   }
@@ -85,13 +83,6 @@ const ModeMenu = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <DarkModeOutlinedIcon fontSize="small" />
               <Box>{t('dark_mode')}</Box>
-            </Box>
-          </MenuItem>
-
-          <MenuItem selected={mode === 'system'} onClick={() => handleChange('system')}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <SettingsBrightnessOutlinedIcon fontSize="small" />
-              <Box>{t('system_mode')}</Box>
             </Box>
           </MenuItem>
         </Menu>

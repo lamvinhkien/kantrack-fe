@@ -8,9 +8,13 @@ import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
 import Language from './Language/Language'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
+import { useTranslation } from 'react-i18next'
+import Typography from '@mui/material/Typography'
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 
 const AppBar = () => {
+  const { t } = useTranslation()
   const user = useSelector(selectCurrentUser)
   const isAuthorized = (user && (!user.require2fa || user.is2faVerified))
 
@@ -56,12 +60,12 @@ const AppBar = () => {
         </Link>
 
         <Button component={Link} to='/' variant='outlined' sx={buttonStyle}>
-          Home
+          {t('home')}
         </Button>
 
         {isAuthorized && (
           <Button component={Link} to='/boards' variant='outlined' sx={buttonStyle}>
-            Boards
+            {t('board')}
           </Button>
         )}
       </Box>
@@ -71,12 +75,54 @@ const AppBar = () => {
         sx={{
           flex: 1,
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          alignItems: 'center',
+          px: 1
         }}
       >
-        {isAuthorized && (
-          <Box sx={{ width: '100%', maxWidth: 700, px: 1 }}>
+        {isAuthorized ? (
+          <Box sx={{ width: '100%', maxWidth: 700 }}>
             <AutoCompleteSearchBoard />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <RocketLaunchOutlinedIcon sx={{ color: 'white', fontSize: 24 }} />
+
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 500,
+                color: 'white',
+                letterSpacing: 0.3
+              }}
+            >
+              {t('slogan')}
+            </Typography>
+
+            <Typography sx={{ color: 'white', opacity: 0.8, mr: -1 }}>|</Typography>
+
+            <Button
+              component={Link}
+              to="/register"
+              sx={{
+                textTransform: 'none',
+                color: 'white',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                '&:hover': {
+                  textDecoration: 'underline',
+                  backgroundColor: 'transparent'
+                }
+              }}
+            >
+              {t('register_now_link')}
+            </Button>
           </Box>
         )}
       </Box>
@@ -103,7 +149,7 @@ const AppBar = () => {
             variant='outlined'
             sx={buttonStyle}
           >
-            Login
+            {t('login_button')}
           </Button>
         )}
       </Box>
