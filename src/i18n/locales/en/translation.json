@@ -22,6 +22,7 @@
   "home": "Home",
   "board": "Board",
   "boards": "Boards",
+  "board_created": "Board created.",
   "confirm": "Confirm",
   "enter_email": "Enter email",
   "invite": "Invite",
@@ -166,5 +167,8 @@
   "already_have_account_message": "Already have an account?",
   "registering": "Registering...",
   "register_success_message": "Registration successful! Please verify your email before logging in.",
-  "slogan": "Organize your work with KanTrack"
+  "slogan": "Organize your work with KanTrack",
+  "account_created": "Account created! Verify before login.",
+  "account_verified": "Account verified! You can login now.",
+  "user_invited": "User invited to board."
 }

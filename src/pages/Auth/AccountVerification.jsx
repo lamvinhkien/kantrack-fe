@@ -3,6 +3,7 @@ import { useSearchParams, Navigate } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import { verifyUserAPI } from '~/apis'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 const AccountVerification = () => {
   const { t } = useTranslation()
@@ -11,8 +12,13 @@ const AccountVerification = () => {
   const [verified, setVerified] = useState(false)
 
   useEffect(() => {
-    if (email && token) verifyUserAPI({ email, token }).then(() => setVerified(true))
-  }, [email, token])
+    if (email && token) {
+      verifyUserAPI({ email, token }).then(() => {
+        setVerified(true)
+        toast.success(t('account_verified'))
+      })
+    }
+  }, [email, t, token])
 
   if (!email || !token) return <Navigate to='/404' />
 

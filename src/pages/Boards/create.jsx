@@ -16,6 +16,8 @@ import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { createNewBoardAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -39,6 +41,8 @@ const BOARD_TYPES = {
 }
 
 const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
+  const { t } = useTranslation()
+
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -50,6 +54,7 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
 
   const submitCreateNewBoard = (data) => {
     createNewBoardAPI(data).then(() => {
+      toast.success(t('board_created'))
       handleCloseModal()
       afterCreateNewBoard()
     })

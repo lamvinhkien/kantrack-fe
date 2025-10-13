@@ -217,7 +217,7 @@ const BoardContent = ({ board, moveColumn, moveCardInTheSameColumn, moveCardToDi
     >
       <Box sx={{
         width: '100%',
-        height: theme => theme.trello.boardContentHeight,
+        height: theme => theme.kantrack.boardContentHeight,
         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
         p: '12px 0'
       }}>

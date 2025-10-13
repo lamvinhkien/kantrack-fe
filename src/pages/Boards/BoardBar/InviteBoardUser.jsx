@@ -13,6 +13,7 @@ import { inviteUserToBoardAPI } from '~/apis'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { useTranslation } from 'react-i18next'
 import { Divider } from '@mui/material'
+import { toast } from 'react-toastify'
 
 const InviteBoardUser = ({ boardId }) => {
   const { t } = useTranslation()
@@ -30,6 +31,7 @@ const InviteBoardUser = ({ boardId }) => {
     inviteUserToBoardAPI({ inviteeEmail, boardId }).then(invitation => {
       setValue('inviteeEmail', null)
       setAnchorPopoverElement(null)
+      toast.success(t('user_invited'))
       socketIoInstance.emit('FE_USER_INVITED_TO_BOARD', invitation)
     })
   }

@@ -22,6 +22,8 @@ import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
 import { useColorScheme } from '@mui/material'
 import { useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 
 const LoginForm = () => {
   const { mode } = useColorScheme()
@@ -98,16 +100,42 @@ const LoginForm = () => {
 
           {/* --- Verified / Registered email messages --- */}
           {verifiedEmail && (
-            <Box sx={{ mb: 2 }}>
-              <Typography color='success.main'>
+            <Box
+              sx={{
+                mb: 3,
+                py: 1,
+                px: 2,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                borderRadius: 2,
+                bgcolor: 'success.main',
+                color: 'success.contrastText'
+              }}
+            >
+              <CheckCircleIcon sx={{ color: 'success.contrastText' }} />
+              <Typography variant="body1" fontWeight={500}>
                 {t('email_verified_message', { email: verifiedEmail })}
               </Typography>
             </Box>
           )}
 
           {registeredEmail && (
-            <Box sx={{ mb: 2 }}>
-              <Typography color='warning.main'>
+            <Box
+              sx={{
+                mb: 3,
+                py: 1,
+                px: 2,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                borderRadius: 2,
+                bgcolor: 'warning.main',
+                color: 'warning.contrastText'
+              }}
+            >
+              <WarningAmberIcon sx={{ color: 'warning.contrastText' }} />
+              <Typography variant="body1" fontWeight={500}>
                 {t('please_verify_email_message', { email: registeredEmail })}
               </Typography>
             </Box>

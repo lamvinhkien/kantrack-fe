@@ -23,7 +23,7 @@ const AppBar = () => {
     textTransform: 'none',
     color: 'white',
     fontWeight: 500,
-    px: 1.5,
+    px: 1.2,
     '&:hover': {
       border: 'none',
       backgroundColor: 'rgba(255,255,255,0.1)'
@@ -34,7 +34,7 @@ const AppBar = () => {
     <Box
       sx={{
         width: '100%',
-        height: (theme) => theme.trello.appBarHeight,
+        height: (theme) => theme.kantrack.appBarHeight,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

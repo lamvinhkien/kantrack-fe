@@ -22,6 +22,7 @@ import CardContent from '@mui/material/CardContent'
 import { useColorScheme } from '@mui/material'
 import { useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
+import { toast } from 'react-toastify'
 
 const RegisterForm = () => {
   const { mode } = useColorScheme()
@@ -36,7 +37,10 @@ const RegisterForm = () => {
 
     try {
       const user = await registerUserAPI({ email, password })
-      navigate(`/login?registeredEmail=${user.email}`)
+      if (user) {
+        toast.success(t('account_created'))
+        navigate(`/login?registeredEmail=${user.email}`)
+      }
     } finally {
       setLoading(false)
     }

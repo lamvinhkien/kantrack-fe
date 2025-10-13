@@ -13,7 +13,7 @@ const ListCards = ({ cards }) => {
         gap: 1,
         overflowX: 'hidden',
         overflowY: 'auto',
-        maxHeight: theme => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)} - ${theme.trello.columnHeaderHeight} - ${theme.trello.columnFooterHeight})`,
+        maxHeight: theme => `calc(${theme.kantrack.boardContentHeight} - ${theme.spacing(5)} - ${theme.kantrack.columnHeaderHeight} - ${theme.kantrack.columnFooterHeight})`,
         '&::-webkit-scrollbar-thumb': { backgroundColor: '#ced0da' },
         '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#bfc2cf', cursor: 'pointer' }
       }}>

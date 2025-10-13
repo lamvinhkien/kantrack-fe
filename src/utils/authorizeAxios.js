@@ -25,7 +25,9 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
 }, (error) => {
   interceptorLoadingElements(false)
 
-  if (error.response?.status === 401) axiosReduxStore.dispatch(logoutUserAPI(false))
+  if (error.response?.status === 401) {
+    axiosReduxStore.dispatch(logoutUserAPI(false))
+  }
 
   const originalRequests = error.config
   if (error.response?.status === 410 && !originalRequests._retry) {

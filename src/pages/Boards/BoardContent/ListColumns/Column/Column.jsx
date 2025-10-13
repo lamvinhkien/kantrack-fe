@@ -141,11 +141,11 @@ const Column = ({ column }) => {
           ml: 2,
           borderRadius: '6px',
           height: 'fit-content',
-          maxHeight: theme => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
+          maxHeight: theme => `calc(${theme.kantrack.boardContentHeight} - ${theme.spacing(5)})`
         }}>
         {/* Header */}
         <Box sx={{
-          height: theme => theme.trello.columnHeaderHeight,
+          height: theme => theme.kantrack.columnHeaderHeight,
           p: '8px 10px 8px 10px',
           display: 'flex',
           alignItems: 'center',
@@ -196,7 +196,7 @@ const Column = ({ column }) => {
 
         {/* Footer */}
         <Box sx={{
-          height: theme => theme.trello.columnFooterHeight,
+          height: theme => theme.kantrack.columnFooterHeight,
           p: 2
         }}>
           {!openNewCardForm

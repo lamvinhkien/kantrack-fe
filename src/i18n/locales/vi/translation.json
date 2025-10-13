@@ -22,6 +22,7 @@
   "home": "Trang chủ",
   "board": "Bảng",
   "boards": "Danh sách bảng",
+  "board_created": "Thêm bảng thành công.",
   "confirm": "Xác nhận",
   "enter_email": "Nhập email",
   "invite": "Mời",
@@ -166,5 +167,8 @@
   "already_have_account_message": "Đã có tài khoản?",
   "registering": "Đang đăng ký...",
   "register_success_message": "Đăng ký thành công! Vui lòng xác minh email trước khi đăng nhập.",
-  "slogan": "Tổ chức công việc hiệu quả cùng KanTrack"
+  "slogan": "Tổ chức công việc hiệu quả cùng KanTrack",
+  "account_created": "Tài khoản đã tạo! Vui lòng xác minh trước khi đăng nhập.",
+  "account_verified": "Tài khoản đã xác minh! Giờ bạn có thể đăng nhập.",
+  "user_invited": "Đã mời người dùng vào bảng."
 }

@@ -201,7 +201,7 @@ const Setup2FA = ({ isOpen, toggleOpen, action2FA, handleSuccessSetup2FA }) => {
             </Button>
           </Box>
 
-          <Footer lineWidth={100} />
+          <Footer lineWidth='100%'/>
         </Box>
       </Box>
     </Modal>
