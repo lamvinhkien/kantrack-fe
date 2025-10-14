@@ -29,6 +29,7 @@
     "axios": "^1.11.0",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.18",
+    "framer-motion": "^12.23.24",
     "i18next": "^23.16.8",
     "lodash": "^4.17.21",
     "material-ui-confirm": "^3.0.18",

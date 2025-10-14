@@ -29,15 +29,15 @@ const Footer = ({ lineWidth = 100 }) => {
           fontFamily: 'Poppins, sans-serif',
           fontWeight: 700,
           letterSpacing: 1,
-          textTransform: 'uppercase',
           fontSize: '0.95rem',
           background: 'linear-gradient(90deg, #1976d2, #63a4ff)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          textShadow: '0 0 6px rgba(25,118,210,0.3)'
+          textShadow: '0 0 6px rgba(25,118,210,0.3)',
+          textWrap: 'nowrap'
         }}
       >
-        KanTrack
+        © {new Date().getFullYear()} KanTrack
       </Typography>
 
       {/* Line phải */}

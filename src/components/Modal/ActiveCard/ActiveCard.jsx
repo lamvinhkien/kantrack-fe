@@ -268,9 +268,20 @@ const ActiveCard = () => {
     >
       <Box
         sx={{
-          position: 'relative', width: 1080, minHeight: 'auto', maxHeight: 620, bgcolor: 'white',
-          boxShadow: 24, border: 'none', outline: 0, margin: '50px auto', display: 'flex', flexDirection: 'column',
-          backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1E2A36' : '#fff'
+          position: 'relative',
+          width: { xs: '95%', sm: 720, md: 920, lg: 1080 },
+          maxWidth: '1100px',
+          minHeight: 'auto',
+          maxHeight: { xs: 'calc(100vh - 48px)', sm: 680, md: 620 },
+          bgcolor: 'white',
+          boxShadow: 24,
+          border: 'none',
+          outline: 0,
+          margin: { xs: '24px auto', sm: '32px auto', md: '50px auto' },
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: theme => theme.palette.mode === 'dark' ? '#1E2A36' : '#fff',
+          overflow: 'hidden'
         }}
       >
         <HeaderCover columnTitle={activeCard?.columnTitle} cover={activeCard?.cover} complete={activeCard?.complete}
@@ -278,11 +289,21 @@ const ActiveCard = () => {
           handleUpdateComplete={onUpdateComplete}
         />
 
-        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
+        <Box sx={{
+          flex: 1,
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          overflow: 'hidden'
+        }}>
           <Box
             sx={(theme) => ({
-              flex: 7.3, padding: '10px 30px 30px 30px',
-              overflowY: 'auto', minHeight: 0, ...getScrollbarStyles(theme)
+              flex: { xs: 'unset', md: 7.3 },
+              width: { xs: '100%', md: 'calc(65% - 20px)' },
+              padding: { xs: '12px 16px', md: '10px 30px 30px 30px' },
+              overflowY: 'auto',
+              minHeight: 0,
+              ...getScrollbarStyles(theme)
             })}
           >
             <Title
@@ -292,7 +313,7 @@ const ActiveCard = () => {
               onUpdateComplete={onUpdateComplete}
             />
 
-            <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 2 }}>
               {
                 activeCard?.memberIds?.includes(currentUser._id)
                   ?
@@ -397,12 +418,14 @@ const ActiveCard = () => {
 
           <Box
             sx={(theme) => ({
-              flex: 4.7,
-              padding: '12px 20px 20px 20px',
+              flex: { xs: 'unset', md: 4.7 },
+              width: { xs: '100%', md: 'calc(35% - 20px)' },
+              padding: { xs: '12px 16px', md: '12px 20px 20px 20px' },
               overflowY: 'auto',
               minHeight: 0,
-              bgcolor: theme => theme.palette.mode === 'dark' ? '#151a1f' : 'grey.200',
-              ...getScrollbarStyles(theme)
+              bgcolor: theme.palette.mode === 'dark' ? '#151a1f' : 'grey.200',
+              ...getScrollbarStyles(theme),
+              borderTop: { xs: '1px solid', md: 'none' }
             })}
           >
             <Box>

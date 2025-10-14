@@ -1,0 +1,13 @@
+<svg viewBox="0 0 70 72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="KanTrack logo">
+  <rect width="70" height="72" rx="12" fill="#1976d2" />
+
+  <g fill="#ffffff" transform="translate(3,-3)">
+    <rect x="6" y="14" width="12" height="36" rx="2" />
+    <rect x="26" y="10" width="12" height="40" rx="2" />
+    <rect x="46" y="14" width="12" height="36" rx="2" />
+
+    <rect x="6" y="60" width="46" height="4" rx="2" />
+
+    <polygon points="52,56 58,62 52,68" />
+  </g>
+</svg>

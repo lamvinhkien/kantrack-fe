@@ -170,5 +170,11 @@
   "slogan": "Organize your work with KanTrack",
   "account_created": "Account created! Verify before login.",
   "account_verified": "Account verified! You can login now.",
-  "user_invited": "User invited to board."
+  "user_invited": "User invited to board.",
+  "newTitle": "Stay on Top of Every Task",
+  "subtitle": "From daily checklists to big projects — KanTrack helps you visualize progress, coordinate teams, and keep everything under control.",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More",
+  "deviceBlocker_title": "This application is not yet supported on mobile devices",
+  "deviceBlocker_description": "Please access KanTrack from a desktop computer for the best experience."
 }

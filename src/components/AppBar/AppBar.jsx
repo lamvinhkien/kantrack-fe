@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import Mode from './Mode/Mode'
 import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
+import { ReactComponent as KanTrackMiniIcon } from '~/assets/kantrack-mini.svg'
 import Profile from './Profile/Profile'
 import { Link } from 'react-router-dom'
 import Notifications from './Notifications/Notifications'
@@ -12,11 +13,14 @@ import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import Typography from '@mui/material/Typography'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 const AppBar = () => {
   const { t } = useTranslation()
   const user = useSelector(selectCurrentUser)
   const isAuthorized = (user && (!user.require2fa || user.is2faVerified))
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const buttonStyle = {
     border: 'none',
@@ -56,7 +60,11 @@ const AppBar = () => {
         }}
       >
         <Link to='/'>
-          <KanTrackIcon style={{ width: 115, margin: '5px 10px 0px 0px', color: 'white' }} />
+          {isMobile ? (
+            <KanTrackMiniIcon style={{ width: 30, margin: '4px 2px 0px 0px', color: 'white' }} />
+          ) : (
+            <KanTrackIcon style={{ width: 115, margin: '5px 8px 0px 0px', color: 'white' }} />
+          )}
         </Link>
 
         <Button component={Link} to='/' variant='outlined' sx={buttonStyle}>
@@ -89,7 +97,8 @@ const AppBar = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 1
+              gap: 1,
+              textWrap: 'nowrap'
             }}
           >
             <RocketLaunchOutlinedIcon sx={{ color: 'white', fontSize: 24 }} />

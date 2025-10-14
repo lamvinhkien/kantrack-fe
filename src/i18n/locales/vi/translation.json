@@ -170,5 +170,11 @@
   "slogan": "Tổ chức công việc hiệu quả cùng KanTrack",
   "account_created": "Tài khoản đã tạo! Vui lòng xác minh trước khi đăng nhập.",
   "account_verified": "Tài khoản đã xác minh! Giờ bạn có thể đăng nhập.",
-  "user_invited": "Đã mời người dùng vào bảng."
+  "user_invited": "Đã mời người dùng vào bảng.",
+  "newTitle": "Theo dõi mọi công việc dễ dàng",
+  "subtitle": "Từ danh sách công việc hằng ngày đến dự án lớn — KanTrack giúp bạn theo dõi tiến độ, phối hợp nhóm và kiểm soát mọi thứ trong tầm tay.",
+  "getStarted": "Bắt đầu ngay",
+  "learnMore": "Tìm hiểu thêm",
+  "deviceBlocker_title": "Ứng dụng hiện chưa hỗ trợ thiết bị di động",
+  "deviceBlocker_description": "Vui lòng truy cập KanTrack bằng máy tính để có trải nghiệm tốt nhất."
 }
