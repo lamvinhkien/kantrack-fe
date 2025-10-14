@@ -60,92 +60,92 @@ const Boards = () => {
     fetchBoardsAPI(location.search).then(updateStateData)
   }
 
-  if (!boards) {
-    return <PageLoadingSpinner caption="Loading..." />
-  }
-
   return (
     <Container disableGutters maxWidth={false}>
       <AppBar />
-      <Box sx={{ paddingX: 2, my: 4 }}>
-        <Grid container spacing={2}>
-          <Grid xs={12} sm={3}>
-            <Stack direction="column" spacing={1} sx={{ mb: 1 }}>
-              <SidebarItem>
-                <SpaceDashboardIcon fontSize="small" />
-                Boards
-              </SidebarItem>
-            </Stack>
-            <Stack direction='column' spacing={1}>
-              <SidebarCreateBoardModal afterCreateNewBoard={afterCreateNewBoard} />
-            </Stack>
-          </Grid>
-
-          <Grid xs={12} sm={9}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-              <SpaceDashboardIcon />
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>YOUR BOARDS</Typography>
-            </Box>
-            {boards?.length === 0 &&
-              <Typography variant="span" sx={{ fontWeight: 'bold', mb: 3 }}>No result found!</Typography>
-            }
-            <Grid container spacing={2}>
-              {boards.map(b =>
-                <Grid xs={12} sm={3} md={4} key={b._id}>
-                  <Card
-                    sx={{
-                      width: '250px',
-                      bgcolor: theme => theme.palette.mode === 'dark' ? '#242b34ff' : '#fbfcffff'
-                    }}>
-                    {/* <CardMedia component='img' height='100' image='https://picsum.photos/100' /> */}
-                    <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
-                    <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-                      <Typography gutterBottom variant="h6" component="div">
-                        {b?.title}
-                      </Typography>
-                      <Box
-                        component={Link}
-                        to={`/boards/${b._id}`}
-                        sx={{
-                          mt: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'flex-end',
-                          color: 'primary.main',
-                          '&:hover': { color: 'primary.light' }
-                        }}
-                      >
-                        Go to board <ArrowRightIcon fontSize="small" />
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              )}
+      {boards
+        ?
+        <Box sx={{ paddingX: 2, my: 4 }}>
+          <Grid container spacing={2}>
+            <Grid xs={12} sm={3}>
+              <Stack direction="column" spacing={1} sx={{ mb: 1 }}>
+                <SidebarItem>
+                  <SpaceDashboardIcon fontSize="small" />
+                  Boards
+                </SidebarItem>
+              </Stack>
+              <Stack direction='column' spacing={1}>
+                <SidebarCreateBoardModal afterCreateNewBoard={afterCreateNewBoard} />
+              </Stack>
             </Grid>
 
-            {
-              totalBoards > 0 &&
-              <Box sx={{ my: 3, pr: 5, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                <Pagination
-                  size="large"
-                  color="primary"
-                  showFirstButton
-                  showLastButton
-                  count={Math.ceil(totalBoards / DEFAULT_ITEMS_PER_PAGE)}
-                  page={page}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      component={Link}
-                      to={`/boards${item.page === DEFAULT_PAGE ? '' : `?page=${item.page}`}`}
-                      {...item}
-                    />
-                  )}
-                />
+            <Grid xs={12} sm={9}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
+                <SpaceDashboardIcon />
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>YOUR BOARDS</Typography>
               </Box>
-            }
+              {boards?.length === 0 &&
+                <Typography variant="span" sx={{ fontWeight: 'bold', mb: 3 }}>No result found!</Typography>
+              }
+              <Grid container spacing={2}>
+                {boards.map(b =>
+                  <Grid xs={12} sm={3} md={4} key={b._id}>
+                    <Card
+                      sx={{
+                        width: '250px',
+                        bgcolor: theme => theme.palette.mode === 'dark' ? '#242b34ff' : '#fbfcffff'
+                      }}>
+                      {/* <CardMedia component='img' height='100' image='https://picsum.photos/100' /> */}
+                      <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
+                      <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
+                        <Typography gutterBottom variant="h6" component="div">
+                          {b?.title}
+                        </Typography>
+                        <Box
+                          component={Link}
+                          to={`/boards/${b._id}`}
+                          sx={{
+                            mt: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                            color: 'primary.main',
+                            '&:hover': { color: 'primary.light' }
+                          }}
+                        >
+                          Go to board <ArrowRightIcon fontSize="small" />
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                )}
+              </Grid>
+
+              {
+                totalBoards > 0 &&
+                <Box sx={{ my: 3, pr: 5, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                  <Pagination
+                    size="large"
+                    color="primary"
+                    showFirstButton
+                    showLastButton
+                    count={Math.ceil(totalBoards / DEFAULT_ITEMS_PER_PAGE)}
+                    page={page}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        component={Link}
+                        to={`/boards${item.page === DEFAULT_PAGE ? '' : `?page=${item.page}`}`}
+                        {...item}
+                      />
+                    )}
+                  />
+                </Box>
+              }
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+        : <PageLoadingSpinner caption="Loading..." AppBar={true} />
+      }
     </Container>
   )
 }

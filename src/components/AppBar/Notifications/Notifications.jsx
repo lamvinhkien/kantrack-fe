@@ -104,7 +104,7 @@ const Notifications = () => {
         <IconButton
           color="inherit"
           onClick={handleOpenMenu}
-          sx={{ color: 'white' }}
+          sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
         >
           <Badge
             color="warning"

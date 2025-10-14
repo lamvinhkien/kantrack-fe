@@ -5,8 +5,9 @@ import BoardType from './BoardType'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { updateBoardDetailsAPI } from '~/apis'
-import { updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { updateCurrentActiveBoard, fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch } from 'react-redux'
+import RefreshBoard from './RefreshBoard'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
@@ -19,6 +20,10 @@ const BoardBar = ({ board }) => {
         dispatch(updateCurrentActiveBoard(newBoard))
         socketIoInstance.emit('FE_UPDATE_BOARD_TITLE', { boardId: newBoard._id, board: newBoard })
       })
+  }
+
+  const onRefreshBoard = () => {
+    dispatch(fetchBoardDetailsAPI(board._id))
   }
 
   return (
@@ -47,6 +52,7 @@ const BoardBar = ({ board }) => {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <RefreshBoard handleRefresh={onRefreshBoard} />
         <BoardType boardType={board?.type} />
         <InviteBoardUser boardId={board._id} />
         <BoardUserGroup boardUsers={board?.FE_allUsers} />

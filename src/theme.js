@@ -6,6 +6,7 @@ const BOARD_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT} - ${BOARD_BAR_HEIGH
 const HOME_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT})`
 const COLUMN_HEADER_HEIGHT = '50px'
 const COLUMN_FOOTER_HEIGHT = '56px'
+const PAGE_WITHOUT_APP_BAR_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT})`
 
 const theme = extendTheme({
   kantrack: {
@@ -14,7 +15,8 @@ const theme = extendTheme({
     boardContentHeight: BOARD_CONTENT_HEIGHT,
     homeContentHeight: HOME_CONTENT_HEIGHT,
     columnHeaderHeight: COLUMN_HEADER_HEIGHT,
-    columnFooterHeight: COLUMN_FOOTER_HEIGHT
+    columnFooterHeight: COLUMN_FOOTER_HEIGHT,
+    pageWithoutAppBarHeight: PAGE_WITHOUT_APP_BAR_HEIGHT
   },
   colorSchemes: {
     light: {

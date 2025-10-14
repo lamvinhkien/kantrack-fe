@@ -101,19 +101,24 @@ const Board = () => {
     })
   }
 
-  if (!board) return <PageLoadingSpinner caption='Loading Board...' />
-
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
-      <ActiveCard />
       <AppBar />
-      <BoardBar board={board} />
-      <BoardContent
-        board={board}
-        moveColumn={moveColumn}
-        moveCardInTheSameColumn={moveCardInTheSameColumn}
-        moveCardToDifferentColumn={moveCardToDifferentColumn}
-      />
+      {board
+        ?
+        <>
+          <BoardBar board={board} />
+          <BoardContent
+            board={board}
+            moveColumn={moveColumn}
+            moveCardInTheSameColumn={moveCardInTheSameColumn}
+            moveCardToDifferentColumn={moveCardToDifferentColumn}
+          />
+          <ActiveCard />
+        </>
+        :
+        <PageLoadingSpinner caption='Loading Board...' AppBar={true} />
+      }
     </Container>
   )
 }

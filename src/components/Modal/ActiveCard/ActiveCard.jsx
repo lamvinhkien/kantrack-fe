@@ -303,6 +303,7 @@ const ActiveCard = () => {
               padding: { xs: '12px 16px', md: '10px 30px 30px 30px' },
               overflowY: 'auto',
               minHeight: 0,
+              borderBottom: { xs: 1, md: 'none' },
               ...getScrollbarStyles(theme)
             })}
           >
@@ -425,7 +426,7 @@ const ActiveCard = () => {
               minHeight: 0,
               bgcolor: theme.palette.mode === 'dark' ? '#151a1f' : 'grey.200',
               ...getScrollbarStyles(theme),
-              borderTop: { xs: '1px solid', md: 'none' }
+              borderTop: { xs: 1, md: 'none' }
             })}
           >
             <Box>

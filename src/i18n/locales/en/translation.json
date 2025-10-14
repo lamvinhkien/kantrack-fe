@@ -176,5 +176,7 @@
   "getStarted": "Get Started",
   "learnMore": "Learn More",
   "deviceBlocker_title": "This application is not yet supported on mobile devices",
-  "deviceBlocker_description": "Please access KanTrack from a desktop computer for the best experience."
+  "deviceBlocker_description": "Please access KanTrack from a desktop computer for the best experience.",
+  "refresh": "Refresh",
+  "refresh_board": "Refresh this board data"
 }
