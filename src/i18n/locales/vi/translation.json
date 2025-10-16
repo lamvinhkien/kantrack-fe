@@ -17,6 +17,7 @@
   "not_found": "Không tìm thấy!",
   "logout": "Đăng xuất",
   "confirm_logout": "Bạn có chắc muốn đăng xuất khỏi tài khoản không?",
+  "logout_success": "Đăng xuất thành công.",
   "account": "Tài khoản",
   "dashboard": "Tổng quan",
   "home": "Trang chủ",
@@ -178,5 +179,9 @@
   "deviceBlocker_title": "Ứng dụng hiện chưa hỗ trợ thiết bị di động",
   "deviceBlocker_description": "Vui lòng truy cập KanTrack bằng máy tính để có trải nghiệm tốt nhất.",
   "refresh": "Làm mới",
-  "refresh_board": "Làm mới dữ liệu bảng này"
+  "refresh_board": "Làm mới dữ liệu bảng này",
+  "complete": "Hoàn thành",
+  "overdue": "Quá hạn",
+  "due_soon": "Sắp đến hạn",
+  "no_date": "Chưa có thời hạn"
 }

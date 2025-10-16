@@ -18,7 +18,17 @@ const BoardBar = ({ board }) => {
       .then(() => {
         if (newTitle) newBoard.title = newTitle
         dispatch(updateCurrentActiveBoard(newBoard))
-        socketIoInstance.emit('FE_UPDATE_BOARD_TITLE', { boardId: newBoard._id, board: newBoard })
+        socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
+      })
+  }
+
+  const onUpdateBoardType = (newType) => {
+    const newBoard = { ...board }
+    updateBoardDetailsAPI(board._id, { type: newType })
+      .then(() => {
+        if (newType) newBoard.type = newType
+        dispatch(updateCurrentActiveBoard(newBoard))
+        socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
       })
   }
 
@@ -53,7 +63,7 @@ const BoardBar = ({ board }) => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <RefreshBoard handleRefresh={onRefreshBoard} />
-        <BoardType boardType={board?.type} />
+        <BoardType boardType={board?.type} handleUpdateBoardType={onUpdateBoardType} />
         <InviteBoardUser boardId={board._id} />
         <BoardUserGroup boardUsers={board?.FE_allUsers} />
       </Box>

@@ -53,6 +53,13 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
     }
   }
 
+  const handleAddCardComment = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      handleSendComment()
+    }
+  }
+
   const handleEditClick = (comment) => {
     setEditingCommentId(comment.commentId)
     setEditContent(comment.content)
@@ -140,6 +147,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
           type="text"
           variant="outlined"
           multiline
+          onKeyDown={handleAddCardComment}
           value={commentInput}
           onChange={(e) => setCommentInput(e.target.value)}
           InputProps={{

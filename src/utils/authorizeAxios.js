@@ -26,7 +26,7 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
   interceptorLoadingElements(false)
 
   if (error.response?.status === 401) {
-    axiosReduxStore.dispatch(logoutUserAPI(false))
+    axiosReduxStore.dispatch(logoutUserAPI())
   }
 
   const originalRequests = error.config
@@ -37,7 +37,7 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
       refreshTokenPromise = refreshTokenAPI()
         .then(data => data?.accessToken)
         .catch((_error) => {
-          axiosReduxStore.dispatch(logoutUserAPI(false))
+          axiosReduxStore.dispatch(logoutUserAPI())
           return Promise.reject(_error)
         })
         .finally(() => refreshTokenPromise = null)

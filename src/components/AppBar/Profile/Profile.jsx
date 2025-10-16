@@ -1,8 +1,5 @@
-import * as React from 'react'
 import Avatar from '@mui/material/Avatar'
 import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
-import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -13,11 +10,13 @@ import { useConfirm } from 'material-ui-confirm'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 const Profile = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -38,26 +37,27 @@ const Profile = () => {
       cancellationText: t('cancel'),
       confirmationButtonProps: { color: 'error' }
     })
-      .then(() => { dispatch(logoutUserAPI()).then(() => navigate('/login')) })
+      .then(() => {
+        dispatch(logoutUserAPI()).then(() => {
+          toast.success(t('logout_success'))
+          navigate('/login')
+        })
+      })
       .catch(() => { })
   }
 
   return (
-    <React.Fragment>
-      <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip title={t('account')}>
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            sx={{ padding: 0 }}
-          >
-            <Avatar sx={{ width: 35, height: 35 }} alt={currentUser?.displayName} src={currentUser?.avatar?.url} />
-          </IconButton>
-        </Tooltip>
-      </Box>
+    <>
+      <IconButton
+        onClick={handleClick}
+        size="small"
+        aria-controls={open ? 'account-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        sx={{ padding: 0 }}
+      >
+        <Avatar sx={{ width: 35, height: 35 }} alt={currentUser?.displayName} src={currentUser?.avatar?.url} />
+      </IconButton>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -87,7 +87,7 @@ const Profile = () => {
           {t('logout')}
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   )
 }
 

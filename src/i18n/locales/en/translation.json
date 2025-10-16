@@ -17,6 +17,7 @@
   "not_found": "Not found!",
   "logout": "Logout",
   "confirm_logout": "Are you sure log out of your account?",
+  "logout_success": "Logged out successfully.",
   "account": "Account",
   "dashboard": "Dashboard",
   "home": "Home",
@@ -178,5 +179,9 @@
   "deviceBlocker_title": "This application is not yet supported on mobile devices",
   "deviceBlocker_description": "Please access KanTrack from a desktop computer for the best experience.",
   "refresh": "Refresh",
-  "refresh_board": "Refresh this board data"
+  "refresh_board": "Refresh this board data",
+  "complete": "Complete",
+  "overdue": "Overdue",
+  "due_soon": "Due soon",
+  "no_date": "No date"
 }

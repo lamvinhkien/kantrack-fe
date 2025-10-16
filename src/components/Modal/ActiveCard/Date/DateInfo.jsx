@@ -2,9 +2,11 @@ import { Box, Typography } from '@mui/material'
 import { useColorScheme } from '@mui/material/styles'
 import { ExpandMore } from '@mui/icons-material'
 import moment from 'moment'
+import { useTranslation } from 'react-i18next'
 
 const DateInfo = ({ dates, complete, onClick }) => {
   const { mode } = useColorScheme()
+  const { t } = useTranslation()
 
   const startDate = dates?.startDate ? moment(dates.startDate) : null
   const dueDate = dates?.dueDate ? moment(dates.dueDate) : null
@@ -19,23 +21,21 @@ const DateInfo = ({ dates, complete, onClick }) => {
       )
       : dueDate
 
-  const diffDays = dueDateTime ? dueDateTime.diff(now, 'days') : null
-
   let statusLabel = ''
   let statusBg = ''
 
   if (complete) {
-    statusLabel = 'Complete'
+    statusLabel = t('complete')
     statusBg = '#b3e863ff'
   } else if (dueDateTime && dueDateTime.isBefore(now)) {
-    statusLabel = 'Overdue'
+    statusLabel = t('overdue')
     statusBg = '#f87168'
-  } else if (diffDays === 0 || diffDays === 1) {
-    statusLabel = 'Due soon'
+  } else if (dueDateTime && dueDateTime.diff(now, 'hours') <= 24) {
+    statusLabel = t('due_soon')
     statusBg = '#fbc828'
   }
 
-  let formattedDate = 'No date'
+  let formattedDate = t('no_date')
   if (dueDate) {
     const formattedStart = startDate ? startDate.format('DD/MM') : null
     const formattedDue = dueDate.format('DD/MM')

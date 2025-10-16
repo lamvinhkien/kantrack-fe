@@ -51,7 +51,7 @@ const SecurityTab = () => {
           .then((res) => {
             if (!res.error) {
               toast.success(t('change_password_success'))
-              dispatch(logoutUserAPI(false))
+              dispatch(logoutUserAPI())
             }
           })
       })

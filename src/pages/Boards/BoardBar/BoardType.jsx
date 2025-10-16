@@ -4,7 +4,7 @@ import PublicIcon from '@mui/icons-material/Public'
 import LockIcon from '@mui/icons-material/Lock'
 import { useTranslation } from 'react-i18next'
 
-const BoardType = ({ boardType, onChangeBoardType }) => {
+const BoardType = ({ boardType, handleUpdateBoardType }) => {
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -19,7 +19,7 @@ const BoardType = ({ boardType, onChangeBoardType }) => {
 
   const handleSelect = (type) => {
     if (type !== boardType) {
-      onChangeBoardType?.(type)
+      handleUpdateBoardType(type)
     }
     handleClose()
   }

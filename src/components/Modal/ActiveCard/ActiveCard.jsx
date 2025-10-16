@@ -205,6 +205,10 @@ const ActiveCard = () => {
     await callApiUpdateCard({ action, newAttachment: data })
   }
 
+  const onUpdateCardDate = async (data) => {
+    await callApiUpdateCard({ dates: data })
+  }
+
   const onDeleteCard = async () => {
     confirmDeleteCard({
       title: t('delete_card'),
@@ -236,10 +240,6 @@ const ActiveCard = () => {
       )
 
     }).catch(() => { })
-  }
-
-  const onUpdateCardDate = async (data) => {
-    await callApiUpdateCard({ dates: data })
   }
 
   useEffect(() => {

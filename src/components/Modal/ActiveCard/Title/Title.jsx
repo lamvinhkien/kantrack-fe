@@ -3,9 +3,11 @@ import { useColorScheme } from '@mui/material/styles'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import ToggleFocusInput from '~/components/form/ToggleFocusInput'
+import { useTranslation } from 'react-i18next'
 
 const Title = ({ title, complete, onUpdateCardTitle, onUpdateComplete }) => {
   const { mode } = useColorScheme()
+  const { t } = useTranslation()
 
   const handleCheckboxChange = (event) => {
     onUpdateComplete(event.target.checked)
@@ -16,7 +18,7 @@ const Title = ({ title, complete, onUpdateCardTitle, onUpdateComplete }) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       <Tooltip
-        title={complete ? 'Mark incomplete' : 'Mark complete'}
+        title={complete ? t('mark_incomplete') : t('mark_complete')}
         arrow
         placement="top"
       >

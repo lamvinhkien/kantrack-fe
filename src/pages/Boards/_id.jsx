@@ -31,7 +31,7 @@ const Board = () => {
     }
 
     if (boardId) socketIoInstance.emit('FE_JOIN_BOARD', boardId)
-    socketIoInstance.on('BE_UPDATE_BOARD_TITLE', onReceiveNewBoard)
+    socketIoInstance.on('BE_UPDATE_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_ADD_COLUMN_IN_BOARD', onReceiveNewBoard)
@@ -43,7 +43,7 @@ const Board = () => {
 
     return () => {
       if (boardId) socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
-      socketIoInstance.off('BE_UPDATE_BOARD_TITLE', onReceiveNewBoard)
+      socketIoInstance.off('BE_UPDATE_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_ADD_COLUMN_IN_BOARD', onReceiveNewBoard)
@@ -95,7 +95,8 @@ const Board = () => {
       prevColumnId,
       prevCardOrderIds,
       nextColumnId,
-      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds,
+      boardId
     }).then(() => {
       socketIoInstance.emit('FE_MOVE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
     })
