@@ -175,7 +175,7 @@ const ActiveCard = () => {
   }
 
   const onUpdateCardMembers = async (incomingMemberInfo) => {
-    callApiUpdateCard({ incomingMemberInfo })
+    await callApiUpdateCard({ incomingMemberInfo })
   }
 
   const onAddCardAttachments = (files, link) => {

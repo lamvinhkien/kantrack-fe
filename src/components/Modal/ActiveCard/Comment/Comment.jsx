@@ -17,6 +17,8 @@ import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { renderTime } from '~/utils/formatters'
 import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
 import { useTranslation } from 'react-i18next'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import Badge from '@mui/material/Badge'
 
 const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
   const { t, i18n } = useTranslation()
@@ -122,13 +124,18 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
     }
   }, [editingCommentId])
 
-
   const renderComments = cardComments.map((comment) => {
-    const user = board?.FE_allUsers?.find((u) => u._id === comment.userId)
+    const user =
+      board?.owners?.find((u) => u._id === comment.userId) ||
+      board?.members?.find((u) => u._id === comment.userId)
+
+    const isOwner = board?.owners?.some((owner) => owner._id === comment.userId)
+
     return {
       ...comment,
       userDisplayName: user?.displayName || 'Unknown User',
-      userAvatar: user?.avatar?.url || ''
+      userAvatar: user?.avatar?.url || '',
+      isOwner
     }
   })
 
@@ -213,13 +220,38 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
             sx={{ display: 'flex', gap: 1, width: '100%', mt: 2 }}
             key={comment.commentId}
           >
-            <Tooltip title={comment.userDisplayName}>
-              <Avatar
-                sx={{ width: 30, height: 30, cursor: 'pointer' }}
-                alt={comment.userDisplayName}
-                src={comment.userAvatar}
-              />
-            </Tooltip>
+            <Box>
+              <Tooltip
+                title={
+                  board?.owners?.some((o) => o._id === comment.userId)
+                    ? `${comment.userDisplayName} (${t('admin')})`
+                    : comment.userDisplayName
+                }
+              >
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  badgeContent={
+                    board?.owners?.some((o) => o._id === comment.userId) ? (
+                      <EmojiEventsIcon sx={{ fontSize: 13, color: '#f1c40f' }} />
+                    ) : null
+                  }
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      cursor: 'pointer',
+                      border: board?.owners?.some((o) => o._id === comment.userId)
+                        ? '2px solid #f1c40f'
+                        : 'none'
+                    }}
+                    alt={comment.userDisplayName}
+                    src={comment.userAvatar}
+                  />
+                </Badge>
+              </Tooltip>
+            </Box>
 
             <Box sx={{ width: 'inherit' }}>
               <Box sx={{ display: 'flex', alignItems: 'start', gap: 1, height: '24px' }}>
@@ -271,7 +303,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
               </Box>
 
               {isEditing ? (
-                <Box sx={{ mt: 1 }}>
+                <Box sx={{ mt: '4px' }}>
                   <TextField
                     fullWidth
                     multiline

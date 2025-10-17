@@ -6,7 +6,7 @@ const RefreshBoard = ({ handleRefresh }) => {
   const { t } = useTranslation()
 
   return (
-    <Tooltip title={t('refresh_board')}>
+    <Tooltip arrow title={t('refresh_board')}>
       <Box
         onClick={handleRefresh}
         sx={{

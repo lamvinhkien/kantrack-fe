@@ -1,21 +1,18 @@
 <svg viewBox="0 0 290 72" xmlns="http://www.w3.org/2000/svg">
-  <rect width="290" height="72" fill="#1976d2" rx="8" />
-
-  <g fill="white">
+  <g fill="currentColor">
     <rect x="6" y="14" width="12" height="36" rx="2" />
     <rect x="26" y="10" width="12" height="40" rx="2" />
     <rect x="46" y="14" width="12" height="36" rx="2" />
     <rect x="6" y="60" width="270" height="4" rx="2" />
     <polygon points="276,56 286,62 276,68" />
   </g>
-
   <text
     x="72"
     y="50"
     font-family="Poppins, 'Segoe UI', Arial, sans-serif"
     font-size="48"
     font-weight="700"
-    fill="white"
+    fill="currentColor"
     letter-spacing="1"
   >
     KanTrack

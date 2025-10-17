@@ -28,7 +28,7 @@ const BoardType = ({ boardType, handleUpdateBoardType }) => {
 
   return (
     <>
-      <Tooltip title={isPublic ? t('public_board') : t('private_board')}>
+      <Tooltip arrow title={isPublic ? t('public_board') : t('private_board')}>
         <Box
           onClick={handleClick}
           sx={{

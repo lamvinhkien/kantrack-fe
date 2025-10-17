@@ -32,7 +32,9 @@
   "public_board": "Bảng có quyền truy cập công khai",
   "private": "Riêng tư",
   "private_board": "Bảng có quyền truy cập riêng tư",
-  "show_more": "Xem thêm",
+  "view_board_member": "Xem thành viên của bảng",
+  "remove_member": "Xoá thành viên",
+  "confirm_remove_member": "Bạn có chắc muốn xoá thành viên này ra khỏi bảng?",
   "change_visibility": "Thay đổi quyền truy cập",
   "des_public": "Bất kỳ ai cũng có thể xem bảng này.",
   "des_private": "Chỉ có thành viên của bảng xem bảng này.",
@@ -183,5 +185,9 @@
   "complete": "Hoàn thành",
   "overdue": "Quá hạn",
   "due_soon": "Sắp đến hạn",
-  "no_date": "Chưa có thời hạn"
+  "no_date": "Chưa có thời hạn",
+  "admin": "Quản trị viên",
+  "leave_board": "Rời khỏi bảng",
+  "assign_admin": "Gán quyền Admin",
+  "confirm_assign_admin": "Bạn có chắc muốn gán quyền thành viên này thành quản trị viên?"
 }

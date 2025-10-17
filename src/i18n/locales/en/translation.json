@@ -32,7 +32,9 @@
   "public_board": "This board is public",
   "private": "Private",
   "private_board": "This board is private",
-  "show_more": "Show more",
+  "view_board_member": "View board member",
+  "remove_member": "Remove member",
+  "confirm_remove_member": "Are you sure you want to remove this member from the board?",
   "change_visibility": "Change visibility",
   "des_public": "Anyone can see this board.",
   "des_private": "Only board members can see this board.",
@@ -183,5 +185,9 @@
   "complete": "Complete",
   "overdue": "Overdue",
   "due_soon": "Due soon",
-  "no_date": "No date"
+  "no_date": "No date",
+  "admin": "Admin",
+  "leave_board": "Leave Board",
+  "assign_admin": "Assign as Admin",
+  "confirm_assign_admin": "Are you sure you want to assign this member as an admin?"
 }

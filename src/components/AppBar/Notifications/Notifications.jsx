@@ -27,6 +27,7 @@ import { selectCurrentUser } from '~/redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { renderTime } from '~/utils/formatters'
 import { useTranslation } from 'react-i18next'
+import { fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
 
 const BOARD_INVITATION_STATUS = {
   PENDING: 'PENDING',
@@ -82,8 +83,14 @@ const Notifications = () => {
 
   const updateBoardInvitation = (invitationId, status) => {
     dispatch(updateBoardInvitationAPI({ invitationId, status }))
-      .then(res => {
+      .then(async (res) => {
         if (res.payload.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
+          const boardRes = await dispatch(fetchBoardDetailsAPI(res.payload.boardInvitation.boardId))
+          const newBoard = {
+            ...boardRes.payload,
+            memberIds: [...boardRes.payload.memberIds, res.payload.inviteeId]
+          }
+          socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
           navigate(`/boards/${res.payload.boardInvitation.boardId}`)
         }
       })

@@ -8,9 +8,12 @@ import { updateBoardDetailsAPI } from '~/apis'
 import { updateCurrentActiveBoard, fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch } from 'react-redux'
 import RefreshBoard from './RefreshBoard'
+import { useConfirm } from 'material-ui-confirm'
+import { useTranslation } from 'react-i18next'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
+  const { t } = useTranslation()
 
   const onUpdateBoardTitle = (newTitle) => {
     const newBoard = { ...board }
@@ -30,6 +33,52 @@ const BoardBar = ({ board }) => {
         dispatch(updateCurrentActiveBoard(newBoard))
         socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
       })
+  }
+
+  const confirmRemoveMember = useConfirm()
+  const onRemoveMember = (removeMember) => {
+    const newBoard = { ...board }
+    confirmRemoveMember({
+      title: t('remove_member'),
+      description: t('confirm_remove_member'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
+      confirmationButtonProps: { color: 'error' }
+    })
+      .then(() => {
+        updateBoardDetailsAPI(board._id, { removeMember })
+          .then(() => {
+            newBoard.memberIds = newBoard.memberIds.filter(id => id !== removeMember._id)
+            newBoard.members = newBoard.members.filter(member => member._id !== removeMember._id)
+            dispatch(updateCurrentActiveBoard(newBoard))
+            socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
+          })
+      })
+      .catch(() => { })
+  }
+
+  const confirmAssignAdmin = useConfirm()
+  const onAssignAdmin = (assignAdmin) => {
+    const newBoard = { ...board }
+    confirmAssignAdmin({
+      title: t('assign_admin'),
+      description: t('confirm_assign_admin'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
+      confirmationButtonProps: { color: 'primary' }
+    })
+      .then(() => {
+        updateBoardDetailsAPI(board._id, { assignAdmin })
+          .then(() => {
+            newBoard.memberIds = newBoard.memberIds.filter(id => id !== assignAdmin._id)
+            newBoard.ownerIds = [...newBoard.ownerIds, assignAdmin._id]
+            newBoard.members = newBoard.members.filter(member => member._id !== assignAdmin._id)
+            newBoard.owners = [...newBoard.owners, assignAdmin]
+            dispatch(updateCurrentActiveBoard(newBoard))
+            socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
+          })
+      })
+      .catch(() => { })
   }
 
   const onRefreshBoard = () => {
@@ -65,7 +114,13 @@ const BoardBar = ({ board }) => {
         <RefreshBoard handleRefresh={onRefreshBoard} />
         <BoardType boardType={board?.type} handleUpdateBoardType={onUpdateBoardType} />
         <InviteBoardUser boardId={board._id} />
-        <BoardUserGroup boardUsers={board?.FE_allUsers} />
+        <BoardUserGroup
+          boardMembers={board?.members}
+          boardOwners={board?.owners}
+          handleRemoveMember={onRemoveMember}
+          handleAssignAdmin={onAssignAdmin}
+        />
+        {/* Settings */}
       </Box>
     </Box>
   )

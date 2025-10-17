@@ -38,7 +38,7 @@ const InviteBoardUser = ({ boardId }) => {
 
   return (
     <Box>
-      <Tooltip title={t('invite_user')}>
+      <Tooltip arrow title={t('invite_user')}>
         <Box
           onClick={handleTogglePopover}
           sx={{
@@ -72,7 +72,7 @@ const InviteBoardUser = ({ boardId }) => {
       >
         <form
           onSubmit={handleSubmit(submitInviteUserToBoard)}
-          style={{ width: 320 }}
+          style={{ width: 300 }}
         >
           <Box
             sx={{

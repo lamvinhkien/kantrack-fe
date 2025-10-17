@@ -1,5 +1,5 @@
 import { Box, Typography, Button } from '@mui/material'
-import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
+import { ReactComponent as KanTrackIcon } from '~/assets/kantrack-transparent.svg'
 import KanbanBoardImage from '~/assets/kanban_board.png'
 import { useColorScheme } from '@mui/material'
 import { useTranslation } from 'react-i18next'
