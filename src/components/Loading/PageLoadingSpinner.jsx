@@ -9,13 +9,14 @@ function PageLoadingSpinner({ caption, AppBar = false }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'column',
         gap: 2,
         width: '100%',
         height: (theme) => AppBar ? theme.kantrack.pageWithoutAppBarHeight : '100vh'
       }}
     >
       <CircularProgress />
-      <Typography>{caption}</Typography>
+      <Typography sx={{ mt: 1 }}>{caption}</Typography>
     </Box>
   )
 }

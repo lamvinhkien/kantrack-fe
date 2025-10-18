@@ -13,11 +13,12 @@ const RefreshBoard = ({ handleRefresh }) => {
           color: 'white',
           display: 'flex',
           alignItems: 'center',
-          gap: 1,
+          gap: 0.5,
           px: 1,
           py: 0.5,
           borderRadius: 1,
           cursor: 'pointer',
+          textWrap: 'nowrap',
           '&:hover': {
             bgcolor: 'rgba(255,255,255,0.12)'
           }

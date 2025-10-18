@@ -10,10 +10,14 @@ import { useDispatch } from 'react-redux'
 import RefreshBoard from './RefreshBoard'
 import { useConfirm } from 'material-ui-confirm'
 import { useTranslation } from 'react-i18next'
+import BoardPermission from './BoardPermission'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const onUpdateBoardTitle = (newTitle) => {
     const newBoard = { ...board }
@@ -27,7 +31,7 @@ const BoardBar = ({ board }) => {
 
   const onUpdateBoardType = (newType) => {
     const newBoard = { ...board }
-    updateBoardDetailsAPI(board._id, { type: newType })
+    return updateBoardDetailsAPI(board._id, { type: newType })
       .then(() => {
         if (newType) newBoard.type = newType
         dispatch(updateCurrentActiveBoard(newBoard))
@@ -81,8 +85,74 @@ const BoardBar = ({ board }) => {
       .catch(() => { })
   }
 
+  const confirmLeaveBoard = useConfirm()
+  const onLeaveBoard = (leaveUser) => {
+    const newBoard = { ...board }
+
+    const ownerIds = newBoard.ownerIds || []
+    const memberIds = newBoard.memberIds || []
+
+    const isOwner = ownerIds.includes(leaveUser._id)
+    const isLastOwner = isOwner && ownerIds.length === 1
+    const isOnlyMember = ownerIds.length + memberIds.length === 1
+
+    if (isOnlyMember) {
+      toast.error(t('cannot_leave_as_last_member'))
+      return
+    }
+
+    if (isLastOwner) {
+      toast.error(t('cannot_leave_as_last_owner'))
+      return
+    }
+
+    confirmLeaveBoard({
+      title: t('leave_board'),
+      description: t('confirm_leave_board'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
+      confirmationButtonProps: { color: 'error' }
+    })
+      .then(() => {
+        updateBoardDetailsAPI(board._id, { leaveBoard: leaveUser })
+          .then(() => {
+            if (newBoard.ownerIds?.includes(leaveUser._id))
+              newBoard.ownerIds = newBoard.ownerIds.filter(id => id !== leaveUser._id)
+
+            if (newBoard.owners?.some(owner => owner._id === leaveUser._id))
+              newBoard.owners = newBoard.owners.filter(owner => owner._id !== leaveUser._id)
+
+            if (newBoard.memberIds?.includes(leaveUser._id))
+              newBoard.memberIds = newBoard.memberIds.filter(id => id !== leaveUser._id)
+
+            if (newBoard.members?.some(member => member._id === leaveUser._id))
+              newBoard.members = newBoard.members.filter(member => member._id !== leaveUser._id)
+
+            dispatch(updateCurrentActiveBoard(newBoard))
+            socketIoInstance.emit('FE_UPDATE_BOARD', {
+              boardId: newBoard._id,
+              board: newBoard
+            })
+
+            navigate('/boards')
+          })
+      })
+      .catch(() => { })
+  }
+
   const onRefreshBoard = () => {
+    dispatch(updateCurrentActiveBoard(null))
     dispatch(fetchBoardDetailsAPI(board._id))
+  }
+
+  const onUpdatePermission = (updatePermissions) => {
+    const newBoard = { ...board }
+    updateBoardDetailsAPI(board._id, { updatePermissions })
+      .then(() => {
+        newBoard.memberPermissions = updatePermissions
+        dispatch(updateCurrentActiveBoard(newBoard))
+        socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
+      })
   }
 
   return (
@@ -95,6 +165,7 @@ const BoardBar = ({ board }) => {
       px: 2,
       gap: 2,
       overflowX: 'auto',
+      overflowY: 'hidden',
       bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#293A4A' : '#155DA9'),
       '&::-webkit-scrollbar-track': { m: 2 }
     }}>
@@ -114,13 +185,14 @@ const BoardBar = ({ board }) => {
         <RefreshBoard handleRefresh={onRefreshBoard} />
         <BoardType boardType={board?.type} handleUpdateBoardType={onUpdateBoardType} />
         <InviteBoardUser boardId={board._id} />
+        <BoardPermission boardPermission={board?.memberPermissions} handleUpdatePermission={onUpdatePermission} />
         <BoardUserGroup
           boardMembers={board?.members}
           boardOwners={board?.owners}
           handleRemoveMember={onRemoveMember}
           handleAssignAdmin={onAssignAdmin}
+          handleLeaveBoard={onLeaveBoard}
         />
-        {/* Settings */}
       </Box>
     </Box>
   )
