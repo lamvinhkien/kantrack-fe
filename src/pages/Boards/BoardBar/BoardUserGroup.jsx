@@ -133,7 +133,7 @@ const BoardUserGroup = ({
             borderRadius: 2,
             boxShadow: 3,
             minWidth: 280,
-            maxHeight: 400,
+            maxHeight: 500,
             display: 'flex',
             flexDirection: 'column',
             p: 0

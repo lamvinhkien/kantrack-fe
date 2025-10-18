@@ -44,7 +44,7 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
     card: Object.keys(permissions).filter((k) => k.toLowerCase().includes('card'))
   }
 
-  const renderPermissionGroup = (title, icon, keys) => (
+  const renderPermissionGroup = (title, icon, keys, divider = true) => (
     <>
       <Box
         sx={{
@@ -107,7 +107,7 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
           </ListItem>
         ))}
       </List>
-      <Divider sx={{ my: 0.5 }} />
+      {divider && <Divider sx={{ my: 0.5 }} />}
     </>
   )
 
@@ -148,11 +148,13 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
             borderRadius: 2,
             boxShadow: 3,
             width: 'auto',
-            minWidth: 320,
+            minWidth: 300,
             maxWidth: 400,
-            maxHeight: 400,
-            overflowY: 'auto',
-            backgroundColor: 'background.paper'
+            maxHeight: 500,
+            backgroundColor: 'background.paper',
+            display: 'flex',
+            flexDirection: 'column',
+            pb: 0.5
           }
         }}
       >
@@ -174,11 +176,7 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
         >
           <Typography
             variant="subtitle2"
-            sx={{
-              flex: 1,
-              textAlign: 'center',
-              pointerEvents: 'none'
-            }}
+            sx={{ flex: 1, textAlign: 'center', pointerEvents: 'none' }}
           >
             {t('manage_permissions')}
           </Typography>
@@ -191,9 +189,17 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
           </IconButton>
         </Box>
 
-        {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board)}
-        {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column)}
-        {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card)}
+        <Box
+          sx={{
+            overflowY: 'auto',
+            flex: 1,
+            maxHeight: 'calc(500px - 56px)'
+          }}
+        >
+          {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board)}
+          {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column)}
+          {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, false)}
+        </Box>
       </Popover>
     </>
   )
