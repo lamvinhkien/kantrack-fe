@@ -54,7 +54,15 @@ const Profile = () => {
         aria-controls={open ? 'account-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
-        sx={{ padding: 0 }}
+        sx={{
+          padding: 0,
+          border: '2px solid transparent',
+          transition: 'transform 0.25s ease',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            borderColor: 'grey.200'
+          }
+        }}
       >
         <Avatar sx={{ width: 35, height: 35 }} alt={currentUser?.displayName} src={currentUser?.avatar?.url} />
       </IconButton>

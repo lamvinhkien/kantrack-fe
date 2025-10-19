@@ -163,7 +163,7 @@
   "password_invalid": "Mật khẩu phải chứa ít nhất 1 chữ cái, 1 số và tối thiểu 8 ký tự.",
   "password_mismatch": "Xác nhận mật khẩu không khớp.",
   "file_blank": "Tệp không được để trống.",
-  "file_size_exceeded": "Kích thước tệp vượt quá giới hạn tối đa (30MB).",
+  "file_size_exceeded": "Kích thước tệp vượt quá giới hạn tối đa (9MB).",
   "file_type_invalid": "Loại tệp không hợp lệ. Chỉ chấp nhận định dạng hình ảnh.",
   "login_subtitle": "Vui lòng đăng nhập để tiếp tục",
   "no_account_message": "Chưa có tài khoản?",
@@ -194,6 +194,7 @@
   "confirm_assign_admin": "Bạn có chắc muốn gán quyền thành viên này thành quản trị viên?",
   "permissions": "Phân quyền",
   "manage_permissions": "Quản lý quyền thành viên",
+  "access_removed": "Bạn không còn quyền truy cập vào bảng này.",
   "permission": "Quyền hạn",
   "edit_board_title": "Chỉnh sửa tiêu đề bảng",
   "edit_board_type": "Thay đổi quyền truy cập bảng",
@@ -215,5 +216,6 @@
   "cannot_leave_as_last_member": "Bạn là thành viên cuối cùng nên không thể rời khỏi.",
   "cannot_leave_as_last_owner": "Bạn là quản trị duy nhất. Hãy gán quyền quản trị cho thành viên khác.",
   "column": "Cột",
-  "card": "Thẻ"
+  "card": "Thẻ",
+  "removed_user_from_board": "Bạn đã bị xoá khỏi bảng."
 }

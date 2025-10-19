@@ -11,11 +11,18 @@ import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
 import { socketIoInstance } from '~/socketio/socketClient'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const Board = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const board = useSelector(selectCurrentActiveBoard)
+  const currentUser = useSelector(selectCurrentUser)
   const { boardId } = useParams()
 
   useEffect(() => {
@@ -27,7 +34,30 @@ const Board = () => {
     if (!socketIoInstance) return
 
     const onReceiveNewBoard = (newBoard) => {
-      if (newBoard._id === boardId) dispatch(updateCurrentActiveBoard(newBoard))
+      if (newBoard._id !== boardId) return
+
+      const isPrivate = newBoard.type === 'private'
+      const isMember = newBoard.memberIds?.includes(currentUser._id)
+      const isOwner = newBoard.ownerIds?.includes(currentUser._id)
+
+      if (isPrivate && !isMember && !isOwner) {
+        toast.error(t('access_removed'))
+        dispatch(updateCurrentActiveBoard(null))
+        socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
+        navigate('/boards')
+        return
+      }
+
+      dispatch(updateCurrentActiveBoard(newBoard))
+    }
+
+    const onRemovedFromBoard = ({ boardId: removedBoardId, removedUserId }) => {
+      if (removedUserId === currentUser._id && removedBoardId === boardId) {
+        toast.error(t('removed_user_from_board'))
+        dispatch(updateCurrentActiveBoard(null))
+        socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
+        navigate('/boards')
+      }
     }
 
     if (boardId) socketIoInstance.emit('FE_JOIN_BOARD', boardId)
@@ -36,10 +66,11 @@ const Board = () => {
     socketIoInstance.on('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_ADD_COLUMN_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_DELETE_COLUMN_IN_BOARD', onReceiveNewBoard)
-    socketIoInstance.on('BE_UPDATE_COLUMN_TITLE_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_UPDATE_COLUMN_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_ADD_CARD_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_DELETE_CARD_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_UPDATE_CARD_IN_BOARD', onReceiveNewBoard)
+    socketIoInstance.on('BE_REMOVE_MEMBER', onRemovedFromBoard)
 
     return () => {
       if (boardId) socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
@@ -48,12 +79,13 @@ const Board = () => {
       socketIoInstance.off('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_ADD_COLUMN_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_DELETE_COLUMN_IN_BOARD', onReceiveNewBoard)
-      socketIoInstance.off('BE_UPDATE_COLUMN_TITLE_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_UPDATE_COLUMN_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_ADD_CARD_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_DELETE_CARD_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_UPDATE_CARD_IN_BOARD', onReceiveNewBoard)
+      socketIoInstance.off('BE_REMOVE_MEMBER', onRemovedFromBoard)
     }
-  }, [dispatch, boardId])
+  }, [dispatch, boardId, currentUser, navigate, t])
 
   const moveColumn = (dndOrderedColumns) => {
     const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)

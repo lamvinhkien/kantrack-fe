@@ -56,6 +56,7 @@ const BoardBar = ({ board }) => {
             newBoard.members = newBoard.members.filter(member => member._id !== removeMember._id)
             dispatch(updateCurrentActiveBoard(newBoard))
             socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
+            socketIoInstance.emit('FE_REMOVE_MEMBER', { boardId: newBoard._id, removedUserId: removeMember._id })
           })
       })
       .catch(() => { })

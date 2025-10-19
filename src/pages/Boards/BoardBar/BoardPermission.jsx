@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -26,6 +26,10 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const [permissions, setPermissions] = useState(boardPermission)
+
+  useEffect(() => {
+    setPermissions(boardPermission)
+  }, [boardPermission])
 
   const handleOpen = (e) => setAnchorEl(e.currentTarget)
   const handleClose = () => setAnchorEl(null)
@@ -93,12 +97,14 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
             />
             <Checkbox
               checked={permissions[key] || false}
-              onChange={() => handleTogglePermission(key)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleTogglePermission(key)
+              }}
               color="primary"
               size="small"
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
               checkedIcon={<CheckBoxIcon fontSize="small" />}
-              onClick={(e) => e.stopPropagation()}
               sx={{
                 p: 0.3,
                 '& .MuiSvgIcon-root': { fontSize: 20 }

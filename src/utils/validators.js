@@ -8,7 +8,7 @@ export const PASSWORD_RULE = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\W]{8,256}$/
 export const PASSWORD_RULE_MESSAGE = 'password_invalid'
 export const PASSWORD_CONFIRMATION_MESSAGE = 'password_mismatch'
 
-export const LIMIT_COMMON_FILE_SIZE = 31457280
+export const LIMIT_COMMON_FILE_SIZE = 9437184
 export const ALLOW_COMMON_FILE_TYPES = [
   'image/jpeg',
   'image/png',

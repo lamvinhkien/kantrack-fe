@@ -163,7 +163,7 @@
   "password_invalid": "Password must include at least 1 letter, a number, and at least 8 characters.",
   "password_mismatch": "Passwords do not match.",
   "file_blank": "File cannot be blank.",
-  "file_size_exceeded": "Maximum file size exceeded. (30MB)",
+  "file_size_exceeded": "Maximum file size exceeded. (9MB)",
   "file_type_invalid": "File type is invalid. Only image types are accepted.",
   "login_subtitle": "Please sign in to continue",
   "no_account_message": "Don't have an account?",
@@ -194,6 +194,7 @@
   "confirm_assign_admin": "Are you sure you want to assign this member as an admin?",
   "permission": "Permission",
   "manage_permissions": "Manage member permissions",
+  "access_removed": "You no longer have access to this board.",
   "edit_board_title": "Edit board title",
   "edit_board_type": "Edit board visibility",
   "delete_member_in_board": "Remove member",
@@ -214,5 +215,6 @@
   "cannot_leave_as_last_member": "You are the last member and cannot leave.",
   "cannot_leave_as_last_owner": "You are the only admin. Assign another member as an admin.",
   "column": "Column",
-  "card": "Card"
+  "card": "Card",
+  "removed_user_from_board": "You have been removed from the board."
 }

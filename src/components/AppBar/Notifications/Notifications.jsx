@@ -100,7 +100,6 @@ const Notifications = () => {
     <Box
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      sx={{ mr: 0.5 }}
     >
       <Tooltip
         title={t('notification')}

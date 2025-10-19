@@ -126,7 +126,7 @@ const Column = ({ column }) => {
       const columnToUpdate = newBoard.columns.find(c => c._id === column._id)
       if (columnToUpdate) columnToUpdate.title = newTitle
       dispatch(updateCurrentActiveBoard(newBoard))
-      socketIoInstance.emit('FE_UPDATE_COLUMN_TITLE_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+      socketIoInstance.emit('FE_UPDATE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
     })
   }
 
