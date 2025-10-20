@@ -217,5 +217,6 @@
   "cannot_leave_as_last_owner": "Bạn là quản trị duy nhất. Hãy gán quyền quản trị cho thành viên khác.",
   "column": "Cột",
   "card": "Thẻ",
-  "removed_user_from_board": "Bạn đã bị xoá khỏi bảng."
+  "removed_user_from_board": "Bạn đã bị xoá khỏi bảng.",
+  "admin_only": "Chỉ admin mới được phép thao tác."
 }

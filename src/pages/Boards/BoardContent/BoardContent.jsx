@@ -16,7 +16,7 @@ import {
   pointerWithin,
   getFirstCollision
 } from '@dnd-kit/core'
-import { MouseSensor, TouchSensor } from '~/customLibs/DndKitSensors'
+import { MouseSensor, TouchSensor } from '~/libs/DndKitSensors'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',

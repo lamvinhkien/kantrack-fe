@@ -12,29 +12,37 @@ import {
   ListItemText
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import CloseIcon from '@mui/icons-material/Close'
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@mui/icons-material/CheckBox'
-import DashboardIcon from '@mui/icons-material/Dashboard'
-import ViewColumnIcon from '@mui/icons-material/ViewColumn'
-import CreditCardIcon from '@mui/icons-material/CreditCard'
+import {
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  Close as CloseIcon,
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  CheckBox as CheckBoxIcon,
+  Dashboard as DashboardIcon,
+  ViewColumn as ViewColumnIcon,
+  CreditCard as CreditCardIcon,
+  InfoOutlined as InfoOutlinedIcon
+} from '@mui/icons-material'
 import { useColorScheme } from '@mui/material'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useSelector } from 'react-redux'
 
-const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
+const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePermission }) => {
   const { mode } = useColorScheme()
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const [permissions, setPermissions] = useState(boardPermission)
+  const currentUser = useSelector(selectCurrentUser)
 
   useEffect(() => {
     setPermissions(boardPermission)
   }, [boardPermission])
 
-  const handleOpen = (e) => setAnchorEl(e.currentTarget)
-  const handleClose = () => setAnchorEl(null)
   const open = Boolean(anchorEl)
   const popoverId = open ? 'board-permission-popover' : undefined
+
+  const handleOpen = (e) => setAnchorEl(e.currentTarget)
+  const handleClose = () => setAnchorEl(null)
 
   const handleTogglePermission = (key) => {
     const newPermissions = { ...permissions, [key]: !permissions[key] }
@@ -48,26 +56,11 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
     card: Object.keys(permissions).filter((k) => k.toLowerCase().includes('card'))
   }
 
-  const renderPermissionGroup = (title, icon, keys, divider = true) => (
+  const renderPermissionGroup = (title, icon, keys, disabled = false, divider = true) => (
     <>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          px: 2,
-          pt: 1.5,
-          pb: 0.5
-        }}
-      >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, pt: 1.5, pb: 0.5 }}>
         {icon}
-        <Typography
-          variant="subtitle2"
-          sx={{
-            fontWeight: 600,
-            opacity: 0.8
-          }}
-        >
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, opacity: 0.8 }}>
           {title}
         </Typography>
       </Box>
@@ -76,19 +69,18 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
         {keys.map((key) => (
           <ListItem
             key={key}
-            onClick={() => handleTogglePermission(key)}
+            onClick={() => !disabled && handleTogglePermission(key)}
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               px: 2,
               py: 0.5,
-              cursor: 'pointer',
               borderRadius: 1,
-              '&:hover': {
-                bgcolor: 'rgba(0,0,0,0.04)'
-              },
-              transition: 'background-color 0.2s ease'
+              cursor: disabled ? 'not-allowed' : 'pointer',
+              '&:hover': disabled ? {} : { bgcolor: 'rgba(0,0,0,0.04)' },
+              opacity: disabled ? 0.9 : 1,
+              userSelect: 'none'
             }}
           >
             <ListItemText
@@ -97,17 +89,25 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
             />
             <Checkbox
               checked={permissions[key] || false}
+              disabled={disabled}
               onClick={(e) => {
                 e.stopPropagation()
-                handleTogglePermission(key)
+                !disabled && handleTogglePermission(key)
               }}
+              onMouseDown={(e) => e.stopPropagation()} // giữ popover không tắt
               color="primary"
               size="small"
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
               checkedIcon={<CheckBoxIcon fontSize="small" />}
               sx={{
                 p: 0.3,
-                '& .MuiSvgIcon-root': { fontSize: 20 }
+                '& .MuiSvgIcon-root': { fontSize: 20 },
+                '&.Mui-disabled.Mui-checked': {
+                  color: (theme) => theme.palette.primary.main
+                },
+                '&.Mui-disabled': {
+                  opacity: 0.9
+                }
               }}
             />
           </ListItem>
@@ -119,6 +119,7 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
 
   return (
     <>
+      {/* Nút mở popover */}
       <Tooltip arrow title={t('manage_permissions')}>
         <Box
           onClick={handleOpen}
@@ -130,7 +131,6 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
             px: 1,
             py: 0.5,
             borderRadius: 1,
-            textWrap: 'nowrap',
             cursor: 'pointer',
             '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' }
           }}
@@ -142,71 +142,160 @@ const BoardPermission = ({ boardPermission = {}, handleUpdatePermission }) => {
         </Box>
       </Tooltip>
 
-      <Popover
-        id={popoverId}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        PaperProps={{
-          sx: {
-            mt: 1,
-            borderRadius: 2,
-            boxShadow: 3,
-            width: 'auto',
-            minWidth: 300,
-            maxWidth: 400,
-            maxHeight: 500,
-            backgroundColor: 'background.paper',
-            display: 'flex',
-            flexDirection: 'column',
-            pb: 0.5
-          }
-        }}
-      >
-        <Box
-          sx={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
-            backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            p: 1.5,
-            borderBottom:
-              mode === 'dark'
-                ? '1px solid rgba(255, 255, 255, 0.12)'
-                : '1px solid rgba(0, 0, 0, 0.12)'
-          }}
-        >
-          <Typography
-            variant="subtitle2"
-            sx={{ flex: 1, textAlign: 'center', pointerEvents: 'none' }}
+      <BoardPermissionGate
+        customCheck={() => ownerIds?.includes(currentUser._id)}
+        fallback={
+          <Popover
+            id={popoverId}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            PaperProps={{
+              sx: {
+                mt: 1,
+                borderRadius: 2,
+                boxShadow: 3,
+                minWidth: 300,
+                maxWidth: 400,
+                maxHeight: 500,
+                backgroundColor: 'background.paper',
+                display: 'flex',
+                flexDirection: 'column'
+              },
+              onClick: (e) => e.stopPropagation()
+            }}
           >
-            {t('manage_permissions')}
-          </Typography>
-          <IconButton
-            size="small"
-            onClick={handleClose}
-            sx={{ position: 'absolute', right: 14, top: 8 }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Box>
+            {/* Header */}
+            <Box
+              sx={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 10,
+                backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 1.5,
+                borderBottom:
+                  mode === 'dark'
+                    ? '1px solid rgba(255, 255, 255, 0.12)'
+                    : '1px solid rgba(0, 0, 0, 0.12)'
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ flex: 1, textAlign: 'center' }}>
+                {t('manage_permissions')}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={handleClose}
+                sx={{ position: 'absolute', right: 14, top: 8 }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
 
-        <Box
-          sx={{
-            overflowY: 'auto',
-            flex: 1,
-            maxHeight: 'calc(500px - 56px)'
+            {/* Body (scroll riêng) */}
+            <Box
+              sx={{
+                overflowY: 'auto',
+                flex: 1,
+                maxHeight: 'calc(500px - 56px - 50px)',
+                pb: 0.5
+              }}
+            >
+              {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board, true)}
+              {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column, true)}
+              {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, true, false)}
+            </Box>
+
+            {/* Footer luôn hiển thị */}
+            <Box
+              sx={{
+                p: 2,
+                borderTop: mode === 'dark'
+                  ? '1px solid rgba(255,255,255,0.12)'
+                  : '1px solid rgba(0,0,0,0.12)',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 0.5,
+                color: 'warning.main'
+              }}
+            >
+              <InfoOutlinedIcon fontSize="small" />
+              <Typography variant="body2">{t('admin_only')}</Typography>
+            </Box>
+          </Popover>
+        }
+      >
+        {/* Phiên bản dành cho admin */}
+        <Popover
+          id={popoverId}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              borderRadius: 2,
+              boxShadow: 3,
+              minWidth: 300,
+              maxWidth: 400,
+              maxHeight: 500,
+              backgroundColor: 'background.paper',
+              display: 'flex',
+              flexDirection: 'column'
+            },
+            onClick: (e) => e.stopPropagation()
           }}
         >
-          {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board)}
-          {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column)}
-          {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, false)}
-        </Box>
-      </Popover>
+          {/* Header */}
+          <Box
+            sx={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 10,
+              backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              p: 1.5,
+              borderBottom:
+                mode === 'dark'
+                  ? '1px solid rgba(255, 255, 255, 0.12)'
+                  : '1px solid rgba(0, 0, 0, 0.12)'
+            }}
+          >
+            <Typography variant="subtitle2" sx={{ flex: 1, textAlign: 'center' }}>
+              {t('manage_permissions')}
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={handleClose}
+              sx={{ position: 'absolute', right: 14, top: 8 }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Box>
+
+          {/* Body */}
+          <Box
+            sx={{
+              overflowY: 'auto',
+              flex: 1,
+              maxHeight: 'calc(500px - 56px)',
+              pb: 0.5
+            }}
+          >
+            {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board)}
+            {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column)}
+            {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, false, false)}
+          </Box>
+        </Popover>
+      </BoardPermissionGate>
     </>
   )
 }

@@ -216,5 +216,6 @@
   "cannot_leave_as_last_owner": "You are the only admin. Assign another member as an admin.",
   "column": "Column",
   "card": "Card",
-  "removed_user_from_board": "You have been removed from the board."
+  "removed_user_from_board": "You have been removed from the board.",
+  "admin_only": "Only admins are allowed."
 }

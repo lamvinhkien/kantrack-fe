@@ -13,6 +13,9 @@ import { useTranslation } from 'react-i18next'
 import BoardPermission from './BoardPermission'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
+import Typography from '@mui/material/Typography'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
@@ -141,11 +144,6 @@ const BoardBar = ({ board }) => {
       .catch(() => { })
   }
 
-  const onRefreshBoard = () => {
-    dispatch(updateCurrentActiveBoard(null))
-    dispatch(fetchBoardDetailsAPI(board._id))
-  }
-
   const onUpdatePermission = (updatePermissions) => {
     const newBoard = { ...board }
     updateBoardDetailsAPI(board._id, { updatePermissions })
@@ -154,6 +152,11 @@ const BoardBar = ({ board }) => {
         dispatch(updateCurrentActiveBoard(newBoard))
         socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
       })
+  }
+
+  const onRefreshBoard = () => {
+    dispatch(updateCurrentActiveBoard(null))
+    dispatch(fetchBoardDetailsAPI(board._id))
   }
 
   return (
@@ -171,22 +174,42 @@ const BoardBar = ({ board }) => {
       '&::-webkit-scrollbar-track': { m: 2 }
     }}>
       <Box sx={{ minWidth: '400px' }}>
-        <ToggleFocusInput
-          value={board?.title}
-          onChangedValue={onUpdateBoardTitle}
-          inputFontSize='18px'
-          colorWhiteMode='white'
-          bgWhiteMode='#155DA9'
-          bgDarkMode='#293A4A'
-          forcusBorderColor='white'
-        />
+        <BoardPermissionGate
+          action={BOARD_MEMBER_ACTIONS.editBoardTitle}
+          fallback={
+            <Typography
+              sx={{
+                '&.MuiTypography-root': {
+                  fontSize: '18px !important',
+                  fontWeight: 'bold',
+                  color: 'white'
+                },
+                px: '6px'
+              }}
+            >
+              {board?.title}
+            </Typography>
+          }
+        >
+          <ToggleFocusInput
+            value={board?.title}
+            onChangedValue={onUpdateBoardTitle}
+            inputFontSize='18px'
+            colorWhiteMode='white'
+            bgWhiteMode='#155DA9'
+            bgDarkMode='#293A4A'
+            forcusBorderColor='white'
+          />
+        </BoardPermissionGate>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <RefreshBoard handleRefresh={onRefreshBoard} />
+        <BoardPermission ownerIds={board?.ownerIds} boardPermission={board?.memberPermissions} handleUpdatePermission={onUpdatePermission} />
+        <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.inviteMemberToBoard}>
+          <InviteBoardUser boardId={board._id} />
+        </BoardPermissionGate>
         <BoardType boardType={board?.type} handleUpdateBoardType={onUpdateBoardType} />
-        <InviteBoardUser boardId={board._id} />
-        <BoardPermission boardPermission={board?.memberPermissions} handleUpdatePermission={onUpdatePermission} />
         <BoardUserGroup
           boardMembers={board?.members}
           boardOwners={board?.owners}

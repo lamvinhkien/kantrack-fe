@@ -6,7 +6,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import { fetchBoardsAPI } from '~/apis'
-import { useDebounceFn } from '~/customHooks/useDebounceFn'
+import { useDebounceFn } from '~/hooks/useDebounceFn'
 import { useTranslation } from 'react-i18next'
 
 const AutoCompleteSearchBoard = () => {

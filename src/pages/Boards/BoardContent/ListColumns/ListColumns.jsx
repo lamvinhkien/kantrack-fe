@@ -14,6 +14,8 @@ import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/acti
 import { useDispatch, useSelector } from 'react-redux'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { useTranslation } from 'react-i18next'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 const ListColumns = ({ columns }) => {
   const { t } = useTranslation()
@@ -57,93 +59,96 @@ const ListColumns = ({ columns }) => {
         display: 'flex',
         overflowX: 'auto',
         overflowY: 'hidden',
+        pr: 2,
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
         {/* List Columns */}
         {columns?.map(column => <Column key={column._id} column={column} />)}
 
         {/* Button add new column */}
-        {!openNewColumnForm
-          ?
-          <Box onClick={toggleOpenNewColumnForm} sx={{
-            minWidth: '250px',
-            maxWidth: '250px',
-            mx: 2,
-            borderRadius: '6px',
-            height: 'fit-content',
-            bgcolor: '#ffffff3d'
-          }}>
-            <Button
-              sx={{
-                color: 'white',
-                width: '100%',
-                justifyContent: 'flex-start',
-                pl: 2.5,
-                py: 1
-              }}
-              startIcon={<NoteAddIcon />}
-            >
-              {t('add_new_column')}
-            </Button>
-          </Box>
-          :
-          <Box sx={{
-            minWidth: '250px',
-            maxWidth: '250px',
-            mx: 2,
-            p: 1,
-            borderRadius: '6px',
-            height: 'fit-content',
-            bgcolor: '#ffffff3d',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1
-          }}>
-            <TextField
-              value={newColumnTitle}
-              onChange={(event) => setNewColumnTitle(event.target.value)}
-              id="outlined-search"
-              label={t('enter_column_title')}
-              type="text"
-              size='small'
-              variant="outlined"
-              autoFocus
-              sx={{
-                '& label': { color: 'white' },
-                '& input': { color: 'white' },
-                '& label.Mui-focused': { color: 'white' },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'white' },
-                  '&:hover fieldset': { borderColor: 'white' },
-                  '&.Mui-focused fieldset': { borderColor: 'white' }
-                }
-              }}
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1 }}>
+        <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.addColumn}>
+          {!openNewColumnForm
+            ?
+            <Box onClick={toggleOpenNewColumnForm} sx={{
+              minWidth: '250px',
+              maxWidth: '250px',
+              ml: 2,
+              borderRadius: '6px',
+              height: 'fit-content',
+              bgcolor: '#ffffff3d'
+            }}>
               <Button
-                className='interceptor-loading'
-                onClick={addNewColumn}
-                variant='contained' color='success' size='small'
-                sx={{
-                  boxShadow: 'none',
-                  border: '0.5px solid',
-                  borderColor: theme => theme.palette.success.main,
-                  '&:hover': { bgcolor: theme => theme.palette.success.main }
-                }}
-              >
-                {t('add')}
-              </Button>
-              <CloseIcon
                 sx={{
                   color: 'white',
-                  cursor: 'pointer'
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  pl: 2.5,
+                  py: 1
                 }}
-                fontSize='small'
-                onClick={toggleOpenNewColumnForm}
-              />
+                startIcon={<NoteAddIcon />}
+              >
+                {t('add_new_column')}
+              </Button>
             </Box>
-          </Box>
-        }
+            :
+            <Box sx={{
+              minWidth: '250px',
+              maxWidth: '250px',
+              ml: 2,
+              p: 1,
+              borderRadius: '6px',
+              height: 'fit-content',
+              bgcolor: '#ffffff3d',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1
+            }}>
+              <TextField
+                value={newColumnTitle}
+                onChange={(event) => setNewColumnTitle(event.target.value)}
+                id="outlined-search"
+                label={t('enter_column_title')}
+                type="text"
+                size='small'
+                variant="outlined"
+                autoFocus
+                sx={{
+                  '& label': { color: 'white' },
+                  '& input': { color: 'white' },
+                  '& label.Mui-focused': { color: 'white' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: 'white' },
+                    '&:hover fieldset': { borderColor: 'white' },
+                    '&.Mui-focused fieldset': { borderColor: 'white' }
+                  }
+                }}
+              />
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1 }}>
+                <Button
+                  className='interceptor-loading'
+                  onClick={addNewColumn}
+                  variant='contained' color='success' size='small'
+                  sx={{
+                    boxShadow: 'none',
+                    border: '0.5px solid',
+                    borderColor: theme => theme.palette.success.main,
+                    '&:hover': { bgcolor: theme => theme.palette.success.main }
+                  }}
+                >
+                  {t('add')}
+                </Button>
+                <CloseIcon
+                  sx={{
+                    color: 'white',
+                    cursor: 'pointer'
+                  }}
+                  fontSize='small'
+                  onClick={toggleOpenNewColumnForm}
+                />
+              </Box>
+            </Box>
+          }
+        </BoardPermissionGate>
       </Box>
     </SortableContext>
   )

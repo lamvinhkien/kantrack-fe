@@ -20,6 +20,7 @@ import ListItemText from '@mui/material/ListItemText'
 import CloseIcon from '@mui/icons-material/Close'
 import { useColorScheme } from '@mui/material'
 import Button from '@mui/material/Button'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 
 const BoardUserGroup = ({
   boardMembers = [],
@@ -251,7 +252,12 @@ const BoardUserGroup = ({
                 </Box>
               </Box>
 
-              {!user.isOwner && user._id !== currentUser._id && (
+              <BoardPermissionGate
+                customCheck={() =>
+                  boardOwners.some((o) => o._id === currentUser._id) &&
+                  !boardOwners.some((o) => o._id === user._id)
+                }
+              >
                 <IconButton
                   size="small"
                   onClick={(e) => handleMenuOpen(e, user)}
@@ -265,7 +271,7 @@ const BoardUserGroup = ({
                 >
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
-              )}
+              </BoardPermissionGate>
             </Box>
           ))}
         </Box>
@@ -300,71 +306,73 @@ const BoardUserGroup = ({
         </Box>
       </Popover>
 
-      <Menu
-        anchorEl={menuAnchorEl}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-        PaperProps={{
-          elevation: 4,
-          sx: {
-            borderRadius: 2,
-            minWidth: 200,
-            bgcolor: (theme) =>
-              theme.palette.mode === 'dark'
-                ? 'rgba(40,40,40,0.96)'
-                : 'rgba(240,240,240,0.98)',
-            backdropFilter: 'blur(6px)',
-            border: (theme) =>
-              theme.palette.mode === 'dark'
-                ? '1px solid rgba(255,255,255,0.08)'
-                : '1px solid rgba(0,0,0,0.06)',
-            boxShadow: (theme) =>
-              theme.palette.mode === 'dark'
-                ? '0 4px 18px rgba(0,0,0,0.6)'
-                : '0 4px 18px rgba(0,0,0,0.12)',
-            '& .MuiMenuItem-root': {
-              fontSize: '0.82rem',
-              py: 0.6,
-              px: 1.3,
-              borderRadius: 1.2,
-              transition: 'background-color 0.2s ease',
-              '&:hover': {
-                backgroundColor: (theme) =>
-                  theme.palette.mode === 'dark'
-                    ? 'rgba(255,255,255,0.08)'
-                    : 'rgba(0,0,0,0.05)'
+      <BoardPermissionGate customCheck={() => boardOwners.some((o) => o._id === currentUser._id)}>
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={isMenuOpen}
+          onClose={handleMenuClose}
+          PaperProps={{
+            elevation: 4,
+            sx: {
+              borderRadius: 2,
+              minWidth: 200,
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? 'rgba(40,40,40,0.96)'
+                  : 'rgba(240,240,240,0.98)',
+              backdropFilter: 'blur(6px)',
+              border: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? '1px solid rgba(255,255,255,0.08)'
+                  : '1px solid rgba(0,0,0,0.06)',
+              boxShadow: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? '0 4px 18px rgba(0,0,0,0.6)'
+                  : '0 4px 18px rgba(0,0,0,0.12)',
+              '& .MuiMenuItem-root': {
+                fontSize: '0.82rem',
+                py: 0.6,
+                px: 1.3,
+                borderRadius: 1.2,
+                transition: 'background-color 0.2s ease',
+                '&:hover': {
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === 'dark'
+                      ? 'rgba(255,255,255,0.08)'
+                      : 'rgba(0,0,0,0.05)'
+                }
               }
             }
-          }
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            handleAssignAdmin(selectedUser)
-            handleMenuClose()
           }}
         >
-          <ListItemIcon>
-            <EmojiEventsIcon fontSize="small" sx={{ color: '#f1c40f' }} />
-          </ListItemIcon>
-          <ListItemText primary={t('assign_admin') || 'Assign as Admin'} />
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleAssignAdmin(selectedUser)
+              handleMenuClose()
+            }}
+          >
+            <ListItemIcon>
+              <EmojiEventsIcon fontSize="small" sx={{ color: '#f1c40f' }} />
+            </ListItemIcon>
+            <ListItemText primary={t('assign_admin') || 'Assign as Admin'} />
+          </MenuItem>
 
-        <Divider sx={{ my: 0.3 }} />
+          <Divider sx={{ my: 0.3 }} />
 
-        <MenuItem
-          onClick={() => {
-            handleRemoveMember(selectedUser)
-            handleMenuClose()
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <ListItemIcon>
-            <HighlightOffIcon fontSize="small" sx={{ color: 'error.main' }} />
-          </ListItemIcon>
-          <ListItemText primary={t('remove_member') || 'Remove Member'} />
-        </MenuItem>
-      </Menu>
+          <MenuItem
+            onClick={() => {
+              handleRemoveMember(selectedUser)
+              handleMenuClose()
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <ListItemIcon>
+              <HighlightOffIcon fontSize="small" sx={{ color: 'error.main' }} />
+            </ListItemIcon>
+            <ListItemText primary={t('remove_member') || 'Remove Member'} />
+          </MenuItem>
+        </Menu>
+      </BoardPermissionGate>
     </>
   )
 }

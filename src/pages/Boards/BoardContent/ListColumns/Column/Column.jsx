@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Menu from '@mui/material/Menu'
@@ -26,6 +25,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { useTranslation } from 'react-i18next'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
+import Typography from '@mui/material/Typography'
 
 const Column = ({ column }) => {
   const { t } = useTranslation()
@@ -151,43 +153,67 @@ const Column = ({ column }) => {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <ToggleFocusInput value={column?.title} onChangedValue={onUpdateColumnTitle} data-no-dnd="true" />
-          <Box>
-            <Tooltip title={t('more_options')}>
-              <ExpandMoreIcon
-                sx={{ color: 'text.primary', cursor: 'pointer' }}
-                id="column-dropdown"
-                aria-controls={open ? 'menu-column-dropdown' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-              />
-            </Tooltip>
-            <Menu
-              id="menu-column-dropdown"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              onClick={handleClose}
-              slotProps={{
-                list: {
-                  'aria-labelledby': 'column-dropdown'
-                }
-              }}
-            >
-              <MenuItem onClick={toggleOpenNewCardForm}>
-                <ListItemIcon><AddCardIcon className='add-card-icon' fontSize="small" /></ListItemIcon>
-                <ListItemText>{t('add_new_card')}</ListItemText>
-              </MenuItem>
-              <Divider />
-              <MenuItem
-                onClick={handleDeleteColumn}
-                sx={{ '&:hover': { color: 'error.main', '& .delete-forever-icon': { color: 'error.main' } } }}
+          <BoardPermissionGate
+            action={BOARD_MEMBER_ACTIONS.editColumnTitle}
+            fallback={
+              <Typography
+                sx={{
+                  '&.MuiTypography-root': {
+                    fontSize: '16px !important',
+                    fontWeight: 'bold'
+                  },
+                  px: '6px'
+                }}
               >
-                <ListItemIcon><DeleteForeverIcon className='delete-forever-icon' fontSize="small" /></ListItemIcon>
-                <ListItemText>{t('delete_column')}</ListItemText>
-              </MenuItem>
-            </Menu>
+                {column?.title}
+              </Typography>
+            }
+          >
+            <ToggleFocusInput value={column?.title} onChangedValue={onUpdateColumnTitle} data-no-dnd="true" />
+          </BoardPermissionGate>
+          <Box>
+            <BoardPermissionGate
+              actions={[BOARD_MEMBER_ACTIONS.deleteColumn]}
+            >
+              <Tooltip title={t('more_options')}>
+                <ExpandMoreIcon
+                  sx={{ color: 'text.primary', cursor: 'pointer' }}
+                  id="column-dropdown"
+                  aria-controls={open ? 'menu-column-dropdown' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                />
+              </Tooltip>
+
+              <Menu
+                id="menu-column-dropdown"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                slotProps={{
+                  list: {
+                    'aria-labelledby': 'column-dropdown'
+                  }
+                }}
+              >
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.deleteColumn}>
+                  <MenuItem
+                    onClick={handleDeleteColumn}
+                    sx={{
+                      '&:hover': {
+                        color: 'error.main',
+                        '& .delete-forever-icon': { color: 'error.main' }
+                      }
+                    }}
+                  >
+                    <ListItemIcon><DeleteForeverIcon className='delete-forever-icon' fontSize="small" /></ListItemIcon>
+                    <ListItemText>{t('delete_column')}</ListItemText>
+                  </MenuItem>
+                </BoardPermissionGate>
+              </Menu>
+            </BoardPermissionGate>
           </Box>
         </Box>
 
@@ -195,88 +221,107 @@ const Column = ({ column }) => {
         <ListCards cards={orderedCards} />
 
         {/* Footer */}
-        <Box sx={{
-          height: theme => theme.kantrack.columnFooterHeight,
-          p: 2
-        }}>
-          {!openNewCardForm
-            ?
+        <BoardPermissionGate
+          actions={[BOARD_MEMBER_ACTIONS.addCard, BOARD_MEMBER_ACTIONS.moveColumn]}
+          fallback={
             <Box sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}>
-              <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm}>{t('add_new_card')}</Button>
-              <Tooltip title={t('drag_to_move')}>
-                <DragHandleIcon sx={{
-                  cursor: 'pointer',
-                  color: 'text.primary'
-                }} />
-              </Tooltip>
-            </Box>
-            :
-            <Box sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}>
-              <TextField
-                value={newCardTitle}
-                onChange={(event) => setNewCardTitle(event.target.value)}
-                id="outlined-search"
-                label={t('enter_card_title')}
-                type="text"
-                size='small'
-                variant="outlined"
-                autoFocus
-                data-no-dnd="true"
-                sx={{
-                  '& label': { color: 'text.primary' },
-                  '& input': {
-                    color: theme => theme.palette.mode === 'dark' ? 'white' : 'black',
-                    bgcolor: theme => theme.palette.mode === 'dark' ? '#333643' : 'white'
-                  },
-                  '& label.Mui-focused': { color: theme => theme.palette.primary.main },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': { borderColor: theme => theme.palette.primary.main },
-                    '&:hover fieldset': { borderColor: theme => theme.palette.primary.main },
-                    '&.Mui-focused fieldset': { borderColor: theme => theme.palette.primary.main }
-                  },
-                  '& .MuiOutlinedInput-input': {
-                    borderRadius: 1
-                  }
-                }}
-              />
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button
-                  className='interceptor-loading'
-                  onClick={addNewCard}
-                  variant='contained' color='success' size='small'
-                  data-no-dnd="true"
-                  sx={{
-                    boxShadow: 'none',
-                    border: '0.5px solid',
-                    borderColor: theme => theme.palette.success.main,
-                    '&:hover': { bgcolor: theme => theme.palette.success.main }
-                  }}
-                >
-                  {t('add')}
-                </Button>
-                <CloseIcon
-                  data-no-dnd="true"
-                  sx={{
-                    color: theme => theme.palette.mode === 'dark' ? 'white' : 'black',
-                    cursor: 'pointer'
-                  }}
-                  fontSize='small'
-                  onClick={toggleOpenNewCardForm}
-                />
-              </Box>
-            </Box>
+              p: 1
+            }}></Box>
           }
-        </Box>
+        >
+          <Box sx={{
+            height: theme => theme.kantrack.columnFooterHeight,
+            p: 2
+          }}>
+            {!openNewCardForm
+              ?
+              <Box sx={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <BoardPermissionGate
+                  action={BOARD_MEMBER_ACTIONS.addCard}
+                  fallback={<Box sx={{ flex: 1 }} />}
+                >
+                  <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm}>{t('add_new_card')}</Button>
+                </BoardPermissionGate>
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.moveColumn}>
+                  <Tooltip title={t('drag_to_move')}>
+                    <DragHandleIcon sx={{
+                      cursor: 'pointer',
+                      color: 'text.primary',
+                      ml: 'auto'
+                    }} />
+                  </Tooltip>
+                </BoardPermissionGate>
+              </Box>
+              :
+              <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.addCard}>
+                <Box sx={{
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}>
+                  <TextField
+                    value={newCardTitle}
+                    onChange={(event) => setNewCardTitle(event.target.value)}
+                    id="outlined-search"
+                    label={t('enter_card_title')}
+                    type="text"
+                    size='small'
+                    variant="outlined"
+                    autoFocus
+                    data-no-dnd="true"
+                    sx={{
+                      '& label': { color: 'text.primary' },
+                      '& input': {
+                        color: theme => theme.palette.mode === 'dark' ? 'white' : 'black',
+                        bgcolor: theme => theme.palette.mode === 'dark' ? '#333643' : 'white'
+                      },
+                      '& label.Mui-focused': { color: theme => theme.palette.primary.main },
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': { borderColor: theme => theme.palette.primary.main },
+                        '&:hover fieldset': { borderColor: theme => theme.palette.primary.main },
+                        '&.Mui-focused fieldset': { borderColor: theme => theme.palette.primary.main }
+                      },
+                      '& .MuiOutlinedInput-input': {
+                        borderRadius: 1
+                      }
+                    }}
+                  />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Button
+                      className='interceptor-loading'
+                      onClick={addNewCard}
+                      variant='contained' color='success' size='small'
+                      data-no-dnd="true"
+                      sx={{
+                        boxShadow: 'none',
+                        border: '0.5px solid',
+                        borderColor: theme => theme.palette.success.main,
+                        '&:hover': { bgcolor: theme => theme.palette.success.main }
+                      }}
+                    >
+                      {t('add')}
+                    </Button>
+                    <CloseIcon
+                      data-no-dnd="true"
+                      sx={{
+                        color: theme => theme.palette.mode === 'dark' ? 'white' : 'black',
+                        cursor: 'pointer'
+                      }}
+                      fontSize='small'
+                      onClick={toggleOpenNewCardForm}
+                    />
+                  </Box>
+                </Box>
+              </BoardPermissionGate>
+            }
+          </Box>
+        </BoardPermissionGate>
       </Box>
     </div>
   )
