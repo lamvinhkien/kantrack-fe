@@ -21,9 +21,11 @@ export const imageFileValidator = (file) => {
   if (!file || !file.name || !file.size || !file.type) {
     return t('file_blank')
   }
+
   if (file.size > LIMIT_COMMON_FILE_SIZE) {
     return t('file_size_exceeded')
   }
+
   if (!ALLOW_COMMON_FILE_TYPES.includes(file.type)) {
     return t('file_type_invalid')
   }
@@ -33,6 +35,10 @@ export const imageFileValidator = (file) => {
 export const multipleFileValidator = (files) => {
   if (!files || files.length === 0) {
     return t('file_blank')
+  }
+
+  if (files.length > 10) {
+    return t('file_too_many')
   }
 
   for (const file of files) {

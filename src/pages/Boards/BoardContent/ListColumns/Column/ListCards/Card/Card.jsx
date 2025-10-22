@@ -11,14 +11,18 @@ import { useDispatch } from 'react-redux'
 import { showModalActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 import { useColorScheme } from '@mui/material/styles'
 import moment from 'moment'
+import { useBoardPermission } from '~/hooks/useBoardPermission'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 const Card = ({ card }) => {
   const { mode } = useColorScheme()
   const dispatch = useDispatch()
+  const { can } = useBoardPermission()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card._id,
-    data: { ...card }
+    data: { ...card },
+    disabled: !can(BOARD_MEMBER_ACTIONS.moveCard)
   })
 
   const dndKitCardStyles = {

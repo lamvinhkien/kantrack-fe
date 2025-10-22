@@ -26,6 +26,7 @@ import { useColorScheme } from '@mui/material'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { useSelector } from 'react-redux'
+import { getScrollbarStyles } from '~/utils/formatters'
 
 const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePermission }) => {
   const { mode } = useColorScheme()
@@ -94,7 +95,7 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
                 e.stopPropagation()
                 !disabled && handleTogglePermission(key)
               }}
-              onMouseDown={(e) => e.stopPropagation()} // giữ popover không tắt
+              onMouseDown={(e) => e.stopPropagation()}
               color="primary"
               size="small"
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
@@ -119,7 +120,6 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
 
   return (
     <>
-      {/* Nút mở popover */}
       <Tooltip arrow title={t('manage_permissions')}>
         <Box
           onClick={handleOpen}
@@ -166,7 +166,6 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
               onClick: (e) => e.stopPropagation()
             }}
           >
-            {/* Header */}
             <Box
               sx={{
                 position: 'sticky',
@@ -195,21 +194,20 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
               </IconButton>
             </Box>
 
-            {/* Body (scroll riêng) */}
             <Box
-              sx={{
+              sx={theme => ({
                 overflowY: 'auto',
                 flex: 1,
                 maxHeight: 'calc(500px - 56px - 50px)',
-                pb: 0.5
-              }}
+                pb: 0.5,
+                ...getScrollbarStyles(theme)
+              })}
             >
               {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board, true)}
               {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column, true)}
               {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, true, false)}
             </Box>
 
-            {/* Footer luôn hiển thị */}
             <Box
               sx={{
                 p: 2,
@@ -230,7 +228,6 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
           </Popover>
         }
       >
-        {/* Phiên bản dành cho admin */}
         <Popover
           id={popoverId}
           open={open}
@@ -252,7 +249,6 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
             onClick: (e) => e.stopPropagation()
           }}
         >
-          {/* Header */}
           <Box
             sx={{
               position: 'sticky',
@@ -281,14 +277,14 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
             </IconButton>
           </Box>
 
-          {/* Body */}
           <Box
-            sx={{
+            sx={theme => ({
               overflowY: 'auto',
               flex: 1,
               maxHeight: 'calc(500px - 56px)',
-              pb: 0.5
-            }}
+              pb: 0.5,
+              ...getScrollbarStyles(theme)
+            })}
           >
             {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board)}
             {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column)}

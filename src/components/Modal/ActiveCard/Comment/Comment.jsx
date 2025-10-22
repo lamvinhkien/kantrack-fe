@@ -19,6 +19,8 @@ import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
 import { useTranslation } from 'react-i18next'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import Badge from '@mui/material/Badge'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
   const { t, i18n } = useTranslation()
@@ -133,7 +135,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
 
     return {
       ...comment,
-      userDisplayName: user?.displayName || 'Unknown User',
+      userDisplayName: user?.displayName || t('unknow_user'),
       userAvatar: user?.avatar?.url || '',
       isOwner
     }
@@ -141,72 +143,74 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
 
   return (
     <Box sx={{ mt: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <Avatar
-          sx={{ width: 30, height: 30, cursor: 'pointer' }}
-          alt={currentUser?.displayName}
-          src={currentUser?.avatar?.url}
-        />
+      <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardComment}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Avatar
+            sx={{ width: 30, height: 30, cursor: 'pointer' }}
+            alt={currentUser?.displayName}
+            src={currentUser?.avatar?.url}
+          />
 
-        <TextField
-          fullWidth
-          placeholder={t('write_a_comment')}
-          type="text"
-          variant="outlined"
-          multiline
-          onKeyDown={handleAddCardComment}
-          value={commentInput}
-          onChange={(e) => setCommentInput(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 36,
-                  height: 36
-                }}
-              >
-                {isPosting ? (
-                  <CircularProgress size={18} sx={{ color: (theme) => theme.palette.primary.main }} />
-                ) : (
-                  <IconButton
-                    onClick={handleSendComment}
-                    size="small"
-                    disabled={!commentInput.trim()}
-                    sx={{
-                      color: (theme) => theme.palette.primary.main,
-                      opacity: !commentInput.trim() ? 0.4 : 1,
-                      transition: 'opacity 0.2s ease'
-                    }}
-                  >
-                    <SendIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </Box>
-            )
-          }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              fontSize: '14px',
-              pr: '6px',
-              py: '2px'
-            }
-          }}
-        />
-      </Box>
+          <TextField
+            fullWidth
+            placeholder={t('write_a_comment')}
+            type="text"
+            variant="outlined"
+            multiline
+            onKeyDown={handleAddCardComment}
+            value={commentInput}
+            onChange={(e) => setCommentInput(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 36,
+                    height: 36
+                  }}
+                >
+                  {isPosting ? (
+                    <CircularProgress size={18} sx={{ color: (theme) => theme.palette.primary.main }} />
+                  ) : (
+                    <IconButton
+                      onClick={handleSendComment}
+                      size="small"
+                      disabled={!commentInput.trim()}
+                      sx={{
+                        color: (theme) => theme.palette.primary.main,
+                        opacity: !commentInput.trim() ? 0.4 : 1,
+                        transition: 'opacity 0.2s ease'
+                      }}
+                    >
+                      <SendIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </Box>
+              )
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                fontSize: '14px',
+                pr: '6px',
+                py: '2px'
+              }
+            }}
+          />
+        </Box>
+      </BoardPermissionGate>
 
       {renderComments.length === 0 && (
         <Typography
           sx={{
-            pl: '45px',
+            pl: '4px',
             fontSize: '14px',
             fontWeight: '500',
             color: '#b1b1b1'
           }}
         >
-          {t('no_comment_found')}
+          {t('no_comment')}
         </Typography>
       )}
 
@@ -277,29 +281,31 @@ const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
                   {renderTime(comment.commentedAt, { locale: i18n.language })}
                 </Typography>
 
-                {isOwner && !isEditing && (
-                  <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditClick(comment)}
-                      disabled={loadingDeleteId === comment.commentId}
-                    >
-                      <EditIcon sx={{ fontSize: 16 }} />
-                    </IconButton>
-
-                    {loadingDeleteId === comment.commentId ? (
-                      <CircularProgress size={16} sx={{ ml: 0.5 }} />
-                    ) : (
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardComment}>
+                  {isOwner && !isEditing && (
+                    <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
                       <IconButton
                         size="small"
-                        onClick={(e) => handleDeleteClick(e, comment)}
+                        onClick={() => handleEditClick(comment)}
                         disabled={loadingDeleteId === comment.commentId}
                       >
-                        <DeleteIcon sx={{ fontSize: 16 }} />
+                        <EditIcon sx={{ fontSize: 16 }} />
                       </IconButton>
-                    )}
-                  </Box>
-                )}
+
+                      {loadingDeleteId === comment.commentId ? (
+                        <CircularProgress size={16} sx={{ ml: 0.5 }} />
+                      ) : (
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleDeleteClick(e, comment)}
+                          disabled={loadingDeleteId === comment.commentId}
+                        >
+                          <DeleteIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      )}
+                    </Box>
+                  )}
+                </BoardPermissionGate>
               </Box>
 
               {isEditing ? (

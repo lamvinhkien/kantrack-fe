@@ -9,6 +9,8 @@ import PreviewAttachment from '../Attachment/PreviewAttachment'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import UnpublishedIcon from '@mui/icons-material/Unpublished'
 import { useTranslation } from 'react-i18next'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, handleDeleteCard, handleCloseModal, handleUpdateComplete }) => {
   const { t } = useTranslation()
@@ -56,19 +58,23 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
           gap: 1.5
         }}
       >
-        <IconButton
-          onClick={handleOpenMenu}
-          sx={{
-            p: 0.5,
-            bgcolor: 'grey.800',
-            color: 'white',
-            '&:hover': {
-              bgcolor: 'grey.700'
-            }
-          }}
+        <BoardPermissionGate
+          actions={[BOARD_MEMBER_ACTIONS.editCardCover, BOARD_MEMBER_ACTIONS.editCardMarkComplete, BOARD_MEMBER_ACTIONS.deleteCard]}
         >
-          <MoreHorizIcon sx={{ fontSize: 24 }} />
-        </IconButton>
+          <IconButton
+            onClick={handleOpenMenu}
+            sx={{
+              p: 0.5,
+              bgcolor: 'grey.800',
+              color: 'white',
+              '&:hover': {
+                bgcolor: 'grey.700'
+              }
+            }}
+          >
+            <MoreHorizIcon sx={{ fontSize: 24 }} />
+          </IconButton>
+        </BoardPermissionGate>
 
         <IconButton
           onClick={handleCloseModal}
@@ -84,63 +90,73 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
           <CloseIcon sx={{ fontSize: 24 }} />
         </IconButton>
 
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleCloseMenu}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        <BoardPermissionGate
+          actions={[BOARD_MEMBER_ACTIONS.editCardCover, BOARD_MEMBER_ACTIONS.editCardMarkComplete, BOARD_MEMBER_ACTIONS.deleteCard]}
         >
-          <MenuItem
-            onClick={() => {
-              handleUpdateComplete(!complete)
-              handleCloseMenu()
-            }}
-            sx={{ fontSize: 14 }}
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleCloseMenu}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
-            {
-              complete
-                ?
-                <>
-                  <UnpublishedIcon fontSize="small" sx={{ mr: 1 }} />
-                  {t('mark_incomplete')}
-                </>
-                :
-                <>
-                  <CheckCircleIcon fontSize="small" sx={{ mr: 1 }} />
-                  {t('mark_complete')}
-                </>
-            }
-          </MenuItem>
+            <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardMarkComplete}>
+              <MenuItem
+                onClick={() => {
+                  handleUpdateComplete(!complete)
+                  handleCloseMenu()
+                }}
+                sx={{ fontSize: 14 }}
+              >
+                {
+                  complete
+                    ?
+                    <>
+                      <UnpublishedIcon fontSize="small" sx={{ mr: 1 }} />
+                      {t('mark_incomplete')}
+                    </>
+                    :
+                    <>
+                      <CheckCircleIcon fontSize="small" sx={{ mr: 1 }} />
+                      {t('mark_complete')}
+                    </>
+                }
+              </MenuItem>
+            </BoardPermissionGate>
 
-          {cover?.url && cover?.publicId && (
-            <MenuItem
-              onClick={() => {
-                handleDeleteCardCover(cover)
-                handleCloseMenu()
-              }}
-              sx={{ fontSize: 14, mt: 1 }}
-            >
-              <ImageNotSupportedIcon fontSize="small" sx={{ mr: 1 }} />
-              {t('remove_cover')}
-            </MenuItem>
-          )}
+            {cover?.url && cover?.publicId && (
+              <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardCover}>
+                <MenuItem
+                  onClick={() => {
+                    handleDeleteCardCover(cover)
+                    handleCloseMenu()
+                  }}
+                  sx={{ fontSize: 14, mt: 1 }}
+                >
+                  <ImageNotSupportedIcon fontSize="small" sx={{ mr: 1 }} />
+                  {t('remove_cover')}
+                </MenuItem>
+              </BoardPermissionGate>
+            )}
 
-          <MenuItem
-            onClick={() => {
-              handleDeleteCard()
-              handleCloseMenu()
-            }}
-            sx={{
-              fontSize: 14,
-              mt: 1,
-              '&:hover': { color: 'error.main', '& .delete-forever-icon': { color: 'error.main' } }
-            }}
-          >
-            <DeleteForeverIcon fontSize="small" sx={{ mr: 1 }} />
-            {t('delete_card')}
-          </MenuItem>
-        </Menu>
+            <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.deleteCard}>
+              <MenuItem
+                onClick={() => {
+                  handleDeleteCard()
+                  handleCloseMenu()
+                }}
+                sx={{
+                  fontSize: 14,
+                  mt: 1,
+                  '&:hover': { color: 'error.main', '& .delete-forever-icon': { color: 'error.main' } }
+                }}
+              >
+                <DeleteForeverIcon fontSize="small" sx={{ mr: 1 }} />
+                {t('delete_card')}
+              </MenuItem>
+            </BoardPermissionGate>
+          </Menu>
+        </BoardPermissionGate>
       </Box>
 
       {cover?.url && cover?.publicId

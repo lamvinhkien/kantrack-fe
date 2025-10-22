@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -6,7 +6,7 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Popover from '@mui/material/Popover'
-import { Link as MuiLink } from '@mui/material'
+import { Link as MuiLink, Tooltip } from '@mui/material'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
@@ -25,6 +25,10 @@ import { renderTime } from '~/utils/formatters'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import { useTranslation } from 'react-i18next'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import CheckIcon from '@mui/icons-material/Check'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
   const { t, i18n } = useTranslation()
@@ -41,6 +45,24 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
 
   const files = ListAttachments?.filter(att => att.type === 'file') || []
   const links = ListAttachments?.filter(att => att.type === 'link') || []
+
+  const [copied, setCopied] = useState(false)
+  const [timerId, setTimerId] = useState(null)
+
+  const handleCopy = async (att) => {
+    await navigator.clipboard.writeText(att.url)
+    setCopied(true)
+    if (timerId) clearTimeout(timerId)
+    const id = setTimeout(() => setCopied(false), 2000)
+    setTimerId(id)
+    setTimerId(id)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (timerId) clearTimeout(timerId)
+    }
+  }, [timerId])
 
   const handleOpenPopover = (event, att) => {
     setAnchorPopoverElement(event.currentTarget)
@@ -161,15 +183,17 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                     </Typography>
                   )}
                 </MuiLink>
-                <Button
-                  sx={{ ml: 'auto', minWidth: 'unset', width: 25, height: 25 }}
-                  onClick={(e) => handleOpenPopover(e, att)}
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                >
-                  <MoreHorizIcon fontSize="small" />
-                </Button>
+                <Tooltip placement='top' arrow title={t('show_more')}>
+                  <Button
+                    sx={{ ml: 'auto', minWidth: 'unset', width: 25, height: 25 }}
+                    onClick={(e) => handleOpenPopover(e, att)}
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                  >
+                    <MoreHorizIcon fontSize="small" />
+                  </Button>
+                </Tooltip>
               </ListItem>
             ))}
           </List>
@@ -220,15 +244,52 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                   />
                 </MuiLink>
               </Box>
-              <Button
-                sx={{ ml: 1, minWidth: 'unset', width: 25, height: 25 }}
-                onClick={(e) => handleOpenPopover(e, att)}
-                variant="outlined"
-                color="primary"
-                size="small"
-              >
-                <MoreHorizIcon fontSize="small" />
-              </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Tooltip
+                  placement="top"
+                  arrow
+                  title={copied ? t('copied') : t('copy_link')}
+                >
+                  <Button
+                    onClick={() => handleCopy(att)}
+                    variant="text"
+                    color="primary"
+                    size="small"
+                    disableRipple
+                    disableFocusRipple
+                    sx={{
+                      minWidth: 'unset',
+                      width: 25,
+                      height: 25,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: 'transparent'
+                      },
+                      transition: 'none'
+                    }}
+                  >
+                    {copied ? (
+                      <CheckIcon fontSize="small" color="success" />
+                    ) : (
+                      <ContentCopyIcon fontSize="small" />
+                    )}
+                  </Button>
+                </Tooltip>
+
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardAttachment}>
+                  <Tooltip placement='top' arrow title={t('show_more')}>
+                    <Button
+                      sx={{ minWidth: 'unset', width: 25, height: 25 }}
+                      onClick={(e) => handleOpenPopover(e, att)}
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                    >
+                      <MoreHorizIcon fontSize="small" />
+                    </Button>
+                  </Tooltip>
+                </BoardPermissionGate>
+              </Box>
             </ListItem>
           ))}
         </List>
@@ -243,21 +304,36 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
         transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         {modePopover === 'main' && (
-          <MenuList>
-            <MenuItem onClick={() => setModePopover('edit')}>
-              <Typography>{t('edit')}</Typography>
-            </MenuItem>
-            {selectedAttachment?.type === 'file' && (
-              <MenuItem component="a" download
-                href={getDownloadUrl(selectedAttachment?.url, selectedAttachment?.displayText)}
-              >
-                <Typography>{t('download')}</Typography>
+          <BoardPermissionGate
+            action={BOARD_MEMBER_ACTIONS.editCardAttachment}
+            fallback={
+              <MenuList>
+                {selectedAttachment?.type === 'file' && (
+                  <MenuItem component="a" download
+                    href={getDownloadUrl(selectedAttachment?.url, selectedAttachment?.displayText)}
+                  >
+                    <Typography>{t('download')}</Typography>
+                  </MenuItem>
+                )}
+              </MenuList>
+            }
+          >
+            <MenuList>
+              <MenuItem onClick={() => setModePopover('edit')}>
+                <Typography>{t('edit')}</Typography>
               </MenuItem>
-            )}
-            <MenuItem onClick={() => setModePopover('remove')}>
-              <Typography color="error.light">{t('remove')}</Typography>
-            </MenuItem>
-          </MenuList>
+              {selectedAttachment?.type === 'file' && (
+                <MenuItem component="a" download
+                  href={getDownloadUrl(selectedAttachment?.url, selectedAttachment?.displayText)}
+                >
+                  <Typography>{t('download')}</Typography>
+                </MenuItem>
+              )}
+              <MenuItem onClick={() => setModePopover('remove')}>
+                <Typography color="error.light">{t('remove')}</Typography>
+              </MenuItem>
+            </MenuList>
+          </BoardPermissionGate>
         )}
 
         {modePopover === 'edit' && (

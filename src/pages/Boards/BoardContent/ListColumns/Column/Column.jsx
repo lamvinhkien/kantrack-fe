@@ -28,15 +28,18 @@ import { useTranslation } from 'react-i18next'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 import Typography from '@mui/material/Typography'
+import { useBoardPermission } from '~/hooks/useBoardPermission'
 
 const Column = ({ column }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
+  const { can } = useBoardPermission()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
-    data: { ...column }
+    data: { ...column },
+    disabled: !can(BOARD_MEMBER_ACTIONS.moveColumn)
   })
 
   const dndKitColumnStyles = {
@@ -171,6 +174,7 @@ const Column = ({ column }) => {
           >
             <ToggleFocusInput value={column?.title} onChangedValue={onUpdateColumnTitle} data-no-dnd="true" />
           </BoardPermissionGate>
+
           <Box>
             <BoardPermissionGate
               actions={[BOARD_MEMBER_ACTIONS.deleteColumn]}

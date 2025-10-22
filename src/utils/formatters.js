@@ -120,3 +120,26 @@ export const formatFileSize = (bytes) => {
   if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB'
   return (bytes / 1024 / 1024 / 1024).toFixed(1) + ' GB'
 }
+
+export const getScrollbarStyles = (theme) => ({
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
+    borderRadius: '4px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#555' : '#b0b0b0',
+    borderRadius: '4px'
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#777' : '#8c8c8c'
+  },
+  '&::-webkit-scrollbar-thumb:active': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#999' : '#666'
+  },
+
+  scrollbarWidth: 'thin',
+  scrollbarColor:
+    theme.palette.mode === 'dark'
+      ? '#555 #1e1e1e'
+      : '#b0b0b0 #f5f5f5'
+})

@@ -44,6 +44,9 @@ import Title from './Title/Title'
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { useTranslation } from 'react-i18next'
+import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
+import { getScrollbarStyles } from '~/utils/formatters'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -64,33 +67,6 @@ const SidebarItem = styled(Box)(({ theme }) => ({
     }
   }
 }))
-
-const getScrollbarStyles = (theme) => ({
-  '&::-webkit-scrollbar': {
-    width: '8px'
-  },
-  '&::-webkit-scrollbar-track': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
-    borderRadius: '4px'
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#555' : '#b0b0b0',
-    borderRadius: '4px'
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#777' : '#8c8c8c'
-  },
-  '&::-webkit-scrollbar-thumb:active': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#999' : '#666'
-  },
-
-  // Firefox support
-  scrollbarWidth: 'thin',
-  scrollbarColor:
-    theme.palette.mode === 'dark'
-      ? '#555 #1e1e1e'
-      : '#b0b0b0 #f5f5f5'
-})
 
 const ActiveCard = () => {
   const { t } = useTranslation()
@@ -314,44 +290,58 @@ const ActiveCard = () => {
               onUpdateComplete={onUpdateComplete}
             />
 
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 2 }}>
-              {
-                activeCard?.memberIds?.includes(currentUser._id)
-                  ?
-                  <SidebarItem
-                    className='active'
-                    onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.REMOVE })}
-                  >
-                    <LogoutIcon fontSize="small" />
-                    {t('left')}
+            <BoardPermissionGate
+              actions={[
+                BOARD_MEMBER_ACTIONS.editCardMember,
+                BOARD_MEMBER_ACTIONS.editCardCover,
+                BOARD_MEMBER_ACTIONS.editCardDate,
+                BOARD_MEMBER_ACTIONS.editCardAttachment
+              ]}
+              fallback={<Box sx={{ mt: -2 }}></Box>}
+            >
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 2 }}>
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardMember}>
+                  {
+                    activeCard?.memberIds?.includes(currentUser._id)
+                      ?
+                      <SidebarItem
+                        className='active'
+                        onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.REMOVE })}
+                      >
+                        <LogoutIcon fontSize="small" />
+                        {t('left')}
+                      </SidebarItem>
+                      :
+                      <SidebarItem
+                        className='active'
+                        onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.ADD })}
+                      >
+                        <PersonOutlinedIcon fontSize="small" />
+                        {t('join')}
+                      </SidebarItem>
+                  }
+                </BoardPermissionGate>
+
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardCover}>
+                  <SidebarItem className='active' component="label">
+                    <ImageOutlinedIcon fontSize="small" /> {t('cover')}
+                    <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
                   </SidebarItem>
-                  :
-                  <SidebarItem
-                    className='active'
-                    onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.ADD })}
-                  >
-                    <PersonOutlinedIcon fontSize="small" />
-                    {t('join')}
+                </BoardPermissionGate>
+
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardDate}>
+                  <SidebarItem className='active' onClick={editDatePopover.openPopover}>
+                    <WatchLaterOutlinedIcon fontSize="small" /> {t('dates')}
                   </SidebarItem>
-              }
+                </BoardPermissionGate>
 
-              <SidebarItem className='active' component="label">
-                <ImageOutlinedIcon fontSize="small" /> {t('cover')}
-                <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
-              </SidebarItem>
-
-              {!activeCard?.dates?.dueDate &&
-                <SidebarItem className='active' onClick={editDatePopover.openPopover}>
-                  <WatchLaterOutlinedIcon fontSize="small" /> {t('dates')}
-                </SidebarItem>
-              }
-
-              {activeCard?.attachments?.length === 0 &&
-                <SidebarItem className='active' component="label" onClick={addAttachmentPopover.openPopover}>
-                  <AttachmentIcon fontSize="small" /> {t('attachment')}
-                </SidebarItem>
-              }
-            </Stack>
+                <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardAttachment}>
+                  <SidebarItem className='active' component="label" onClick={addAttachmentPopover.openPopover}>
+                    <AttachmentIcon fontSize="small" /> {t('attachment')}
+                  </SidebarItem>
+                </BoardPermissionGate>
+              </Stack>
+            </BoardPermissionGate>
 
             <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
               <Box>
@@ -398,16 +388,18 @@ const ActiveCard = () => {
                     <AttachmentIcon />
                     <Typography variant="span" sx={{ fontWeight: '600', fontSize: '18px' }}>{t('attachment')}</Typography>
                   </Box>
-                  <Button
-                    onClick={addAttachmentPopover.openPopover}
-                    type="button"
-                    variant="contained"
-                    color="info"
-                    size="small"
-                    startIcon={<AddIcon />}
-                  >
-                    {t('add')}
-                  </Button>
+                  <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardAttachment}>
+                    <Button
+                      onClick={addAttachmentPopover.openPopover}
+                      type="button"
+                      variant="contained"
+                      color="info"
+                      size="small"
+                      startIcon={<AddIcon />}
+                    >
+                      {t('add')}
+                    </Button>
+                  </BoardPermissionGate>
                 </Box>
                 <ListAttachment
                   ListAttachments={activeCard?.attachments}

@@ -62,10 +62,8 @@ const ListColumns = ({ columns }) => {
         pr: 2,
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {/* List Columns */}
         {columns?.map(column => <Column key={column._id} column={column} />)}
 
-        {/* Button add new column */}
         <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.addColumn}>
           {!openNewColumnForm
             ?

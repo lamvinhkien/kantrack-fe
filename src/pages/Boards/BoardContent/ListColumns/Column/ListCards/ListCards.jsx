@@ -14,8 +14,13 @@ const ListCards = ({ cards }) => {
         overflowX: 'hidden',
         overflowY: 'auto',
         maxHeight: theme => `calc(${theme.kantrack.boardContentHeight} - ${theme.spacing(5)} - ${theme.kantrack.columnHeaderHeight} - ${theme.kantrack.columnFooterHeight})`,
-        '&::-webkit-scrollbar-thumb': { backgroundColor: '#ced0da' },
-        '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#bfc2cf', cursor: 'pointer' }
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: theme => theme.palette.mode === 'dark' ? '#131b24ff' : '#d2d2d5ff'
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          backgroundColor: theme => theme.palette.mode === 'dark' ? '#131b24be' : '#cbcbceff',
+          cursor: 'pointer'
+        }
       }}>
         {cards?.map(card => <Card key={card._id} card={card} />)}
       </Box>

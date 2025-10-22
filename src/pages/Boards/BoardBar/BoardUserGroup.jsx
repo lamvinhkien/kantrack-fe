@@ -21,6 +21,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useColorScheme } from '@mui/material'
 import Button from '@mui/material/Button'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
+import { getScrollbarStyles } from '~/utils/formatters'
 
 const BoardUserGroup = ({
   boardMembers = [],
@@ -173,12 +174,13 @@ const BoardUserGroup = ({
         </Box>
 
         <Box
-          sx={{
+          sx={theme => ({
             flex: 1,
             overflowY: 'auto',
             p: 1.2,
-            backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff'
-          }}
+            backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff',
+            ...getScrollbarStyles(theme)
+          })}
         >
           {allUsers.map((user, index) => (
             <Box
@@ -236,7 +238,7 @@ const BoardUserGroup = ({
                     noWrap
                     sx={{ fontWeight: 500, lineHeight: 1.2 }}
                   >
-                    {user?.displayName || 'Unknown'}
+                    {user?.displayName}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -247,7 +249,7 @@ const BoardUserGroup = ({
                       opacity: 0.8
                     }}
                   >
-                    {user?.email || 'No email'}
+                    {user?.email}
                   </Typography>
                 </Box>
               </Box>
