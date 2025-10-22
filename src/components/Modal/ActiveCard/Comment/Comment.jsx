@@ -12,7 +12,6 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import Popover from '@mui/material/Popover'
 import Button from '@mui/material/Button'
 import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { renderTime } from '~/utils/formatters'
 import { CARD_COMMENT_ACTIONS } from '~/utils/constants'
@@ -22,9 +21,8 @@ import Badge from '@mui/material/Badge'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
-const Comment = ({ cardComments = [], handleUpdateCardComment }) => {
+const Comment = ({ cardComments = [], handleUpdateCardComment, currentUser }) => {
   const { t, i18n } = useTranslation()
-  const currentUser = useSelector(selectCurrentUser)
   const board = useSelector(selectCurrentActiveBoard)
   const [commentInput, setCommentInput] = useState('')
   const [isPosting, setIsPosting] = useState(false)

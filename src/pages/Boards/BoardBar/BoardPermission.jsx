@@ -24,16 +24,13 @@ import {
 } from '@mui/icons-material'
 import { useColorScheme } from '@mui/material'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
-import { selectCurrentUser } from '~/redux/user/userSlice'
-import { useSelector } from 'react-redux'
 import { getScrollbarStyles } from '~/utils/formatters'
 
-const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePermission }) => {
+const BoardPermission = ({ ownerIds, memberIds, boardPermission = {}, handleUpdatePermission, currentUser }) => {
   const { mode } = useColorScheme()
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const [permissions, setPermissions] = useState(boardPermission)
-  const currentUser = useSelector(selectCurrentUser)
 
   useEffect(() => {
     setPermissions(boardPermission)
@@ -120,27 +117,34 @@ const BoardPermission = ({ ownerIds = [], boardPermission = {}, handleUpdatePerm
 
   return (
     <>
-      <Tooltip arrow title={t('manage_permissions')}>
-        <Box
-          onClick={handleOpen}
-          sx={{
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            px: 1,
-            py: 0.5,
-            borderRadius: 1,
-            cursor: 'pointer',
-            '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' }
-          }}
-        >
-          <AdminPanelSettingsIcon />
-          <Typography variant="body2" fontWeight={500}>
-            {t('permission')}
-          </Typography>
-        </Box>
-      </Tooltip>
+      <BoardPermissionGate
+        customCheck={() =>
+          ownerIds?.includes(currentUser._id) ||
+          memberIds?.includes(currentUser._id)
+        }
+      >
+        <Tooltip arrow title={t('manage_permissions')}>
+          <Box
+            onClick={handleOpen}
+            sx={{
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              px: 1,
+              py: 0.5,
+              borderRadius: 1,
+              cursor: 'pointer',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' }
+            }}
+          >
+            <AdminPanelSettingsIcon />
+            <Typography variant="body2" fontWeight={500}>
+              {t('permission')}
+            </Typography>
+          </Box>
+        </Tooltip>
+      </BoardPermissionGate>
 
       <BoardPermissionGate
         customCheck={() => ownerIds?.includes(currentUser._id)}

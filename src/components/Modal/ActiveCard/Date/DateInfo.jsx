@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, CircularProgress } from '@mui/material'
 import { useColorScheme } from '@mui/material/styles'
 import { ExpandMore } from '@mui/icons-material'
 import moment from 'moment'
@@ -6,9 +6,24 @@ import { useTranslation } from 'react-i18next'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 
-const DateInfo = ({ dates, complete, onClick }) => {
+const DateInfo = ({ dates, complete, onClick, loading = false }) => {
   const { mode } = useColorScheme()
   const { t } = useTranslation()
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 36
+        }}
+      >
+        <CircularProgress size={22} />
+      </Box>
+    )
+  }
 
   const startDate = dates?.startDate ? moment(dates.startDate) : null
   const dueDate = dates?.dueDate ? moment(dates.dueDate) : null

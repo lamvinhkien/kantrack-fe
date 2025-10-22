@@ -19,7 +19,7 @@ import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 
-const BoardType = ({ boardType, handleUpdateBoardType }) => {
+const BoardType = ({ boardType, handleUpdateBoardType, ownerIds, memberIds, currentUser }) => {
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -48,30 +48,62 @@ const BoardType = ({ boardType, handleUpdateBoardType }) => {
 
   return (
     <>
-      <Tooltip arrow title={isPublic ? t('public_board') : t('private_board')}>
-        <Box
-          onClick={handleClick}
-          sx={{
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            px: 1,
-            py: 0.5,
-            borderRadius: 1,
-            cursor: 'pointer',
-            textWrap: 'nowrap',
-            '&:hover': {
-              bgcolor: 'rgba(255,255,255,0.12)'
-            }
-          }}
-        >
-          {isPublic ? <PublicIcon fontSize="small" /> : <LockIcon fontSize="small" />}
-          <Typography variant="body2" fontWeight={500}>
-            {isPublic ? t('public') : t('private')}
-          </Typography>
-        </Box>
-      </Tooltip>
+      <BoardPermissionGate
+        customCheck={() =>
+          ownerIds?.includes(currentUser._id) ||
+          memberIds?.includes(currentUser._id)
+        }
+        fallback={
+          <Tooltip arrow title={isPublic ? t('public_board') : t('private_board')}>
+            <Box
+              sx={{
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                cursor: 'pointer',
+                textWrap: 'nowrap',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.12)'
+                }
+              }}
+            >
+              {isPublic ? <PublicIcon fontSize="small" /> : <LockIcon fontSize="small" />}
+              <Typography variant="body2" fontWeight={500}>
+                {isPublic ? t('public') : t('private')}
+              </Typography>
+            </Box>
+          </Tooltip>
+        }
+      >
+        <Tooltip arrow title={isPublic ? t('public_board') : t('private_board')}>
+          <Box
+            onClick={handleClick}
+            sx={{
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              px: 1,
+              py: 0.5,
+              borderRadius: 1,
+              cursor: 'pointer',
+              textWrap: 'nowrap',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.12)'
+              }
+            }}
+          >
+            {isPublic ? <PublicIcon fontSize="small" /> : <LockIcon fontSize="small" />}
+            <Typography variant="body2" fontWeight={500}>
+              {isPublic ? t('public') : t('private')}
+            </Typography>
+          </Box>
+        </Tooltip>
+      </BoardPermissionGate>
 
       <BoardPermissionGate
         action={BOARD_MEMBER_ACTIONS.editBoardType}

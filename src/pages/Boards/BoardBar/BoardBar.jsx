@@ -16,11 +16,14 @@ import { toast } from 'react-toastify'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 import Typography from '@mui/material/Typography'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useSelector } from 'react-redux'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const currentUser = useSelector(selectCurrentUser)
 
   const onUpdateBoardTitle = (newTitle) => {
     const newBoard = { ...board }
@@ -205,17 +208,34 @@ const BoardBar = ({ board }) => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <RefreshBoard handleRefresh={onRefreshBoard} />
-        <BoardPermission ownerIds={board?.ownerIds} boardPermission={board?.memberPermissions} handleUpdatePermission={onUpdatePermission} />
+
+        <BoardPermission
+          ownerIds={board?.ownerIds}
+          memberIds={board?.memberIds}
+          boardPermission={board?.memberPermissions}
+          handleUpdatePermission={onUpdatePermission}
+          currentUser={currentUser}
+        />
+
         <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.inviteMemberToBoard}>
           <InviteBoardUser boardId={board._id} />
         </BoardPermissionGate>
-        <BoardType boardType={board?.type} handleUpdateBoardType={onUpdateBoardType} />
+
+        <BoardType
+          boardType={board?.type}
+          handleUpdateBoardType={onUpdateBoardType}
+          ownerIds={board?.ownerIds}
+          memberIds={board?.memberIds}
+          currentUser={currentUser}
+        />
+
         <BoardUserGroup
           boardMembers={board?.members}
           boardOwners={board?.owners}
           handleRemoveMember={onRemoveMember}
           handleAssignAdmin={onAssignAdmin}
           handleLeaveBoard={onLeaveBoard}
+          currentUser={currentUser}
         />
       </Box>
     </Box>

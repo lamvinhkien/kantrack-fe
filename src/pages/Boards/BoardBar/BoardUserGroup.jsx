@@ -12,8 +12,6 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 import { useTranslation } from 'react-i18next'
-import { selectCurrentUser } from '~/redux/user/userSlice'
-import { useSelector } from 'react-redux'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
@@ -29,16 +27,14 @@ const BoardUserGroup = ({
   limit = 5,
   handleRemoveMember,
   handleAssignAdmin,
-  handleLeaveBoard
+  handleLeaveBoard,
+  currentUser
 }) => {
   const { mode } = useColorScheme()
   const { t } = useTranslation()
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'board-all-users-popover' : undefined
-
-  const currentUser = useSelector(selectCurrentUser)
-
   const [menuAnchorEl, setMenuAnchorEl] = useState(null)
   const [selectedUser, setSelectedUser] = useState(null)
   const isMenuOpen = Boolean(menuAnchorEl)
@@ -278,34 +274,41 @@ const BoardUserGroup = ({
           ))}
         </Box>
 
-        <Box
-          sx={{
-            borderTop:
-              mode === 'dark'
-                ? '1px solid rgba(255,255,255,0.12)'
-                : '1px solid rgba(0,0,0,0.12)',
-            p: 1.5,
-            textAlign: 'center',
-            backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff'
-          }}
+        <BoardPermissionGate
+          customCheck={() =>
+            boardOwners.some((o) => o._id === currentUser._id) ||
+            boardMembers.some((m) => m._id === currentUser._id)
+          }
         >
-          <Button
-            variant="text"
-            color="error"
-            fullWidth
-            onClick={() => handleLeaveBoard(currentUser)}
+          <Box
             sx={{
-              fontWeight: 500,
-              textTransform: 'none',
-              borderRadius: 2,
-              px: 2.5,
-              py: 0.6,
-              borderWidth: 1.3
+              borderTop:
+                mode === 'dark'
+                  ? '1px solid rgba(255,255,255,0.12)'
+                  : '1px solid rgba(0,0,0,0.12)',
+              p: 1.5,
+              textAlign: 'center',
+              backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff'
             }}
           >
-            {t('leave_board')}
-          </Button>
-        </Box>
+            <Button
+              variant="text"
+              color="error"
+              fullWidth
+              onClick={() => handleLeaveBoard(currentUser)}
+              sx={{
+                fontWeight: 500,
+                textTransform: 'none',
+                borderRadius: 2,
+                px: 2.5,
+                py: 0.6,
+                borderWidth: 1.3
+              }}
+            >
+              {t('leave_board')}
+            </Button>
+          </Box>
+        </BoardPermissionGate>
       </Popover>
 
       <BoardPermissionGate customCheck={() => boardOwners.some((o) => o._id === currentUser._id)}>
@@ -356,7 +359,7 @@ const BoardUserGroup = ({
             <ListItemIcon>
               <EmojiEventsIcon fontSize="small" sx={{ color: '#f1c40f' }} />
             </ListItemIcon>
-            <ListItemText primary={t('assign_admin') || 'Assign as Admin'} />
+            <ListItemText primary={t('assign_admin')} />
           </MenuItem>
 
           <Divider sx={{ my: 0.3 }} />
@@ -371,7 +374,7 @@ const BoardUserGroup = ({
             <ListItemIcon>
               <HighlightOffIcon fontSize="small" sx={{ color: 'error.main' }} />
             </ListItemIcon>
-            <ListItemText primary={t('remove_member') || 'Remove Member'} />
+            <ListItemText primary={t('remove_member')} />
           </MenuItem>
         </Menu>
       </BoardPermissionGate>

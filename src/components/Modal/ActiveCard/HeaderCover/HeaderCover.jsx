@@ -198,6 +198,7 @@ const HeaderCover = ({ columnTitle, cover, complete, handleDeleteCardCover, hand
                 onClick={() => setPreviewFile(cover)}
                 src={cover.url}
                 alt="card-cover"
+                draggable={false}
                 sx={{
                   position: 'relative',
                   zIndex: 1,

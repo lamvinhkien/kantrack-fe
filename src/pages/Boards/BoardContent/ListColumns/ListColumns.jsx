@@ -21,6 +21,7 @@ const ListColumns = ({ columns }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
+  const [loading, setLoading] = useState(false)
 
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
@@ -32,22 +33,27 @@ const ListColumns = ({ columns }) => {
       return
     }
 
-    const newColumnData = { title: newColumnTitle }
+    try {
+      setLoading(true)
 
-    const createdColumn = await createNewColumnAPI({ ...newColumnData, boardId: board._id })
+      const newColumnData = { title: newColumnTitle }
+      const createdColumn = await createNewColumnAPI({ ...newColumnData, boardId: board._id })
 
-    createdColumn.cards = [generatePlaceholderCard(createdColumn)]
-    createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id]
+      createdColumn.cards = [generatePlaceholderCard(createdColumn)]
+      createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id]
 
-    const newBoard = cloneDeep(board)
-    newBoard.columns.push(createdColumn)
-    newBoard.columnOrderIds.push(createdColumn._id)
-    dispatch(updateCurrentActiveBoard(newBoard))
+      const newBoard = cloneDeep(board)
+      newBoard.columns.push(createdColumn)
+      newBoard.columnOrderIds.push(createdColumn._id)
+      dispatch(updateCurrentActiveBoard(newBoard))
 
-    socketIoInstance.emit('FE_ADD_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+      socketIoInstance.emit('FE_ADD_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
 
-    toggleOpenNewColumnForm()
-    setNewColumnTitle('')
+      toggleOpenNewColumnForm()
+      setNewColumnTitle('')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -126,6 +132,7 @@ const ListColumns = ({ columns }) => {
                   className='interceptor-loading'
                   onClick={addNewColumn}
                   variant='contained' color='success' size='small'
+                  disabled={loading}
                   sx={{
                     boxShadow: 'none',
                     border: '0.5px solid',

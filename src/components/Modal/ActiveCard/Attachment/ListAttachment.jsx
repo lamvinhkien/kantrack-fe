@@ -89,10 +89,17 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
   }
 
   const handleRemoveAttachment = (action) => {
-    toast.promise(
-      handleUpdateCardAttachments(action, selectedAttachment),
-      { pending: t('removing') }
-    )
+    if (selectedAttachment?.type === 'file') {
+      toast.promise(
+        handleUpdateCardAttachments(action, selectedAttachment),
+        { pending: t('removing') }
+      )
+    }
+
+    if (selectedAttachment?.type === 'link') {
+      handleUpdateCardAttachments(action, selectedAttachment)
+    }
+
     setAnchorPopoverElement(null)
     setSelectedAttachment(null)
   }

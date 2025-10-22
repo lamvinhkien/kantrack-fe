@@ -35,6 +35,7 @@ const Column = ({ column }) => {
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
   const { can } = useBoardPermission()
+  const [loading, setLoading] = useState(false)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
@@ -77,27 +78,31 @@ const Column = ({ column }) => {
       return
     }
 
-    const newCardData = { title: newCardTitle.trim(), columnId: column._id }
+    try {
+      setLoading(true)
 
-    const createdCard = await createNewCardAPI({ ...newCardData, boardId: board._id })
-
-    const newBoard = cloneDeep(board)
-    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
-    if (columnToUpdate) {
-      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
-        columnToUpdate.cards = [createdCard]
-        columnToUpdate.cardOrderIds = [createdCard._id]
-      } else {
-        columnToUpdate.cards.push(createdCard)
-        columnToUpdate.cardOrderIds.push(createdCard._id)
+      const newCardData = { title: newCardTitle.trim(), columnId: column._id }
+      const createdCard = await createNewCardAPI({ ...newCardData, boardId: board._id })
+      const newBoard = cloneDeep(board)
+      const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+      if (columnToUpdate) {
+        if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+          columnToUpdate.cards = [createdCard]
+          columnToUpdate.cardOrderIds = [createdCard._id]
+        } else {
+          columnToUpdate.cards.push(createdCard)
+          columnToUpdate.cardOrderIds.push(createdCard._id)
+        }
       }
+
+      dispatch(updateCurrentActiveBoard(newBoard))
+      socketIoInstance.emit('FE_ADD_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+
+      toggleOpenNewCardForm()
+      setNewCardTitle('')
+    } finally {
+      setLoading(false)
     }
-    dispatch(updateCurrentActiveBoard(newBoard))
-
-    socketIoInstance.emit('FE_ADD_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
-
-    toggleOpenNewCardForm()
-    setNewCardTitle('')
   }
 
   const confirmDeleteColumn = useConfirm()
@@ -300,7 +305,10 @@ const Column = ({ column }) => {
                     <Button
                       className='interceptor-loading'
                       onClick={addNewCard}
-                      variant='contained' color='success' size='small'
+                      variant='contained'
+                      color='success'
+                      size='small'
+                      disabled={loading}
                       data-no-dnd="true"
                       sx={{
                         boxShadow: 'none',
@@ -311,6 +319,7 @@ const Column = ({ column }) => {
                     >
                       {t('add')}
                     </Button>
+
                     <CloseIcon
                       data-no-dnd="true"
                       sx={{

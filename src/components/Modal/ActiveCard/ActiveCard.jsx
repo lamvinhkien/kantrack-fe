@@ -25,7 +25,7 @@ import { selectCurrentUser } from '~/redux/user/userSlice'
 import { updateCardDetailsAPI, deleteCardDetailsAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { socketIoInstance } from '~/socketio/socketClient'
 import AddAttachment from './Attachment/AddAttachment'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
@@ -150,8 +150,14 @@ const ActiveCard = () => {
     await callApiUpdateCard({ action, comment })
   }
 
+  const [isUpdatingMember, setIsUpdatingMember] = useState(false)
   const onUpdateCardMembers = async (incomingMemberInfo) => {
-    await callApiUpdateCard({ incomingMemberInfo })
+    setIsUpdatingMember(true)
+    try {
+      await callApiUpdateCard({ incomingMemberInfo })
+    } finally {
+      setIsUpdatingMember(false)
+    }
   }
 
   const onAddCardAttachments = (files, link) => {
@@ -181,8 +187,14 @@ const ActiveCard = () => {
     await callApiUpdateCard({ action, newAttachment: data })
   }
 
+  const [isUpdatingDate, setIsUpdatingDate] = useState(false)
   const onUpdateCardDate = async (data) => {
-    await callApiUpdateCard({ dates: data })
+    setIsUpdatingDate(true)
+    try {
+      await callApiUpdateCard({ dates: data })
+    } finally {
+      setIsUpdatingDate(false)
+    }
   }
 
   const onDeleteCard = async () => {
@@ -302,23 +314,37 @@ const ActiveCard = () => {
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 2 }}>
                 <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.editCardMember}>
                   {
-                    activeCard?.memberIds?.includes(currentUser._id)
-                      ?
+                    activeCard?.memberIds?.includes(currentUser._id) ? (
                       <SidebarItem
                         className='active'
                         onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.REMOVE })}
+                        disabled={isUpdatingMember}
+                        sx={{
+                          opacity: isUpdatingMember ? 0.6 : 1,
+                          pointerEvents: isUpdatingMember ? 'none' : 'auto',
+                          cursor: isUpdatingMember ? 'default' : 'pointer',
+                          transition: 'opacity 0.2s ease'
+                        }}
                       >
                         <LogoutIcon fontSize="small" />
                         {t('left')}
                       </SidebarItem>
-                      :
+                    ) : (
                       <SidebarItem
                         className='active'
                         onClick={() => onUpdateCardMembers({ userId: currentUser._id, action: CARD_MEMBER_ACTIONS.ADD })}
+                        disabled={isUpdatingMember}
+                        sx={{
+                          opacity: isUpdatingMember ? 0.6 : 1,
+                          pointerEvents: isUpdatingMember ? 'none' : 'auto',
+                          cursor: isUpdatingMember ? 'default' : 'pointer',
+                          transition: 'opacity 0.2s ease'
+                        }}
                       >
                         <PersonOutlinedIcon fontSize="small" />
                         {t('join')}
                       </SidebarItem>
+                    )
                   }
                 </BoardPermissionGate>
 
@@ -355,7 +381,7 @@ const ActiveCard = () => {
                 />
               </Box>
 
-              {activeCard?.dates?.dueDate && (
+              {(activeCard?.dates?.dueDate || isUpdatingDate) && (
                 <Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
                     <AccessAlarmIcon fontSize='small' />
@@ -365,6 +391,7 @@ const ActiveCard = () => {
                     dates={activeCard?.dates}
                     complete={activeCard?.complete}
                     onClick={editDatePopover.openPopover}
+                    loading={isUpdatingDate}
                   />
                 </Box>
               )}
@@ -429,6 +456,7 @@ const ActiveCard = () => {
               <Comment
                 cardComments={activeCard?.comments}
                 handleUpdateCardComment={onUpdateCardComment}
+                currentUser={currentUser}
               />
             </Box>
           </Box>

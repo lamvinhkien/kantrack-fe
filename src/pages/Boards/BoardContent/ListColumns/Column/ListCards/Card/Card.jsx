@@ -64,6 +64,7 @@ const Card = ({ card }) => {
 
   return (
     <MuiCard
+      data-no-dnd={!can(BOARD_MEMBER_ACTIONS.moveCard)}
       onClick={handleOpenCard}
       ref={setNodeRef}
       style={dndKitCardStyles}
@@ -84,6 +85,7 @@ const Card = ({ card }) => {
           component="img"
           src={card.cover.url}
           alt="card cover"
+          draggable={false}
           sx={{
             width: '100%',
             height: 150,

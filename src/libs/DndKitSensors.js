@@ -3,7 +3,7 @@ import { MouseSensor as DndKitMouseSensor, TouchSensor as DndKitTouchSensor } fr
 const handler = ({ nativeEvent: event }) => {
   let cur = event.target
   while (cur) {
-    if (cur.dataset && cur.dataset.noDnd) {
+    if (cur.dataset && cur.dataset.noDnd === 'true') {
       return false
     }
     cur = cur.parentElement
