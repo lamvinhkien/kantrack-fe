@@ -150,7 +150,7 @@ const Board = () => {
           <ActiveCard />
         </>
         :
-        <PageLoadingSpinner caption='Loading Board...' AppBar={true} />
+        <PageLoadingSpinner caption={t('loading')} AppBar={true} />
       }
     </Container>
   )

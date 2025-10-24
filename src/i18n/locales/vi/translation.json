@@ -225,5 +225,13 @@
   "file_too_many": "Bạn chỉ có thể tải lên tối đa 10 tệp.",
   "copy_link": "Sao chép liên kết",
   "copied": "Đã sao chép",
-  "unknow_user": "Người dùng không xác định"
+  "unknow_user": "Người dùng không xác định",
+  "loading": "Đang tải...",
+  "recently_viewed": "Xem gần đầy",
+  "create_board": "Thêm mới bảng",
+  "title": "Tiêu đề",
+  "create": "Thêm",
+  "ownedBoards": "Bảng của bạn",
+  "sharedBoards": "Bảng được chia sẻ",
+  "no_boards": "Chưa có bảng."
 }

@@ -4,10 +4,11 @@ import Autocomplete from '@mui/material/Autocomplete'
 import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { fetchBoardsAPI } from '~/apis'
 import { useDebounceFn } from '~/hooks/useDebounceFn'
 import { useTranslation } from 'react-i18next'
+import { getScrollbarStyles } from '~/utils/formatters'
 
 const AutoCompleteSearchBoard = () => {
   const navigate = useNavigate()
@@ -21,15 +22,23 @@ const AutoCompleteSearchBoard = () => {
   }, [open])
 
   const handleInputSearchChange = (event) => {
-    const searchValue = event.target?.value
-    if (!searchValue) return
+    const searchValue = event.target?.value?.trim()
+    if (!searchValue) {
+      setBoards([])
+      return
+    }
 
-    const searchPath = `?${createSearchParams({ 'q[title]': searchValue })}`
-
+    const searchPath = `?q[title]=${encodeURIComponent(searchValue)}`
     setLoading(true)
 
     fetchBoardsAPI(searchPath)
-      .then(res => setBoards(res.boards || []))
+      .then(res => {
+        const combined = [
+          ...(res.ownerBoards || []),
+          ...(res.memberBoards || [])
+        ]
+        setBoards(combined)
+      })
       .finally(() => setLoading(false))
   }
 
@@ -53,6 +62,13 @@ const AutoCompleteSearchBoard = () => {
       loading={loading}
       onInputChange={debounceSearchBoard}
       onChange={handleSelectedBoard}
+      ListboxProps={{
+        sx: theme => ({
+          ...getScrollbarStyles(theme),
+          maxHeight: 300,
+          overflowY: 'auto'
+        })
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

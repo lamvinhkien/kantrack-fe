@@ -79,7 +79,8 @@ const SecurityTab = () => {
         height: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        p: 2
       }}
     >
       <Setup2FA
@@ -90,74 +91,31 @@ const SecurityTab = () => {
       />
 
       <Box
-        sx={{
+        sx={(theme) => ({
           maxWidth: '1200px',
+          width: '100%',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          flexDirection: 'row',
+          alignItems: 'flex-start',
           justifyContent: 'center',
-          gap: 3
-        }}
+          gap: 6,
+
+          [theme.breakpoints.down('md')]: {
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 3
+          }
+        })}
       >
-        {/* ============ 2FA Section ============ */}
-        <Box sx={{ width: '400px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LockOutlinedIcon />
-            <Typography variant='h6'>
-              {t('two_factor_authentication_title')}
-            </Typography>
-          </Box>
-
-          <Alert
-            severity={user.require2fa ? 'success' : 'warning'}
-            sx={(theme) => ({
-              '.MuiAlert-message': { overflow: 'hidden' },
-              backgroundColor:
-                theme.palette.mode === 'dark'
-                  ? alpha(
-                    user.require2fa
-                      ? theme.palette.success.main
-                      : theme.palette.warning.main,
-                    0.1
-                  )
-                  : undefined
-            })}
-          >
-            {t('account_security_status')}{' '}
-            <Typography component='span' sx={{ fontWeight: 'bold' }}>
-              {t('two_factor_authentication_label')}{' '}
-              {user.require2fa ? t('enabled') : t('not_enabled')}.
-            </Typography>
-          </Alert>
-
-          {user.require2fa ? (
-            <Button
-              type='button'
-              variant='contained'
-              color='error'
-              fullWidth
-              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.DISABLE)}
-            >
-              {t('disable_2fa')}
-            </Button>
-          ) : (
-            <Button
-              type='button'
-              variant='contained'
-              color='warning'
-              fullWidth
-              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.ENABLE)}
-            >
-              {t('enable_2fa')}
-            </Button>
-          )}
-        </Box>
-
-        <Divider sx={{ width: '100%' }} />
-
-        {/* ============ Change Password Section ============ */}
         <form onSubmit={handleSubmit(submitChangePassword)}>
-          <Box sx={{ width: '400px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            sx={{
+              width: { xs: '100%', sm: '400px' },
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <LockOutlinedIcon />
               <Typography variant='h6'>
@@ -229,10 +187,9 @@ const SecurityTab = () => {
                   )
                 }}
                 {...register('new_password_confirmation', {
-                  validate: (value) => {
-                    if (value === watch('new_password')) return true
-                    return t('password_confirmation_not_match')
-                  }
+                  validate: (value) =>
+                    value === watch('new_password') ||
+                    t('password_confirmation_not_match')
                 })}
                 error={!!errors['new_password_confirmation']}
               />
@@ -252,6 +209,78 @@ const SecurityTab = () => {
             </Box>
           </Box>
         </form>
+
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={(theme) => ({
+            mx: 2,
+            [theme.breakpoints.down('md')]: {
+              orientation: 'horizontal',
+              width: '100%'
+            }
+          })}
+        />
+
+        <Box
+          sx={{
+            width: { xs: '100%', sm: '400px' },
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LockOutlinedIcon />
+            <Typography variant='h6'>
+              {t('two_factor_authentication_title')}
+            </Typography>
+          </Box>
+
+          <Alert
+            severity={user.require2fa ? 'success' : 'warning'}
+            sx={(theme) => ({
+              '.MuiAlert-message': { overflow: 'hidden' },
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? alpha(
+                    user.require2fa
+                      ? theme.palette.success.main
+                      : theme.palette.warning.main,
+                    0.1
+                  )
+                  : undefined
+            })}
+          >
+            {t('account_security_status')}{' '}
+            <Typography component='span' sx={{ fontWeight: 'bold' }}>
+              {t('two_factor_authentication_label')}{' '}
+              {user.require2fa ? t('enabled') : t('not_enabled')}.
+            </Typography>
+          </Alert>
+
+          {user.require2fa ? (
+            <Button
+              type='button'
+              variant='contained'
+              color='error'
+              fullWidth
+              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.DISABLE)}
+            >
+              {t('disable_2fa')}
+            </Button>
+          ) : (
+            <Button
+              type='button'
+              variant='contained'
+              color='warning'
+              fullWidth
+              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.ENABLE)}
+            >
+              {t('enable_2fa')}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   )

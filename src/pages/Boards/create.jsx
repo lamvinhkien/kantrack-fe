@@ -3,7 +3,6 @@ import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
-import CancelIcon from '@mui/icons-material/Cancel'
 import { useForm, Controller } from 'react-hook-form'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -64,7 +63,7 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
     <>
       <SidebarItem onClick={handleOpenModal}>
         <LibraryAddIcon fontSize="small" />
-        Create a new board
+        {t('create_board')}
       </SidebarItem>
 
       <Modal
@@ -86,29 +85,17 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
           padding: '20px 30px',
           backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1A2027' : 'white'
         }}>
-          <Box sx={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            cursor: 'pointer'
-          }}>
-            <CancelIcon
-              color="error"
-              sx={{ '&:hover': { color: 'error.light' } }}
-              onClick={handleCloseModal}
-            />
-          </Box>
           <Box id="modal-modal-title" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LibraryAddIcon />
-            <Typography variant="h6" component="h2">Create a new board</Typography>
+            <Typography variant="h6" component="h2">{t('create_board')}</Typography>
           </Box>
           <Box id="modal-modal-description" sx={{ my: 2 }}>
             <form onSubmit={handleSubmit(submitCreateNewBoard)}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Box>
                   <TextField
                     fullWidth
-                    label="Title"
+                    label={t('title')}
                     type="text"
                     variant="outlined"
                     InputProps={{
@@ -142,26 +129,33 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
                       <FormControlLabel
                         value={BOARD_TYPES.PUBLIC}
                         control={<Radio size="small" />}
-                        label="Public"
+                        label={t('public')}
                         labelPlacement="start"
                       />
                       <FormControlLabel
                         value={BOARD_TYPES.PRIVATE}
                         control={<Radio size="small" />}
-                        label="Private"
+                        label={t('private')}
                         labelPlacement="start"
                       />
                     </RadioGroup>
                   )}
                 />
-                <Box sx={{ alignSelf: 'flex-end' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: 1 }}>
+                  <Button
+                    onClick={handleCloseModal}
+                    variant="text"
+                    color="inherit"
+                  >
+                    {t('cancel')}
+                  </Button>
                   <Button
                     className="interceptor-loading"
                     type="submit"
                     variant="contained"
                     color="primary"
                   >
-                    Create
+                    {t('create')}
                   </Button>
                 </Box>
               </Box>

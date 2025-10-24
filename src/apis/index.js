@@ -93,3 +93,8 @@ export const verify2faAPI = async (email, otpToken) => {
   const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/verify_2fa`, { email, otpToken })
   return response.data
 }
+
+export const getRecentBoards = async () => {
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/recent_boards`)
+  return response.data
+}

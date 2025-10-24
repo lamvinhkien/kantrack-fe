@@ -224,5 +224,13 @@
   "file_too_many": "You can upload up to 10 files only.",
   "copy_link": "Copy link",
   "copied": "Copied",
-  "unknow_user": "Unknow user"
+  "unknow_user": "Unknow user",
+  "loading": "Loading...",
+  "recently_viewed": "Recently Viewed",
+  "create_board": "Create new board",
+  "title": "Title",
+  "create": "Create",
+  "ownedBoards": "Owned Boards",
+  "sharedBoards": "Shared Boards",
+  "no_boards": "No boards."
 }
