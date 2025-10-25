@@ -231,7 +231,11 @@
   "create_board": "Thêm mới bảng",
   "title": "Tiêu đề",
   "create": "Thêm",
-  "ownedBoards": "Bảng của bạn",
-  "sharedBoards": "Bảng được chia sẻ",
-  "no_boards": "Chưa có bảng."
+  "owned_boards": "Bảng của bạn",
+  "joined_boards": "Bảng đã tham gia",
+  "no_boards": "Chưa có bảng.",
+  "favourite": "Yêu thích",
+  "un_favourite": "Bỏ yêu thích",
+  "favourite_board": "Yêu thích bảng này",
+  "un_favourite_board": "Bỏ yêu thích bảng này"
 }

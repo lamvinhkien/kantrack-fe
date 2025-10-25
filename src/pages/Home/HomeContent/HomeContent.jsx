@@ -133,7 +133,7 @@ const HomeContent = () => {
         </motion.div>
       </Box>
 
-      <Footer lineWidth={150} />
+      <Footer lineWidth={'40%'} />
     </Box>
   )
 }

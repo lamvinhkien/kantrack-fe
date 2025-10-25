@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
 import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
@@ -11,7 +12,7 @@ import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
 import { socketIoInstance } from '~/socketio/socketClient'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+import { selectCurrentUser, updateCurrentUser } from '~/redux/user/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -28,6 +29,13 @@ const Board = () => {
   useEffect(() => {
     dispatch(updateCurrentActiveBoard(null))
     dispatch(fetchBoardDetailsAPI(boardId))
+    dispatch(updateCurrentUser({
+      ...currentUser,
+      recentBoards: [
+        { boardId, viewedAt: Date.now() },
+        ...(currentUser?.recentBoards || []).filter(b => b.boardId !== boardId)
+      ]
+    }))
   }, [dispatch, boardId])
 
   useEffect(() => {

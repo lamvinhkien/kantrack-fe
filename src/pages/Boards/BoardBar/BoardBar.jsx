@@ -16,8 +16,9 @@ import { toast } from 'react-toastify'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { BOARD_MEMBER_ACTIONS } from '~/utils/constants'
 import Typography from '@mui/material/Typography'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+import { selectCurrentUser, updateUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import { useSelector } from 'react-redux'
+import FavouriteBoard from './FavouriteBoard'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
@@ -162,6 +163,25 @@ const BoardBar = ({ board }) => {
     dispatch(fetchBoardDetailsAPI(board._id))
   }
 
+  const isFavourite = currentUser?.favouriteBoards?.some(b => b.boardId === board?._id)
+  const onFavouriteBoard = () => {
+    dispatch(updateUserAPI({ favouriteAction: true, boardId: board?._id }))
+    if (isFavourite) {
+      dispatch(updateCurrentUser({
+        ...currentUser,
+        favouriteBoards: currentUser.favouriteBoards.filter(b => b.boardId !== board?._id)
+      }))
+    } else {
+      dispatch(updateCurrentUser({
+        ...currentUser,
+        favouriteBoards: [
+          { boardId: board?._id, viewedAt: Date.now() },
+          ...(currentUser?.favouriteBoards || [])
+        ]
+      }))
+    }
+  }
+
   return (
     <Box sx={{
       width: '100%',
@@ -208,6 +228,11 @@ const BoardBar = ({ board }) => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <RefreshBoard handleRefresh={onRefreshBoard} />
+
+        <FavouriteBoard
+          handleFavourite={onFavouriteBoard}
+          favourite={isFavourite}
+        />
 
         <BoardPermission
           ownerIds={board?.ownerIds}

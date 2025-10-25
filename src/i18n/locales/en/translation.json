@@ -230,7 +230,11 @@
   "create_board": "Create new board",
   "title": "Title",
   "create": "Create",
-  "ownedBoards": "Owned Boards",
-  "sharedBoards": "Shared Boards",
-  "no_boards": "No boards."
+  "owned_boards": "Owned Boards",
+  "joined_boards": "Joined Boards",
+  "no_boards": "No boards.",
+  "favourite": "Favourite",
+  "un_favourite": "Unfavourite",
+  "favourite_board": "Favourite this board",
+  "un_favourite_board": "Unfavourite this board"
 }

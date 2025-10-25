@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, forwardRef, useImperativeHandle } from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
@@ -39,28 +39,32 @@ const BOARD_TYPES = {
   PRIVATE: 'private'
 }
 
-const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
+const SidebarCreateBoardModal = forwardRef(({ afterCreateNewBoard, ...props }, ref) => {
   const { t } = useTranslation()
-
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm()
-
   const [isOpen, setIsOpen] = useState(false)
+
   const handleOpenModal = () => setIsOpen(true)
   const handleCloseModal = () => {
     setIsOpen(false)
     reset()
   }
 
+  useImperativeHandle(ref, () => ({
+    openModal: handleOpenModal
+  }))
+
   const submitCreateNewBoard = (data) => {
-    createNewBoardAPI(data).then(() => {
-      toast.success(t('board_created'))
-      handleCloseModal()
-      afterCreateNewBoard()
-    })
+    createNewBoardAPI(data)
+      .then(() => {
+        toast.success(t('board_created'))
+        handleCloseModal()
+        afterCreateNewBoard()
+      })
   }
 
   return (
-    <>
+    <Box ref={ref} {...props}>
       <SidebarItem onClick={handleOpenModal}>
         <LibraryAddIcon fontSize="small" />
         {t('create_board')}
@@ -68,6 +72,7 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
 
       <Modal
         open={isOpen}
+        onClose={handleCloseModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -89,6 +94,7 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
             <LibraryAddIcon />
             <Typography variant="h6" component="h2">{t('create_board')}</Typography>
           </Box>
+
           <Box id="modal-modal-description" sx={{ my: 2 }}>
             <form onSubmit={handleSubmit(submitCreateNewBoard)}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -141,12 +147,9 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
                     </RadioGroup>
                   )}
                 />
+
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: 1 }}>
-                  <Button
-                    onClick={handleCloseModal}
-                    variant="text"
-                    color="inherit"
-                  >
+                  <Button onClick={handleCloseModal} variant="text" color="inherit">
                     {t('cancel')}
                   </Button>
                   <Button
@@ -163,8 +166,9 @@ const SidebarCreateBoardModal = ({ afterCreateNewBoard }) => {
           </Box>
         </Box>
       </Modal>
-    </>
+    </Box>
   )
-}
+})
 
+SidebarCreateBoardModal.displayName = 'SidebarCreateBoardModal'
 export default SidebarCreateBoardModal

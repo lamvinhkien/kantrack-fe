@@ -14,7 +14,6 @@ const Footer = ({ lineWidth = 100 }) => {
         mb: 1
       }}
     >
-      {/* Line trái */}
       <Box
         sx={{
           width: lineWidth,
@@ -23,7 +22,6 @@ const Footer = ({ lineWidth = 100 }) => {
         }}
       />
 
-      {/* Text KanTrack */}
       <Typography
         sx={{
           fontFamily: 'Poppins, sans-serif',
@@ -40,7 +38,6 @@ const Footer = ({ lineWidth = 100 }) => {
         © {new Date().getFullYear()} KanTrack
       </Typography>
 
-      {/* Line phải */}
       <Box
         sx={{
           width: lineWidth,
