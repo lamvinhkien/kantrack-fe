@@ -68,7 +68,15 @@ const Board = () => {
       }
     }
 
+    const onDeletedBoard = (boardId) => {
+      toast.error(t('access_board_deleted'))
+      dispatch(updateCurrentActiveBoard(null))
+      socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
+      navigate('/boards')
+    }
+
     if (boardId) socketIoInstance.emit('FE_JOIN_BOARD', boardId)
+    socketIoInstance.on('BE_DELETE_BOARD', onDeletedBoard)
     socketIoInstance.on('BE_UPDATE_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
     socketIoInstance.on('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)
@@ -82,6 +90,7 @@ const Board = () => {
 
     return () => {
       if (boardId) socketIoInstance.emit('FE_LEAVE_BOARD', boardId)
+      socketIoInstance.off('BE_DELETE_BOARD', onDeletedBoard)
       socketIoInstance.off('BE_UPDATE_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_MOVE_COLUMN_IN_BOARD', onReceiveNewBoard)
       socketIoInstance.off('BE_MOVE_CARD_IN_BOARD', onReceiveNewBoard)

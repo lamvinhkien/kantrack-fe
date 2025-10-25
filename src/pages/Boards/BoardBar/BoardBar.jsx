@@ -4,13 +4,13 @@ import InviteBoardUser from './InviteBoardUser'
 import BoardType from './BoardType'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { socketIoInstance } from '~/socketio/socketClient'
-import { updateBoardDetailsAPI } from '~/apis'
+import { updateBoardDetailsAPI, deleteBoardDetailsAPI } from '~/apis'
 import { updateCurrentActiveBoard, fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch } from 'react-redux'
 import RefreshBoard from './RefreshBoard'
 import { useConfirm } from 'material-ui-confirm'
 import { useTranslation } from 'react-i18next'
-import BoardPermission from './BoardPermission'
+import BoardSettings from './BoardSettings'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography'
 import { selectCurrentUser, updateUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import { useSelector } from 'react-redux'
 import FavouriteBoard from './FavouriteBoard'
+import { useState } from 'react'
 
 const BoardBar = ({ board }) => {
   const dispatch = useDispatch()
@@ -182,6 +183,30 @@ const BoardBar = ({ board }) => {
     }
   }
 
+  const [isDeletingBoard, setIsDeletingBoard] = useState(false)
+  const confirmDeleteBoard = useConfirm()
+  const onDeleteBoard = () => {
+    confirmDeleteBoard({
+      title: t('delete_board'),
+      description: t('confirm_delete_board'),
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel'),
+      confirmationButtonProps: { color: 'error' }
+    })
+      .then(async () => {
+        setIsDeletingBoard(true)
+        try {
+          await deleteBoardDetailsAPI(board?._id)
+          toast.success(t('board_deleted'))
+          socketIoInstance.emit('FE_DELETE_BOARD', board?._id)
+          navigate('/boards')
+        } finally {
+          setIsDeletingBoard(false)
+        }
+      })
+      .catch(() => { })
+  }
+
   return (
     <Box sx={{
       width: '100%',
@@ -227,18 +252,18 @@ const BoardBar = ({ board }) => {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <RefreshBoard handleRefresh={onRefreshBoard} />
-
         <FavouriteBoard
           handleFavourite={onFavouriteBoard}
           favourite={isFavourite}
         />
 
-        <BoardPermission
+        <RefreshBoard handleRefresh={onRefreshBoard} />
+
+        <BoardType
+          boardType={board?.type}
+          handleUpdateBoardType={onUpdateBoardType}
           ownerIds={board?.ownerIds}
           memberIds={board?.memberIds}
-          boardPermission={board?.memberPermissions}
-          handleUpdatePermission={onUpdatePermission}
           currentUser={currentUser}
         />
 
@@ -246,11 +271,13 @@ const BoardBar = ({ board }) => {
           <InviteBoardUser boardId={board._id} />
         </BoardPermissionGate>
 
-        <BoardType
-          boardType={board?.type}
-          handleUpdateBoardType={onUpdateBoardType}
+        <BoardSettings
           ownerIds={board?.ownerIds}
           memberIds={board?.memberIds}
+          boardPermission={board?.memberPermissions}
+          handleUpdatePermission={onUpdatePermission}
+          handleDeleteBoard={onDeleteBoard}
+          isDeletingBoard={isDeletingBoard}
           currentUser={currentUser}
         />
 

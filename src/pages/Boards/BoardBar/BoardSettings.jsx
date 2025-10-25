@@ -9,11 +9,13 @@ import {
   Divider,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
+  Button,
+  CircularProgress
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import {
-  AdminPanelSettings as AdminPanelSettingsIcon,
+  Settings as SettingsIcon,
   Close as CloseIcon,
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   CheckBox as CheckBoxIcon,
@@ -26,7 +28,15 @@ import { useColorScheme } from '@mui/material'
 import { BoardPermissionGate } from '~/components/common/BoardPermissionGate'
 import { getScrollbarStyles } from '~/utils/formatters'
 
-const BoardPermission = ({ ownerIds, memberIds, boardPermission = {}, handleUpdatePermission, currentUser }) => {
+const BoardSettings = ({
+  ownerIds,
+  memberIds,
+  boardPermission = {},
+  handleUpdatePermission,
+  handleDeleteBoard,
+  isDeletingBoard,
+  currentUser
+}) => {
   const { mode } = useColorScheme()
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -123,7 +133,7 @@ const BoardPermission = ({ ownerIds, memberIds, boardPermission = {}, handleUpda
           memberIds?.includes(currentUser._id)
         }
       >
-        <Tooltip arrow title={t('manage_permissions')}>
+        <Tooltip arrow title={t('board_settings')}>
           <Box
             onClick={handleOpen}
             sx={{
@@ -139,9 +149,9 @@ const BoardPermission = ({ ownerIds, memberIds, boardPermission = {}, handleUpda
               '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' }
             }}
           >
-            <AdminPanelSettingsIcon />
+            <SettingsIcon />
             <Typography variant="body2" fontWeight={500}>
-              {t('permission')}
+              {t('settings')}
             </Typography>
           </Box>
         </Tooltip>
@@ -211,6 +221,26 @@ const BoardPermission = ({ ownerIds, memberIds, boardPermission = {}, handleUpda
               {renderPermissionGroup(t('board'), <DashboardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.board, true)}
               {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column, true)}
               {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, true, false)}
+            </Box>
+
+            <Box
+              sx={{
+                backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff',
+                p: 1,
+                borderTop:
+                  mode === 'dark'
+                    ? '1px solid rgba(255, 255, 255, 0.12)'
+                    : '1px solid rgba(0, 0, 0, 0.12)',
+                '&:hover': { cursor: 'not-allowed' }
+              }}
+            >
+              <Button
+                variant="contained"
+                fullWidth
+                disabled
+              >
+                {t('delete_board')}
+              </Button>
             </Box>
 
             <Box
@@ -295,10 +325,38 @@ const BoardPermission = ({ ownerIds, memberIds, boardPermission = {}, handleUpda
             {renderPermissionGroup(t('column'), <ViewColumnIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.column)}
             {renderPermissionGroup(t('card'), <CreditCardIcon sx={{ fontSize: 18, opacity: 0.8 }} />, groupedPermissions.card, false, false)}
           </Box>
+
+          <Box
+            sx={{
+              backgroundColor: mode === 'dark' ? '#2f2f2f' : '#ffffff',
+              p: 1,
+              borderTop:
+                mode === 'dark'
+                  ? '1px solid rgba(255, 255, 255, 0.12)'
+                  : '1px solid rgba(0, 0, 0, 0.12)'
+            }}
+          >
+            <Button
+              onClick={handleDeleteBoard}
+              variant="text"
+              fullWidth
+              color="error"
+              disabled={isDeletingBoard}
+              startIcon={
+                isDeletingBoard ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <CircularProgress size={18} color="inherit" />
+                  </Box>
+                ) : null
+              }
+            >
+              {isDeletingBoard ? t('deleting') : t('delete_board')}
+            </Button>
+          </Box>
         </Popover>
       </BoardPermissionGate>
     </>
   )
 }
 
-export default BoardPermission
+export default BoardSettings

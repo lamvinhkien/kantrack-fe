@@ -262,6 +262,7 @@ const Boards = () => {
                 {totalOwnerBoards > DEFAULT_ITEMS_PER_PAGE && (
                   <Box sx={{ my: 3, display: 'flex', justifyContent: 'center' }}>
                     <Pagination
+                      disabled={loadingOwner}
                       size="large"
                       color="primary"
                       count={Math.ceil(totalOwnerBoards / DEFAULT_ITEMS_PER_PAGE)}
@@ -292,6 +293,7 @@ const Boards = () => {
                   {totalMemberBoards > DEFAULT_ITEMS_PER_PAGE && (
                     <Box sx={{ my: 3, display: 'flex', justifyContent: 'center' }}>
                       <Pagination
+                        disabled={loadingMember}
                         size="large"
                         color="secondary"
                         count={Math.ceil(totalMemberBoards / DEFAULT_ITEMS_PER_PAGE)}
@@ -323,6 +325,7 @@ const Boards = () => {
                   {totalFavouriteBoards > DEFAULT_ITEMS_PER_PAGE && (
                     <Box sx={{ my: 3, display: 'flex', justifyContent: 'center' }}>
                       <Pagination
+                        disabled={loadingFavourite}
                         size="large"
                         count={Math.ceil(totalFavouriteBoards / DEFAULT_ITEMS_PER_PAGE)}
                         page={favouritePage}
