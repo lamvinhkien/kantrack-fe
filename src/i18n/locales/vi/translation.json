@@ -207,7 +207,6 @@
   "edit_board_type": "Thay đổi quyền truy cập bảng",
   "delete_member_in_board": "Xóa thành viên",
   "invite_member_to_board": "Mời thành viên mới",
-  "add_column": "Thêm mới cột",
   "edit_column_title": "Chỉnh sửa tiêu đề cột",
   "move_column": "Di chuyển cột",
   "add_card": "Thêm mới thẻ",
@@ -241,5 +240,12 @@
   "favourite": "Yêu thích",
   "un_favourite": "Bỏ yêu thích",
   "favourite_board": "Yêu thích bảng này",
-  "un_favourite_board": "Bỏ yêu thích bảng này"
+  "un_favourite_board": "Bỏ yêu thích bảng này",
+  "min_title": "Tiêu đề phải có ít nhất {{limit}} ký tự.",
+  "max_title": "Tiêu đề không được vượt quá {{limit}} ký tự.",
+  "private_board_title": "Bảng riêng tư",
+  "private_board_description": "Bảng này được đặt ở chế độ riêng tư. Bạn không có quyền truy cập.",
+  "back_to_board": "Quay lại danh sách bảng",
+  "board_removed_realtime": "Một bảng đã bị xoá trong danh sách.",
+  "add_column": "Thêm mới cột"
 }

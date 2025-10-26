@@ -113,8 +113,8 @@ const SidebarCreateBoardModal = forwardRef(({ afterCreateNewBoard, ...props }, r
                     }}
                     {...register('title', {
                       required: FIELD_REQUIRED_MESSAGE,
-                      minLength: { value: 3, message: 'Min Length is 3 characters' },
-                      maxLength: { value: 50, message: 'Max Length is 50 characters' }
+                      minLength: { value: 3, message: t('min_title', { limit: 3 }) },
+                      maxLength: { value: 35, message: t('max_title', { limit: 35 }) }
                     })}
                     error={!!errors['title']}
                   />

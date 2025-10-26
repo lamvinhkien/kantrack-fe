@@ -28,14 +28,15 @@ const AutoCompleteSearchBoard = () => {
       return
     }
 
-    const searchPath = `?q[title]=${encodeURIComponent(searchValue)}`
+    const searchPath = `?title=${encodeURIComponent(searchValue)}&itemsPerPage=100`
     setLoading(true)
 
     fetchBoardsAPI(searchPath)
       .then(res => {
         const combined = [
           ...(res.ownerBoards || []),
-          ...(res.memberBoards || [])
+          ...(res.memberBoards || []),
+          ...(res.favouriteBoards || [])
         ]
         setBoards(combined)
       })

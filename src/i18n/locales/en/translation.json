@@ -207,7 +207,6 @@
   "edit_board_type": "Edit board visibility",
   "delete_member_in_board": "Remove member",
   "invite_member_to_board": "Invite new member",
-  "add_column": "Add new column",
   "edit_column_title": "Edit column title",
   "move_column": "Move column",
   "add_card": "Add new card",
@@ -241,5 +240,12 @@
   "favourite": "Favourite",
   "un_favourite": "Unfavourite",
   "favourite_board": "Favourite this board",
-  "un_favourite_board": "Unfavourite this board"
+  "un_favourite_board": "Unfavourite this board",
+  "min_title": "Title must be at least {{limit}} characters.",
+  "max_title": "Title must not exceed {{limit}} characters.",
+  "private_board_title": "Private Board",
+  "private_board_description": "This board is private. You don’t have permission to access it.",
+  "back_to_board": "Back to Boards",
+  "board_removed_realtime": "A board in your lists was deleted.",
+  "add_column": "Add new column"
 }

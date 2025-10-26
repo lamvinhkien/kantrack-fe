@@ -102,6 +102,16 @@ const ActiveCard = () => {
   }
 
   const onUpdateCardTitle = (newTitle) => {
+    if (newTitle.length < 3) {
+      toast.error(t('min_title', { limit: 3 }))
+      return
+    }
+
+    if (newTitle.length > 40) {
+      toast.error(t('max_title', { limit: 40 }))
+      return
+    }
+
     callApiUpdateCard({ title: newTitle.trim() })
   }
 

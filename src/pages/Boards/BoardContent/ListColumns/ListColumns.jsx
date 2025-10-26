@@ -33,6 +33,16 @@ const ListColumns = ({ columns }) => {
       return
     }
 
+    if (newColumnTitle.length < 3) {
+      toast.error(t('min_title', { limit: 3 }))
+      return
+    }
+
+    if (newColumnTitle.length > 25) {
+      toast.error(t('max_title', { limit: 25 }))
+      return
+    }
+
     try {
       setLoading(true)
 

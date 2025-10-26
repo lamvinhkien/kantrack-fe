@@ -48,6 +48,7 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
 
   let errorMessage = error?.message
   if (error.response?.data?.message) errorMessage = error.response?.data?.message
+  if (errorMessage === 'You do not have permission to view this board.') return
   if (error.response?.status !== 410) toast.error(errorMessage)
 
   return Promise.reject(error)

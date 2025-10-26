@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Footer from '~/components/Footer/Footer'
+import Button from '@mui/material/Button'
+import { useNavigate } from 'react-router-dom'
 
 const NotFound = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   return (
     <Box
@@ -20,23 +22,18 @@ const NotFound = () => {
         <Typography variant='h5' sx={{ fontWeight: '500' }}>
           {t('not_found_title')}
         </Typography>
-
-        <Link to='/' style={{ textDecoration: 'none' }}>
-          <Box
-            sx={{
-              mt: 3,
-              fontSize: '18px',
-              color: (theme) =>
-                theme.palette.mode === 'dark'
-                  ? theme.palette.info.light
-                  : theme.palette.info.main,
-              '&:hover': { textDecoration: 'underline' }
-            }}
-          >
-            {t('go_home_link')}
-          </Box>
-        </Link>
-
+        <Button
+          variant="outlined"
+          onClick={() => navigate('/')}
+          sx={{
+            textTransform: 'none',
+            fontWeight: 600,
+            borderRadius: 2,
+            mt: 2
+          }}
+        >
+          {t('go_home_link')}
+        </Button>
         <Footer lineWidth={100} />
       </Box>
     </Box>

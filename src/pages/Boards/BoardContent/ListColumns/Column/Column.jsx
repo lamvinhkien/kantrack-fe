@@ -78,6 +78,16 @@ const Column = ({ column }) => {
       return
     }
 
+    if (newCardTitle.length < 3) {
+      toast.error(t('min_title', { limit: 3 }))
+      return
+    }
+
+    if (newCardTitle.length > 40) {
+      toast.error(t('max_title', { limit: 40 }))
+      return
+    }
+
     try {
       setLoading(true)
 
@@ -131,6 +141,16 @@ const Column = ({ column }) => {
   }
 
   const onUpdateColumnTitle = (newTitle) => {
+    if (newTitle.length < 3) {
+      toast.error(t('min_title', { limit: 3 }))
+      return
+    }
+
+    if (newTitle.length > 25) {
+      toast.error(t('max_title', { limit: 25 }))
+      return
+    }
+
     updateColumnDetailsAPI(column._id, { title: newTitle.trim() }).then(() => {
       const newBoard = cloneDeep(board)
       const columnToUpdate = newBoard.columns.find(c => c._id === column._id)

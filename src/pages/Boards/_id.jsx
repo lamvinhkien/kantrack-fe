@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
@@ -16,6 +16,7 @@ import { selectCurrentUser, updateCurrentUser } from '~/redux/user/userSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import PrivateBoardNotice from './PrivateBoardNotice'
 
 const Board = () => {
   const dispatch = useDispatch()
@@ -25,18 +26,41 @@ const Board = () => {
   const board = useSelector(selectCurrentActiveBoard)
   const currentUser = useSelector(selectCurrentUser)
   const { boardId } = useParams()
+  const [isPrivate, setIsPrivate] = useState(false)
+  const [loadingBoard, setLoadingBoard] = useState(true)
 
   useEffect(() => {
-    dispatch(updateCurrentActiveBoard(null))
-    dispatch(fetchBoardDetailsAPI(boardId))
-    dispatch(updateCurrentUser({
-      ...currentUser,
-      recentBoards: [
-        { boardId, viewedAt: Date.now() },
-        ...(currentUser?.recentBoards || []).filter(b => b.boardId !== boardId)
-      ]
-    }))
-  }, [dispatch, boardId])
+    const fetchBoard = async () => {
+      setIsPrivate(false)
+      setLoadingBoard(true)
+      dispatch(updateCurrentActiveBoard(null))
+
+      try {
+        const boardData = await dispatch(fetchBoardDetailsAPI(boardId)).unwrap()
+
+        const isOwner = boardData?.ownerIds?.includes(currentUser._id)
+        const isMember = boardData?.memberIds?.includes(currentUser._id)
+        const isPublic = boardData?.type === 'public'
+
+        if (isOwner || isMember || isPublic) {
+          dispatch(updateCurrentUser({
+            ...currentUser,
+            recentBoards: [
+              { boardId, viewedAt: Date.now() },
+              ...(currentUser?.recentBoards || []).filter(b => b.boardId !== boardId)
+            ]
+          }))
+        } else {
+          setIsPrivate(true)
+        }
+      } catch (error) { setIsPrivate(true) }
+      finally {
+        setLoadingBoard(false)
+      }
+    }
+
+    fetchBoard()
+  }, [dispatch, boardId, currentUser._id])
 
   useEffect(() => {
     if (!socketIoInstance) return
@@ -154,20 +178,25 @@ const Board = () => {
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
-      {board
-        ?
-        <>
-          <BoardBar board={board} />
-          <BoardContent
-            board={board}
-            moveColumn={moveColumn}
-            moveCardInTheSameColumn={moveCardInTheSameColumn}
-            moveCardToDifferentColumn={moveCardToDifferentColumn}
-          />
-          <ActiveCard />
-        </>
-        :
-        <PageLoadingSpinner caption={t('loading')} AppBar={true} />
+      {
+        loadingBoard
+          ? (<PageLoadingSpinner caption={t('loading')} AppBar={true} />)
+          :
+          isPrivate
+            ? (<PrivateBoardNotice />)
+            :
+            (board && (
+              <>
+                <BoardBar board={board} />
+                <BoardContent
+                  board={board}
+                  moveColumn={moveColumn}
+                  moveCardInTheSameColumn={moveCardInTheSameColumn}
+                  moveCardToDifferentColumn={moveCardToDifferentColumn}
+                />
+                <ActiveCard />
+              </>
+            ))
       }
     </Container>
   )

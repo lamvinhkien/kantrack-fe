@@ -26,6 +26,8 @@ import Footer from '~/components/Footer/Footer'
 import StarIcon from '@mui/icons-material/Star'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+import { socketIoInstance } from '~/socketio/socketClient'
+import { toast } from 'react-toastify'
 
 const Boards = () => {
   const { t } = useTranslation()
@@ -49,6 +51,88 @@ const Boards = () => {
   const [loadingMember, setLoadingMember] = useState(false)
   const [loadingFavourite, setLoadingFavourite] = useState(false)
   const [loadingInitial, setLoadingInitial] = useState(true)
+
+  useEffect(() => {
+    if (!socketIoInstance) return
+
+    const onDeletedBoardGlobal = async (deletedBoardId) => {
+      try {
+        let didRemoveAny = false
+
+        if (ownerBoards.some(b => b._id === deletedBoardId)) {
+          didRemoveAny = true
+          const newOwner = ownerBoards.filter(b => b._id !== deletedBoardId)
+
+          if (newOwner.length === 0 && ownerPage > 1) {
+            const res = await fetchBoardsAPI(`?ownerPage=${ownerPage - 1}&memberPage=${memberPage}&favouritePage=${favouritePage}`)
+            setOwnerBoards(res.ownerBoards || [])
+            setTotalOwnerBoards(res.totalOwnerBoards || 0)
+          } else {
+            setOwnerBoards(newOwner)
+            setTotalOwnerBoards(prev => Math.max(0, prev - 1))
+          }
+        }
+
+        if (memberBoards.some(b => b._id === deletedBoardId)) {
+          didRemoveAny = true
+          const newMember = memberBoards.filter(b => b._id !== deletedBoardId)
+
+          if (newMember.length === 0 && memberPage > 1) {
+            const res = await fetchBoardsAPI(`?ownerPage=${ownerPage}&memberPage=${memberPage - 1}&favouritePage=${favouritePage}`)
+            setMemberBoards(res.memberBoards || [])
+            setTotalMemberBoards(res.totalMemberBoards || 0)
+          } else {
+            setMemberBoards(newMember)
+            setTotalMemberBoards(prev => Math.max(0, prev - 1))
+          }
+        }
+
+        if (favouriteBoards.some(b => b._id === deletedBoardId)) {
+          didRemoveAny = true
+          const newFav = favouriteBoards.filter(b => b._id !== deletedBoardId)
+
+          if (newFav.length === 0 && favouritePage > 1) {
+            const res = await fetchBoardsAPI(`?ownerPage=${ownerPage}&memberPage=${memberPage}&favouritePage=${favouritePage - 1}`)
+            setFavouriteBoards(res.favouriteBoards || [])
+            setTotalFavouriteBoards(res.totalFavouriteBoards || 0)
+          } else {
+            setFavouriteBoards(newFav)
+            setTotalFavouriteBoards(prev => Math.max(0, prev - 1))
+          }
+        }
+
+        if (recentBoards.some(b => b._id === deletedBoardId)) {
+          didRemoveAny = true
+          setRecentBoards(prev => prev.filter(b => b._id !== deletedBoardId))
+        }
+
+        if (didRemoveAny) {
+          toast.info(t('board_removed_realtime'))
+        }
+      } catch (err) {
+        setOwnerBoards(prev => prev.filter(b => b._id !== deletedBoardId))
+        setMemberBoards(prev => prev.filter(b => b._id !== deletedBoardId))
+        setFavouriteBoards(prev => prev.filter(b => b._id !== deletedBoardId))
+        setRecentBoards(prev => prev.filter(b => b._id !== deletedBoardId))
+      }
+    }
+
+    socketIoInstance.on('BE_DELETE_BOARD_GLOBAL', onDeletedBoardGlobal)
+
+    return () => {
+      socketIoInstance.off('BE_DELETE_BOARD_GLOBAL', onDeletedBoardGlobal)
+    }
+  }, [
+    socketIoInstance,
+    ownerBoards,
+    memberBoards,
+    favouriteBoards,
+    recentBoards,
+    ownerPage,
+    memberPage,
+    favouritePage,
+    t
+  ])
 
   useEffect(() => {
     const hasRecent = currentUser?.recentBoards?.length > 0

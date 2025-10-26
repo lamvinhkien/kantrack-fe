@@ -28,6 +28,16 @@ const BoardBar = ({ board }) => {
   const currentUser = useSelector(selectCurrentUser)
 
   const onUpdateBoardTitle = (newTitle) => {
+    if (newTitle.length < 3) {
+      toast.error(t('min_title', { limit: 3 }))
+      return
+    }
+
+    if (newTitle.length > 35) {
+      toast.error(t('max_title', { limit: 35 }))
+      return
+    }
+
     const newBoard = { ...board }
     updateBoardDetailsAPI(board._id, { title: newTitle })
       .then(() => {
