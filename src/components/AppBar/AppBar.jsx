@@ -146,9 +146,9 @@ const AppBar = () => {
           gap: 1.2
         }}
       >
-        <Language />
-        <Mode />
         {isAuthorized && <Notifications />}
+        <Mode />
+        <Language />
         {isAuthorized && <Profile />}
 
         {!isAuthorized && (

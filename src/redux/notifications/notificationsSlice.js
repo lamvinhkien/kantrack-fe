@@ -35,6 +35,12 @@ export const notificationsSlice = createSlice({
     addNotification: (state, action) => {
       const incomingInvitation = action.payload
       state.currentNotifications.unshift(incomingInvitation)
+    },
+    removeNotification: (state, action) => {
+      const boardId = action.payload
+      state.currentNotifications = state.currentNotifications.filter(
+        (n) => n.board?._id !== boardId
+      )
     }
   },
   extraReducers: (builder) => {
@@ -54,7 +60,8 @@ export const notificationsSlice = createSlice({
 export const {
   clearCurrentNotifications,
   updateCurrentNotifications,
-  addNotification
+  addNotification,
+  removeNotification
 } = notificationsSlice.actions
 
 

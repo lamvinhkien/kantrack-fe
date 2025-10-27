@@ -20,7 +20,8 @@ import {
   fetchInvitationsAPI,
   updateBoardInvitationAPI,
   selectCurrentNotifications,
-  addNotification
+  addNotification,
+  removeNotification
 } from '~/redux/notifications/notificationsSlice'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { selectCurrentUser } from '~/redux/user/userSlice'
@@ -28,6 +29,7 @@ import { useNavigate } from 'react-router-dom'
 import { renderTime } from '~/utils/formatters'
 import { useTranslation } from 'react-i18next'
 import { fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
+import { getScrollbarStyles } from '~/utils/formatters'
 
 const BOARD_INVITATION_STATUS = {
   PENDING: 'PENDING',
@@ -55,7 +57,6 @@ const Notifications = () => {
   const handleOpenMenu = (e) => {
     setAnchorEl(e.currentTarget)
     setDisableUntil(Date.now() + 1000)
-    setNewNotification(false)
   }
 
   const handleCloseMenu = () => {
@@ -70,16 +71,28 @@ const Notifications = () => {
     const onReceiveNewInvitation = (invitation) => {
       if (invitation.inviteeId === currentUser._id) {
         dispatch(addNotification(invitation))
-        setNewNotification(true)
       }
     }
 
+    const onDeletedBoardGlobal = (boardId) => {
+      dispatch(removeNotification(boardId))
+    }
+
     socketIoInstance.on('BE_USER_INVITED_TO_BOARD', onReceiveNewInvitation)
+    socketIoInstance.on('BE_DELETE_BOARD_GLOBAL', onDeletedBoardGlobal)
 
     return () => {
       socketIoInstance.off('BE_USER_INVITED_TO_BOARD', onReceiveNewInvitation)
+      socketIoInstance.off('BE_DELETE_BOARD_GLOBAL', onDeletedBoardGlobal)
     }
   }, [dispatch, currentUser._id])
+
+  useEffect(() => {
+    const hasPending = notifications?.some(
+      (inv) => inv.boardInvitation?.status === BOARD_INVITATION_STATUS.PENDING
+    )
+    setNewNotification(hasPending)
+  }, [notifications])
 
   const updateBoardInvitation = (invitationId, status) => {
     dispatch(updateBoardInvitationAPI({ invitationId, status }))
@@ -130,10 +143,27 @@ const Notifications = () => {
         anchorEl={anchorEl}
         open={menuOpen}
         onClose={handleCloseMenu}
-        MenuListProps={{ 'aria-labelledby': 'notification-menu-button' }}
+        MenuListProps={{
+          'aria-labelledby': 'notification-menu-button',
+          sx: {
+            p: 0,
+            maxHeight: 500,
+            overflowY: 'auto',
+            width: 350
+          }
+        }}
+        PaperProps={{
+          elevation: 6,
+          sx: theme => ({
+            mt: 1,
+            borderRadius: 2,
+            overflow: 'hidden',
+            ...getScrollbarStyles(theme)
+          })
+        }}
       >
-        {!notifications || notifications.length === 0 ? (
-          <MenuItem sx={{ minWidth: 200 }}>
+        {(!notifications || notifications.length === 0) ? (
+          <MenuItem sx={{ justifyContent: 'center', py: 2, color: 'gray' }}>
             {t('no_notification')}
           </MenuItem>
         ) : (
@@ -141,95 +171,106 @@ const Notifications = () => {
             <Box key={index}>
               <MenuItem
                 sx={{
-                  minWidth: 200,
-                  maxWidth: 360,
-                  overflowY: 'auto'
+                  alignItems: 'flex-start',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1.2,
+                  py: 1.5,
+                  px: 2,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.08)'
+                  }
                 }}
               >
-                <Box
-                  sx={{
-                    maxWidth: '100%',
-                    wordBreak: 'break-word',
-                    whiteSpace: 'pre-wrap',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <GroupAddIcon fontSize="small" />
-                    <Box>
-                      <strong>{notification.inviter?.displayName}</strong> {t('invited_board')}{' '}
-                      <strong>{notification.board?.title}</strong>
-                    </Box>
-                  </Box>
-
-                  {notification.boardInvitation.status === BOARD_INVITATION_STATUS.PENDING && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        justifyContent: 'flex-end'
-                      }}
-                    >
-                      <Button
-                        className="interceptor-loading"
-                        type="submit"
-                        variant="contained"
-                        color="success"
-                        size="small"
-                        onClick={() =>
-                          updateBoardInvitation(
-                            notification._id,
-                            BOARD_INVITATION_STATUS.ACCEPTED
-                          )
-                        }
-                      >
-                        {t('accept')}
-                      </Button>
-                      <Button
-                        className="interceptor-loading"
-                        type="submit"
-                        variant="contained"
-                        color="error"
-                        size="small"
-                        onClick={() =>
-                          updateBoardInvitation(
-                            notification._id,
-                            BOARD_INVITATION_STATUS.REJECTED
-                          )
-                        }
-                      >
-                        {t('reject')}
-                      </Button>
-                    </Box>
-                  )}
-
-                  <Box
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <GroupAddIcon fontSize="small" sx={{ color: 'orange' }} />
+                  <Typography
+                    variant="body2"
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      justifyContent: 'flex-end'
+                      fontSize: '0.9rem',
+                      lineHeight: 1.4,
+                      flex: 1
                     }}
                   >
+                    <strong>{notification.inviter?.displayName}</strong>{' '}
+                    {t('invited_board')}{' '}
+                    <strong>{notification.board?.title}</strong>
+                  </Typography>
+                </Box>
+
+                {notification.boardInvitation.status === BOARD_INVITATION_STATUS.PENDING && (
+                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', width: '100%' }}>
+                    <Button
+                      className="interceptor-loading"
+                      variant="contained"
+                      color="success"
+                      size="small"
+                      onClick={() =>
+                        updateBoardInvitation(
+                          notification._id,
+                          BOARD_INVITATION_STATUS.ACCEPTED
+                        )
+                      }
+                    >
+                      {t('accept')}
+                    </Button>
+                    <Button
+                      className="interceptor-loading"
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      onClick={() =>
+                        updateBoardInvitation(
+                          notification._id,
+                          BOARD_INVITATION_STATUS.REJECTED
+                        )
+                      }
+                    >
+                      {t('reject')}
+                    </Button>
+                  </Box>
+                )}
+
+                {notification.boardInvitation.status !== BOARD_INVITATION_STATUS.PENDING && (
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                     {notification.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED && (
-                      <Chip icon={<DoneIcon />} label={t('accepted')} color="success" size="small" />
+                      <Chip
+                        icon={<DoneIcon />}
+                        label={t('accepted')}
+                        color="success"
+                        size="small"
+                        sx={{ fontSize: '0.75rem' }}
+                      />
                     )}
                     {notification.boardInvitation.status === BOARD_INVITATION_STATUS.REJECTED && (
-                      <Chip icon={<NotInterestedIcon />} label={t('rejected')} color="error" size="small" />
+                      <Chip
+                        icon={<NotInterestedIcon />}
+                        label={t('rejected')}
+                        color="error"
+                        size="small"
+                        sx={{ fontSize: '0.75rem' }}
+                      />
                     )}
                   </Box>
+                )}
 
-                  <Box sx={{ textAlign: 'right' }}>
-                    <Typography variant="span" sx={{ fontSize: '13px' }}>
-                      {renderTime(notification.createdAt, { locale: i18n.language })}
-                    </Typography>
-                  </Box>
-                </Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    alignSelf: 'flex-end',
+                    fontSize: '0.75rem',
+                    color: 'gray'
+                  }}
+                >
+                  {renderTime(notification.createdAt, { locale: i18n.language })}
+                </Typography>
               </MenuItem>
-              {index !== notifications.length - 1 && <Divider />}
+
+              {index !== notifications.length - 1 && (
+                <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+              )}
             </Box>
           ))
         )}

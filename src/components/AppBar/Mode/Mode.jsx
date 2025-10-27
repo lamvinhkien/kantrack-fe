@@ -55,7 +55,6 @@ const ModeMenu = () => {
       <Box
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        sx={{ mr: -0.5 }}
       >
         <IconButton
           color="inherit"
