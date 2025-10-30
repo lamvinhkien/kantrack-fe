@@ -3,6 +3,8 @@ import { toast } from 'react-toastify'
 import { interceptorLoadingElements } from '~/utils/formatters'
 import { refreshTokenAPI } from '~/apis'
 import { logoutUserAPI } from '~/redux/user/userSlice'
+import i18next from 'i18next'
+const t = i18next.t.bind(i18next)
 
 let axiosReduxStore
 export const injectStore = mainStore => { axiosReduxStore = mainStore }
@@ -47,9 +49,31 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
   }
 
   let errorMessage = error?.message
-  if (error.response?.data?.message) errorMessage = error.response?.data?.message
-  if (errorMessage === 'You do not have permission to view this board.') return
-  if (error.response?.status !== 410) toast.error(errorMessage)
+  if (error.response?.data?.message) errorMessage = error.response.data.message
+
+  const silentMessages = new Set([
+    'You do not have permission to view this board.'
+  ])
+
+  const toastMessages = {
+    'Board not found.': t('board_not_found'),
+    'Column not found.': t('column_not_found'),
+    'Card not found.': t('card_not_found'),
+    'Invitee not found.': t('invitee_not_found'),
+    'Invitee is already a member of this board.': t('exist_invitee'),
+    'Email already exist.': t('exist_email'),
+    'Your email or password is incorrect.': t('email_password_incorrect'),
+    'Your account is not active, please verify email.': t('account_is_not_active'),
+    'Invalid code.': t('invalid_code')
+  }
+
+  if (silentMessages.has(errorMessage)) {
+    // None
+  } else if (toastMessages[errorMessage]) {
+    toast.error(toastMessages[errorMessage])
+  } else if (error.response?.status !== 410) {
+    toast.error(errorMessage)
+  }
 
   return Promise.reject(error)
 })

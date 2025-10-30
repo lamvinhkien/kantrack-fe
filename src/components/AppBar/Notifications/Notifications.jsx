@@ -30,12 +30,7 @@ import { renderTime } from '~/utils/formatters'
 import { useTranslation } from 'react-i18next'
 import { fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
 import { getScrollbarStyles } from '~/utils/formatters'
-
-const BOARD_INVITATION_STATUS = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
-}
+import { BOARD_INVITATION_STATUS } from '~/utils/constants'
 
 const Notifications = () => {
   const { t, i18n } = useTranslation()

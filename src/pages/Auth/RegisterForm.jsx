@@ -16,7 +16,7 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { registerUserAPI } from '~/apis'
 import { useTranslation } from 'react-i18next'
 import Divider from '@mui/material/Divider'
-import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
+import { ReactComponent as KanTrackIcon } from '~/assets/kantrack-transparent.svg'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import { useColorScheme } from '@mui/material'
@@ -78,7 +78,6 @@ const RegisterForm = () => {
             px: 4, position: 'relative', zIndex: 2,
             bgcolor: mode === 'dark' ? '#26282aff' : 'white'
           }}>
-            {/* --- Logo section --- */}
             <Box
               component={Link}
               to='/'
@@ -102,7 +101,6 @@ const RegisterForm = () => {
               <KanTrackIcon style={{ width: '85%', color: 'white' }} />
             </Box>
 
-            {/* --- Subtitle --- */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -119,14 +117,12 @@ const RegisterForm = () => {
               </Typography>
             </motion.div>
 
-            {/* --- Form --- */}
             <form onSubmit={handleSubmit(submitRegister)}>
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                {/* Email */}
                 <Box sx={{ mb: 2 }}>
                   <TextField
                     label={t('enter_email_placeholder')}
@@ -146,7 +142,6 @@ const RegisterForm = () => {
                   <FieldErrorAlert errors={errors} fieldName='email' />
                 </Box>
 
-                {/* Password */}
                 <Box sx={{ mb: 2 }}>
                   <TextField
                     label={t('enter_password_placeholder')}
@@ -166,7 +161,6 @@ const RegisterForm = () => {
                   <FieldErrorAlert errors={errors} fieldName='password' />
                 </Box>
 
-                {/* Password Confirmation */}
                 <Box sx={{ mb: 2 }}>
                   <TextField
                     label={t('enter_password_confirmation_placeholder')}
@@ -186,7 +180,6 @@ const RegisterForm = () => {
                   />
                 </Box>
 
-                {/* Register Button */}
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button
                     type='submit'

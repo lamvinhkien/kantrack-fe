@@ -10,20 +10,17 @@ import { useForm } from 'react-hook-form'
 import {
   EMAIL_RULE,
   EMAIL_RULE_MESSAGE,
-  PASSWORD_RULE,
-  PASSWORD_RULE_MESSAGE,
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useDispatch } from 'react-redux'
 import { loginUserAPI } from '~/redux/user/userSlice'
-import { useTranslation } from 'react-i18next'
-import { ReactComponent as KanTrackIcon } from '~/assets/kantrack.svg'
+import { useTranslation, Trans } from 'react-i18next'
+import { ReactComponent as KanTrackIcon } from '~/assets/kantrack-transparent.svg'
 import { useColorScheme } from '@mui/material'
 import { useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import { motion } from 'framer-motion'
 
 const LoginForm = () => {
@@ -48,6 +45,69 @@ const LoginForm = () => {
     if (!res.error) navigate('/boards')
   }
 
+  if (registeredEmail) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          padding: '0 16px'
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: 1000,
+            py: 3,
+            px: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'start',
+            gap: 2.5,
+            borderRadius: 2,
+            bgcolor: mode === 'dark' ? 'success.dark' : 'success.light',
+            color: 'white',
+            boxShadow: 3
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <CheckCircleIcon sx={{ color: 'inherit', fontSize: 30 }} />
+            <Typography variant='h6' fontWeight={600}>
+              {t('account_created')}
+            </Typography>
+          </Box>
+
+          <Typography variant='body1' fontWeight={400}>
+            <Trans
+              i18nKey='please_verify_email_message'
+              values={{ email: registeredEmail }}
+              components={{ strong: <strong /> }}
+            />
+          </Typography>
+
+          <Button
+            variant='contained'
+            color='warning'
+            onClick={() => navigate('/login')}
+            sx={{
+              mt: 1,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 500
+            }}
+          >
+            {t('back_to_login')}
+          </Button>
+        </Box>
+      </motion.div>
+    )
+  }
+
   return (
     <Box
       sx={{
@@ -61,7 +121,6 @@ const LoginForm = () => {
         transition: 'background-color 0.4s ease'
       }}
     >
-      {/* --- Login card motion --- */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -80,7 +139,6 @@ const LoginForm = () => {
             px: 4, position: 'relative', zIndex: 2,
             bgcolor: mode === 'dark' ? '#26282aff' : 'white'
           }}>
-            {/* --- Logo section --- */}
             <Box
               component={Link}
               to='/'
@@ -104,7 +162,6 @@ const LoginForm = () => {
               <KanTrackIcon style={{ width: '85%', color: 'white' }} />
             </Box>
 
-            {/* --- Subtitle --- */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -121,7 +178,6 @@ const LoginForm = () => {
               </Typography>
             </motion.div>
 
-            {/* --- Verified / Registered email messages --- */}
             {verifiedEmail && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -149,34 +205,6 @@ const LoginForm = () => {
               </motion.div>
             )}
 
-            {registeredEmail && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <Box
-                  sx={{
-                    mb: 3,
-                    py: 1,
-                    px: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    borderRadius: 2,
-                    bgcolor: 'warning.main',
-                    color: 'warning.contrastText'
-                  }}
-                >
-                  <WarningAmberIcon sx={{ color: 'warning.contrastText' }} />
-                  <Typography variant='body1' fontWeight={500}>
-                    {t('please_verify_email_message', { email: registeredEmail })}
-                  </Typography>
-                </Box>
-              </motion.div>
-            )}
-
-            {/* --- Form --- */}
             <form onSubmit={handleSubmit(submitLogIn)}>
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
@@ -211,11 +239,7 @@ const LoginForm = () => {
                     size='small'
                     error={!!errors['password']}
                     {...register('password', {
-                      required: FIELD_REQUIRED_MESSAGE,
-                      pattern: {
-                        value: PASSWORD_RULE,
-                        message: PASSWORD_RULE_MESSAGE
-                      }
+                      required: FIELD_REQUIRED_MESSAGE
                     })}
                   />
                   <FieldErrorAlert errors={errors} fieldName='password' />

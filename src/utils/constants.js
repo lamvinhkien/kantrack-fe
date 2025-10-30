@@ -14,6 +14,17 @@ export const CARD_COMMENT_ACTIONS = { ADD: 'ADD', EDIT: 'EDIT', REMOVE: 'REMOVE'
 
 export const SETUP_2FA_ACTIONS = { ENABLE: 'Enable', DISABLE: 'Disable' }
 
+export const BOARD_TYPES = {
+  PUBLIC: 'public',
+  PRIVATE: 'private'
+}
+
+export const BOARD_INVITATION_STATUS = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+}
+
 export const BOARD_MEMBER_ACTIONS = {
   editBoardTitle: 'editBoardTitle',
   editBoardType: 'editBoardType',

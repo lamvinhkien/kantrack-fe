@@ -5,7 +5,7 @@ import BoardType from './BoardType'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { updateBoardDetailsAPI, deleteBoardDetailsAPI } from '~/apis'
-import { updateCurrentActiveBoard, fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
+import { updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch } from 'react-redux'
 import RefreshBoard from './RefreshBoard'
 import { useConfirm } from 'material-ui-confirm'
@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux'
 import FavouriteBoard from './FavouriteBoard'
 import { useState } from 'react'
 
-const BoardBar = ({ board }) => {
+const BoardBar = ({ board, handleRefresh }) => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -169,11 +169,6 @@ const BoardBar = ({ board }) => {
       })
   }
 
-  const onRefreshBoard = () => {
-    dispatch(updateCurrentActiveBoard(null))
-    dispatch(fetchBoardDetailsAPI(board._id))
-  }
-
   const isFavourite = currentUser?.favouriteBoards?.some(b => b.boardId === board?._id)
   const onFavouriteBoard = () => {
     dispatch(updateUserAPI({ favouriteAction: true, boardId: board?._id }))
@@ -267,7 +262,7 @@ const BoardBar = ({ board }) => {
           favourite={isFavourite}
         />
 
-        <RefreshBoard handleRefresh={onRefreshBoard} />
+        <RefreshBoard handleRefresh={handleRefresh} />
 
         <BoardType
           boardType={board?.type}

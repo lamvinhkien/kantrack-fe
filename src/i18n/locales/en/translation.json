@@ -150,7 +150,8 @@
   "verifying_account": "Verifying your account...",
   "logging": "Logging...",
   "email_verified_message": "Your email {{email}} has been verified.",
-  "please_verify_email_message": "Please verify your email: {{email}}.",
+  "please_verify_email_message": "• We've sent a verification link to your email: <strong>{{email}}</strong>.<br /><br />• Please check your inbox (and spam folder) and click the link to activate your account.<br /><br />• If you have already verified your email, you can return to the login page to sign in.",
+  "back_to_login": "Back to Login",
   "enter_password_placeholder": "Enter Password",
   "login_button": "Login",
   "create_account_link": "Create account",
@@ -247,5 +248,14 @@
   "private_board_description": "This board is private. You don’t have permission to access it.",
   "back_to_board": "Back to Boards",
   "board_removed_realtime": "A board in your lists was deleted.",
-  "add_column": "Add new column"
+  "add_column": "Add new column",
+  "board_not_found": "Board not found.",
+  "column_not_found": "Column not found.",
+  "card_not_found": "Card not found.",
+  "invitee_not_found": "Invitee not found.",
+  "exist_invitee": "Invitee is already a member of this board.",
+  "exist_email": "Email already exist.",
+  "email_password_incorrect": "Your email or password is incorrect.",
+  "account_is_not_active": "Your account is not active, please verify email.",
+  "invalid_code": "Invalid code."
 }

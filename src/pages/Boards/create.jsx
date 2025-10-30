@@ -10,6 +10,7 @@ import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import AbcIcon from '@mui/icons-material/Abc'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -17,6 +18,7 @@ import { createNewBoardAPI } from '~/apis'
 import { styled } from '@mui/material/styles'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import { BOARD_TYPES } from '~/utils/constants'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -34,15 +36,11 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   }
 }))
 
-const BOARD_TYPES = {
-  PUBLIC: 'public',
-  PRIVATE: 'private'
-}
-
 const SidebarCreateBoardModal = forwardRef(({ afterCreateNewBoard, ...props }, ref) => {
   const { t } = useTranslation()
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm()
   const [isOpen, setIsOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleOpenModal = () => setIsOpen(true)
   const handleCloseModal = () => {
@@ -54,13 +52,18 @@ const SidebarCreateBoardModal = forwardRef(({ afterCreateNewBoard, ...props }, r
     openModal: handleOpenModal
   }))
 
-  const submitCreateNewBoard = (data) => {
-    createNewBoardAPI(data)
-      .then(() => {
-        toast.success(t('board_created'))
-        handleCloseModal()
-        afterCreateNewBoard()
-      })
+  const submitCreateNewBoard = async (data) => {
+    try {
+      setLoading(true)
+      await createNewBoardAPI(data)
+      toast.success(t('board_created'))
+      handleCloseModal()
+      afterCreateNewBoard()
+    } catch (error) {
+      toast.error(t('something_went_wrong'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -149,16 +152,16 @@ const SidebarCreateBoardModal = forwardRef(({ afterCreateNewBoard, ...props }, r
                 />
 
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: 1 }}>
-                  <Button onClick={handleCloseModal} variant="text" color="inherit">
+                  <Button onClick={handleCloseModal} variant="text" color="inherit" disabled={loading}>
                     {t('cancel')}
                   </Button>
                   <Button
-                    className="interceptor-loading"
                     type="submit"
                     variant="contained"
                     color="primary"
+                    disabled={loading}
                   >
-                    {t('create')}
+                    {loading ? <CircularProgress color="inherit" size={22} /> : t('create')}
                   </Button>
                 </Box>
               </Box>

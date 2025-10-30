@@ -231,6 +231,7 @@ const ActiveCard = () => {
             }
             dispatch(updateCurrentActiveBoard(newBoard))
             socketIoInstance.emit('FE_DELETE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
+            socketIoInstance.emit('FE_DELETE_ACTIVE_CARD', activeCard._id)
             toast.success(res.deleteResult)
             handleCloseModal()
           }),
@@ -248,12 +249,18 @@ const ActiveCard = () => {
         if (newCard._id === activeCard._id) dispatch(updateCurrentActiveCard(newCard))
       }
 
+      const onDeleteCard = (cardId) => {
+        if (cardId === activeCard._id) dispatch(clearAndHideCurrentActiveCard())
+      }
+
       if (activeCard._id) socketIoInstance.emit('FE_JOIN_ACTIVE_CARD', activeCard._id)
       socketIoInstance.on('BE_UPDATE_ACTIVE_CARD', onReceiveNewCard)
+      socketIoInstance.on('BE_DELETE_ACTIVE_CARD', onDeleteCard)
 
       return () => {
         if (activeCard._id) socketIoInstance.emit('FE_LEAVE_ACTIVE_CARD', activeCard._id)
         socketIoInstance.off('BE_UPDATE_ACTIVE_CARD', onReceiveNewCard)
+        socketIoInstance.off('BE_DELETE_ACTIVE_CARD', onDeleteCard)
       }
     }
   }, [dispatch, activeCard?._id, isShowModalActiveCard])

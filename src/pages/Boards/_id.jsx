@@ -29,36 +29,32 @@ const Board = () => {
   const [isPrivate, setIsPrivate] = useState(false)
   const [loadingBoard, setLoadingBoard] = useState(true)
 
-  useEffect(() => {
-    const fetchBoard = async () => {
-      setIsPrivate(false)
-      setLoadingBoard(true)
-      dispatch(updateCurrentActiveBoard(null))
+  const fetchBoard = async () => {
+    setIsPrivate(false)
+    setLoadingBoard(true)
+    dispatch(updateCurrentActiveBoard(null))
 
-      try {
-        const boardData = await dispatch(fetchBoardDetailsAPI(boardId)).unwrap()
+    try {
+      const boardData = await dispatch(fetchBoardDetailsAPI(boardId)).unwrap()
+      const isOwner = boardData?.ownerIds?.includes(currentUser._id)
+      const isMember = boardData?.memberIds?.includes(currentUser._id)
+      const isPublic = boardData?.type === 'public'
 
-        const isOwner = boardData?.ownerIds?.includes(currentUser._id)
-        const isMember = boardData?.memberIds?.includes(currentUser._id)
-        const isPublic = boardData?.type === 'public'
-
-        if (isOwner || isMember || isPublic) {
-          dispatch(updateCurrentUser({
-            ...currentUser,
-            recentBoards: [
-              { boardId, viewedAt: Date.now() },
-              ...(currentUser?.recentBoards || []).filter(b => b.boardId !== boardId)
-            ]
-          }))
-        } else {
-          setIsPrivate(true)
-        }
-      } catch (error) { setIsPrivate(true) }
-      finally {
-        setLoadingBoard(false)
-      }
+      if (isOwner || isMember || isPublic) {
+        dispatch(updateCurrentUser({
+          ...currentUser,
+          recentBoards: [
+            { boardId, viewedAt: Date.now() },
+            ...(currentUser?.recentBoards || []).filter(b => b.boardId !== boardId)
+          ]
+        }))
+      } else { setIsPrivate(true) }
     }
+    catch (error) { setIsPrivate(true) }
+    finally { setLoadingBoard(false) }
+  }
 
+  useEffect(() => {
     fetchBoard()
   }, [dispatch, boardId, currentUser._id])
 
@@ -187,7 +183,7 @@ const Board = () => {
             :
             (board && (
               <>
-                <BoardBar board={board} />
+                <BoardBar board={board} handleRefresh={fetchBoard} />
                 <BoardContent
                   board={board}
                   moveColumn={moveColumn}

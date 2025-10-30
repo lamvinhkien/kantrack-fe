@@ -428,8 +428,8 @@ const Boards = () => {
                               backgroundColor: (theme) => theme.palette.action.hover
                             },
                             '&.Mui-selected': {
-                              backgroundColor: (theme) => theme.palette.warning.main,
-                              color: (theme) => theme.palette.getContrastText(theme.palette.warning.main),
+                              backgroundColor: (theme) => loadingFavourite ? theme.palette.divider : theme.palette.warning.main,
+                              color: (theme) => loadingFavourite ? theme.palette.grey[500] : theme.palette.getContrastText(theme.palette.warning.main),
 
                               '&:hover': {
                                 backgroundColor: (theme) => theme.palette.warning.dark
