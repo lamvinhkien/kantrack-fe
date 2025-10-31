@@ -46,6 +46,10 @@ export const userSlice = createSlice({
       state.currentUser = null
     })
     builder.addCase(updateUserAPI.fulfilled, (state, action) => {
+      if (action.payload.isLoggedOut) {
+        state.currentUser = null
+        return
+      }
       state.currentUser = action.payload
     })
   }

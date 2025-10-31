@@ -13,7 +13,7 @@ import DeviceBlocker from '~/components/DeviceBlocker/DeviceBlocker'
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to='/login' />
-  if (user.require2fa && !user.is2faVerified) return <Require2FA user={user} />
+  if (user.require2fa && user.password) return <Require2FA user={user} />
   return <Outlet />
 }
 

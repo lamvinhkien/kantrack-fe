@@ -15,19 +15,17 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useForm } from 'react-hook-form'
 import { useConfirm } from 'material-ui-confirm'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUserAPI, logoutUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
+import { updateUserAPI, logoutUserAPI } from '~/redux/user/userSlice'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
-import Setup2FA from '~/components/Modal/2FA/Setup2FA'
 import { alpha } from '@mui/material/styles'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import { SETUP_2FA_ACTIONS } from '~/utils/constants'
 import { useTranslation } from 'react-i18next'
 
 const SecurityTab = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { register, handleSubmit, watch, formState: { errors } } = useForm()
+  const user = useSelector(selectCurrentUser)
 
   const confirmChangePassword = useConfirm()
   const submitChangePassword = (data) => {
@@ -58,18 +56,31 @@ const SecurityTab = () => {
       .catch(() => { })
   }
 
-  const [openSetup2FA, setOpenSetup2FA] = useState(false)
-  const [action2FA, setAction2FA] = useState(null)
-  const user = useSelector(selectCurrentUser)
-
-  const handleOpenSetup2FA = (action) => {
-    setOpenSetup2FA(true)
-    setAction2FA(action)
-  }
-
-  const handleSuccessSetup2FA = (updatedUser) => {
-    dispatch(updateCurrentUser(updatedUser))
-    setOpenSetup2FA(false)
+  const confirmUpdateRequire2FA = useConfirm()
+  const handleUpdateRequire2FA = () => {
+    const isEnabled = user.require2fa
+    confirmUpdateRequire2FA({
+      title: isEnabled
+        ? t('disableConfirmTitle')
+        : t('enableConfirmTitle'),
+      description: isEnabled
+        ? t('disableConfirmDescription')
+        : t('enableConfirmDescription'),
+      confirmationButtonProps: { color: isEnabled ? 'error' : 'success' },
+      confirmationText: t('confirm'),
+      cancellationText: t('cancel')
+    })
+      .then(() => {
+        dispatch(updateUserAPI({ require2fa: true }))
+          .then(() => {
+            toast.success(
+              isEnabled
+                ? t('toastDisabled')
+                : t('toastEnabled')
+            )
+          })
+      })
+      .catch(() => { })
   }
 
   return (
@@ -83,13 +94,6 @@ const SecurityTab = () => {
         p: 2
       }}
     >
-      <Setup2FA
-        isOpen={openSetup2FA}
-        toggleOpen={setOpenSetup2FA}
-        handleSuccessSetup2FA={handleSuccessSetup2FA}
-        action2FA={action2FA}
-      />
-
       <Box
         sx={(theme) => ({
           maxWidth: '1200px',
@@ -265,7 +269,7 @@ const SecurityTab = () => {
               variant='contained'
               color='error'
               fullWidth
-              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.DISABLE)}
+              onClick={handleUpdateRequire2FA}
             >
               {t('disable_2fa')}
             </Button>
@@ -275,7 +279,7 @@ const SecurityTab = () => {
               variant='contained'
               color='warning'
               fullWidth
-              onClick={() => handleOpenSetup2FA(SETUP_2FA_ACTIONS.ENABLE)}
+              onClick={handleUpdateRequire2FA}
             >
               {t('enable_2fa')}
             </Button>

@@ -18,7 +18,7 @@ import { useMediaQuery, useTheme } from '@mui/material'
 const AppBar = () => {
   const { t } = useTranslation()
   const user = useSelector(selectCurrentUser)
-  const isAuthorized = (user && (!user.require2fa || user.is2faVerified))
+  const isAuthorized = (user && !user.password)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 

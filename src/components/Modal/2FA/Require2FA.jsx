@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
@@ -6,21 +6,34 @@ import Typography from '@mui/material/Typography'
 import SecurityIcon from '@mui/icons-material/Security'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { verify2faAPI } from '~/apis'
-import { updateCurrentUser } from '~/redux/user/userSlice'
+import CircularProgress from '@mui/material/CircularProgress'
 import { useDispatch } from 'react-redux'
 import { useTranslation, Trans } from 'react-i18next'
-import CircularProgress from '@mui/material/CircularProgress'
+import { verify2faAPI } from '~/apis'
+import { updateCurrentUser, loginUserAPI } from '~/redux/user/userSlice'
 import Footer from '~/components/Footer/Footer'
 
 const Require2FA = ({ user }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+
   const [otpToken, setConfirmOtpToken] = useState('')
   const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loadingVerify, setLoadingVerify] = useState(false)
+  const [loadingResend, setLoadingResend] = useState(false)
+  const [countdown, setCountdown] = useState(60)
 
-  const handleRequire2FA = () => {
+  useEffect(() => {
+    let timer
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1)
+      }, 1000)
+    }
+    return () => clearInterval(timer)
+  }, [countdown])
+
+  const handleVerify2FA = () => {
     if (!otpToken) {
       const errMsg = t('require_enter_code')
       setError(errMsg)
@@ -28,16 +41,27 @@ const Require2FA = ({ user }) => {
       return
     }
 
-    setLoading(true)
+    setLoadingVerify(true)
     verify2faAPI(user?.email, otpToken)
-      .then(updatedUser => {
+      .then((updatedUser) => {
         dispatch(updateCurrentUser(updatedUser))
         setConfirmOtpToken('')
         setError(null)
       })
       .finally(() => {
-        setLoading(false)
+        setLoadingVerify(false)
       })
+  }
+
+  const handleResendCode = () => {
+    setLoadingResend(true)
+    dispatch(loginUserAPI({ email: user?.email, password: user?.password }))
+      .unwrap()
+      .then(() => {
+        toast.success(t('code_resent'))
+        setCountdown(60)
+      })
+      .finally(() => setLoadingResend(false))
   }
 
   return (
@@ -98,12 +122,13 @@ const Require2FA = ({ user }) => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 1,
-              mt: 1.5
+              mt: 1.5,
+              flexWrap: 'wrap'
             }}
           >
             <TextField
               autoFocus
-              autoComplete="nope"
+              autoComplete="off"
               label={t('enter_code')}
               variant="outlined"
               sx={{ minWidth: '200px' }}
@@ -117,21 +142,16 @@ const Require2FA = ({ user }) => {
               variant="contained"
               color="primary"
               size="medium"
-              disabled={loading}
-              onClick={handleRequire2FA}
+              disabled={loadingVerify}
+              onClick={handleVerify2FA}
               sx={{
                 minWidth: '120px',
                 height: '55px',
                 fontSize: '1em'
               }}
             >
-              {loading ? (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    color: 'white'
-                  }}
-                />
+              {loadingVerify ? (
+                <CircularProgress size={24} sx={{ color: 'white' }} />
               ) : (
                 t('confirm')
               )}
@@ -139,7 +159,29 @@ const Require2FA = ({ user }) => {
 
             <Button
               type="button"
-              variant="text"
+              variant="contained"
+              color="warning"
+              size="medium"
+              disabled={loadingResend || countdown > 0}
+              onClick={handleResendCode}
+              sx={{
+                minWidth: '150px',
+                height: '55px',
+                fontSize: '1em'
+              }}
+            >
+              {loadingResend ? (
+                <CircularProgress size={24} sx={{ color: 'white' }} />
+              ) : countdown > 0 ? (
+                `${t('resend_in')} ${countdown}s`
+              ) : (
+                t('resend_code')
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="contained"
               color="error"
               size="medium"
               sx={{

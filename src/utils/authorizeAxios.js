@@ -64,7 +64,9 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'Email already exist.': t('exist_email'),
     'Your email or password is incorrect.': t('email_password_incorrect'),
     'Your account is not active, please verify email.': t('account_is_not_active'),
-    'Invalid code.': t('invalid_code')
+    'Invalid code.': t('invalid_code'),
+    'OTP expired. Please request a new one.': t('expired_otp'),
+    'Please wait 1 minute before resending the code or logging in again.': t('resend_code_or_login_again')
   }
 
   if (silentMessages.has(errorMessage)) {
