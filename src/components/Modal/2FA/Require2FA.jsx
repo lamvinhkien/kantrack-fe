@@ -34,7 +34,7 @@ const Require2FA = ({ user }) => {
   }, [countdown])
 
   const handleVerify2FA = () => {
-    if (!otpToken) {
+    if (!otpToken.trim()) {
       const errMsg = t('require_enter_code')
       setError(errMsg)
       toast.error(errMsg)
@@ -42,7 +42,7 @@ const Require2FA = ({ user }) => {
     }
 
     setLoadingVerify(true)
-    verify2faAPI(user?.email, otpToken)
+    verify2faAPI(user?.email, otpToken.trim())
       .then((updatedUser) => {
         dispatch(updateCurrentUser(updatedUser))
         setConfirmOtpToken('')

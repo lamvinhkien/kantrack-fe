@@ -35,16 +35,18 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
   const [hasStartDate, setHasStartDate] = useState(!!dates?.startDate)
 
   useEffect(() => {
-    reset({
-      startDate: dates?.startDate ? moment(dates.startDate) : null,
-      dueDate: dates?.dueDate ? moment(dates.dueDate) : moment(),
-      dueTime: dates?.dueTime ? moment(dates.dueTime, 'HH:mm') : moment(),
-      reminder: dates?.reminder?.enabled
-        ? mapMinutesToString(dates.reminder.timeBefore)
-        : 'None'
-    })
-    setHasStartDate(!!dates?.startDate)
-  }, [dates, reset])
+    if (!open) {
+      reset({
+        startDate: dates?.startDate ? moment(dates.startDate) : null,
+        dueDate: dates?.dueDate ? moment(dates.dueDate) : moment(),
+        dueTime: dates?.dueTime ? moment(dates.dueTime, 'HH:mm') : moment(),
+        reminder: dates?.reminder?.enabled
+          ? mapMinutesToString(dates.reminder.timeBefore)
+          : 'None'
+      })
+      setHasStartDate(!!dates?.startDate)
+    }
+  }, [open, dates, reset])
 
   const mapStringToMinutes = (value) => {
     const map = {
@@ -52,18 +54,24 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
       '10m': 10,
       '30m': 30,
       '1h': 60,
-      '1d': 1440
+      '2h': 120,
+      '1d': 1440,
+      '2d': 2880
     }
     return map[value] || 0
   }
 
   function mapMinutesToString(minutes) {
+    if (minutes === 0) return 'AtTime'
+
     const map = {
       5: '5m',
       10: '10m',
       30: '30m',
       60: '1h',
-      1440: '1d'
+      120: '2h',
+      1440: '1d',
+      2880: '2d'
     }
     return map[minutes] || 'None'
   }
@@ -79,11 +87,22 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
       }
     }
 
-    const timeBefore = mapStringToMinutes(value)
     const dueDateTime = moment(
       `${dueDate.format('YYYY-MM-DD')} ${dueTime.format('HH:mm')}`,
       'YYYY-MM-DD HH:mm'
     )
+
+    if (value === 'AtTime') {
+      return {
+        enabled: true,
+        timeBefore: 0,
+        type: 'email',
+        scheduledAt: dueDateTime.toDate(),
+        sent: false
+      }
+    }
+
+    const timeBefore = mapStringToMinutes(value)
     const scheduledAt = moment(dueDateTime).subtract(timeBefore, 'minutes')
 
     return {
@@ -278,11 +297,14 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
             render={({ field }) => (
               <TextField {...field} select size="small" fullWidth>
                 <MenuItem value="None">{t('none')}</MenuItem>
-                <MenuItem value="5m">{t('5MinutesBefore')}</MenuItem>
-                <MenuItem value="10m">{t('10MinutesBefore')}</MenuItem>
-                <MenuItem value="30m">{t('30MinutesBefore')}</MenuItem>
-                <MenuItem value="1h">{t('1HourBefore')}</MenuItem>
-                <MenuItem value="1d">{t('1DayBefore')}</MenuItem>
+                <MenuItem value="AtTime">{t('at_time_due_date')}</MenuItem>
+                <MenuItem value="5m">5 {t('minutes_before')}</MenuItem>
+                <MenuItem value="10m">10 {t('minutes_before')}</MenuItem>
+                <MenuItem value="30m">30 {t('minutes_before')}</MenuItem>
+                <MenuItem value="1h">1 {t('hour_before')}</MenuItem>
+                <MenuItem value="2h">2 {t('hours_before')}</MenuItem>
+                <MenuItem value="1d">1 {t('day_before')}</MenuItem>
+                <MenuItem value="2d">2 {t('days_before')}</MenuItem>
               </TextField>
             )}
           />
