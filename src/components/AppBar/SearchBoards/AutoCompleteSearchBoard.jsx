@@ -33,11 +33,23 @@ const AutoCompleteSearchBoard = () => {
 
     fetchBoardsAPI(searchPath)
       .then(res => {
+        const ownerBoards = res.ownerBoards || []
+        const memberBoards = res.memberBoards || []
+        const favouriteBoards = res.favouriteBoards || []
+
+        const existingBoardIds = new Set([
+          ...ownerBoards.map(b => b.id),
+          ...memberBoards.map(b => b.id)
+        ])
+
+        const filteredFavouriteBoards = favouriteBoards.filter(b => !existingBoardIds.has(b.id))
+
         const combined = [
-          ...(res.ownerBoards || []),
-          ...(res.memberBoards || []),
-          ...(res.favouriteBoards || [])
+          ...ownerBoards,
+          ...memberBoards,
+          ...filteredFavouriteBoards
         ]
+
         setBoards(combined)
       })
       .finally(() => setLoading(false))

@@ -61,7 +61,7 @@ const DateInfo = ({ dates, complete, onClick, loading = false }) => {
       : formattedDue
   }
 
-  const formattedTime = dueTime ? `, ${dueTime.format('HH:mm')}` : ''
+  const formattedTime = dueTime ? `, ${dueTime.format('HH')}h` : ''
 
   return (
     <BoardPermissionGate

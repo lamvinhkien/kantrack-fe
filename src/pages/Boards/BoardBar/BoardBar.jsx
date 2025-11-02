@@ -19,7 +19,9 @@ import Typography from '@mui/material/Typography'
 import { selectCurrentUser, updateUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import { useSelector } from 'react-redux'
 import FavouriteBoard from './FavouriteBoard'
-import { useState } from 'react'
+import CopyBoardLink from './CopyBoardLink'
+import { useState, useEffect } from 'react'
+import { WEB_DOMAIN } from '~/utils/constants'
 
 const BoardBar = ({ board, handleRefresh }) => {
   const dispatch = useDispatch()
@@ -212,6 +214,23 @@ const BoardBar = ({ board, handleRefresh }) => {
       .catch(() => { })
   }
 
+  const [copied, setCopied] = useState(false)
+  const [timerId, setTimerId] = useState(null)
+
+  const onCopyBoardLink = async () => {
+    await navigator.clipboard.writeText(`${WEB_DOMAIN}/boards/${board?._id}`)
+    setCopied(true)
+    if (timerId) clearTimeout(timerId)
+    const id = setTimeout(() => setCopied(false), 2000)
+    setTimerId(id)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (timerId) clearTimeout(timerId)
+    }
+  }, [timerId])
+
   return (
     <Box sx={{
       width: '100%',
@@ -261,6 +280,8 @@ const BoardBar = ({ board, handleRefresh }) => {
           handleFavourite={onFavouriteBoard}
           favourite={isFavourite}
         />
+
+        <CopyBoardLink handleCopyBoardLink={onCopyBoardLink} copyStatus={copied} />
 
         <RefreshBoard handleRefresh={handleRefresh} />
 

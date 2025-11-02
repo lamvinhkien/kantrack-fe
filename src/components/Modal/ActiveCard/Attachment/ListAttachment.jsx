@@ -55,7 +55,6 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
     if (timerId) clearTimeout(timerId)
     const id = setTimeout(() => setCopied(false), 2000)
     setTimerId(id)
-    setTimerId(id)
   }
 
   useEffect(() => {

@@ -28,6 +28,8 @@ import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { socketIoInstance } from '~/socketio/socketClient'
 import { toast } from 'react-toastify'
+import PublicIcon from '@mui/icons-material/Public'
+import LockIcon from '@mui/icons-material/Lock'
 
 const Boards = () => {
   const { t } = useTranslation()
@@ -256,7 +258,7 @@ const Boards = () => {
                         sx={{
                           fontWeight: 600,
                           fontSize: '0.95rem',
-                          mb: 0.3,
+                          mb: 0.5,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap'
@@ -264,9 +266,24 @@ const Boards = () => {
                       >
                         {b?.title}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {b.type === 'public' ? t('public') : t('private')}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        {b.type === 'public'
+                          ?
+                          <>
+                            <PublicIcon fontSize='small' color='action' />
+                            <Typography variant="body2" color="text.secondary">
+                              {t('public')}
+                            </Typography>
+                          </>
+                          :
+                          <>
+                            <LockIcon fontSize='small' color='action' />
+                            <Typography variant="body2" color="text.secondary">
+                              {t('private')}
+                            </Typography>
+                          </>
+                        }
+                      </Box>
                     </CardContent>
                   </>
                 )}

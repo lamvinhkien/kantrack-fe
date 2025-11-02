@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
+import { getScrollbarStyles } from '~/utils/formatters'
 
 const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
   const { mode } = useColorScheme()
@@ -50,9 +51,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
 
   const mapStringToMinutes = (value) => {
     const map = {
-      '5m': 5,
-      '10m': 10,
-      '30m': 30,
       '1h': 60,
       '2h': 120,
       '1d': 1440,
@@ -65,9 +63,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
     if (minutes === 0) return 'AtTime'
 
     const map = {
-      5: '5m',
-      10: '10m',
-      30: '30m',
       60: '1h',
       120: '2h',
       1440: '1d',
@@ -245,22 +240,39 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
                 render={({ field, fieldState: { error } }) => (
                   <TimePicker
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(newValue) => {
+                      const rounded = moment(newValue).minutes(0).seconds(0)
+                      field.onChange(rounded)
+                    }}
                     ampm={false}
-                    format="HH:mm"
+                    views={['hours']}
+                    format="HH"
+                    slots={{
+                      actionBar: () => null
+                    }}
                     slotProps={{
                       textField: {
                         size: 'small',
                         fullWidth: true,
                         error: !!error,
                         helperText: error?.message
+                      },
+                      popper: {
+                        sx: theme => ({
+                          '& .MuiList-root': {
+                            ...getScrollbarStyles(theme),
+                            overflowY: 'auto',
+                            width: 84,
+                            pl: 1.2
+                          }
+                        })
                       }
                     }}
                   />
                 )}
               />
             </Box>
-            <Box sx={{ flex: 1.5 }}>
+            <Box sx={{ flex: 2.4 }}>
               <Controller
                 name="dueDate"
                 control={control}
@@ -298,9 +310,6 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
               <TextField {...field} select size="small" fullWidth>
                 <MenuItem value="None">{t('none')}</MenuItem>
                 <MenuItem value="AtTime">{t('at_time_due_date')}</MenuItem>
-                <MenuItem value="5m">5 {t('minutes_before')}</MenuItem>
-                <MenuItem value="10m">10 {t('minutes_before')}</MenuItem>
-                <MenuItem value="30m">30 {t('minutes_before')}</MenuItem>
                 <MenuItem value="1h">1 {t('hour_before')}</MenuItem>
                 <MenuItem value="2h">2 {t('hours_before')}</MenuItem>
                 <MenuItem value="1d">1 {t('day_before')}</MenuItem>
