@@ -66,7 +66,11 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'Your account is not active, please verify email.': t('account_is_not_active'),
     'Invalid code.': t('invalid_code'),
     'OTP expired. Please request a new one.': t('expired_otp'),
-    'Please wait 1 minute before resending the code or logging in again.': t('resend_code_or_login_again')
+    'Please wait 1 minute before resending the code or logging in again.': t('resend_code_or_login_again'),
+    'Reminder schedule time cannot be in the past.': t('reminder_in_the_past'),
+    'This board has reached its email reminder limit.': t('limit_reminder'),
+    'You’ve joined or created more boards than allowed.': t('limit_join_create_board'),
+    'Something went wrong while sending your verification email. Please try again.': t('failed_send_mail')
   }
 
   if (silentMessages.has(errorMessage)) {

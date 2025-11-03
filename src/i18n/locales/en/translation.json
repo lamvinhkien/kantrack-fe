@@ -267,5 +267,9 @@
   "resend_code": "Resend code",
   "resend_in": "Resend in",
   "code_resent": "A new verification code has been sent to your email.",
-  "resend_code_or_login_again": "Please wait 1 minute before resending the code or logging in again."
+  "resend_code_or_login_again": "Please wait 1 minute before resending the code or logging in again.",
+  "reminder_in_the_past": "Reminder schedule time cannot be in the past.",
+  "limit_reminder": "This board has reached its email reminder limit.",
+  "limit_join_create_board": "You’ve joined or created more boards than allowed.",
+  "failed_send_mail": "Something went wrong while sending your verification email. Please try again."
 }

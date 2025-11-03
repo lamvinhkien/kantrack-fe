@@ -59,8 +59,6 @@ const SidebarCreateBoardModal = forwardRef(({ afterCreateNewBoard, ...props }, r
       toast.success(t('board_created'))
       handleCloseModal()
       afterCreateNewBoard()
-    } catch (error) {
-      toast.error(t('something_went_wrong'))
     } finally {
       setLoading(false)
     }

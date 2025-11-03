@@ -267,5 +267,9 @@
   "resend_code": "Gửi lại mã",
   "resend_in": "Gửi lại sau",
   "code_resent": "Mã xác minh mới đã được gửi đến email của bạn.",
-  "resend_code_or_login_again": "Vui lòng chờ 1 phút trước khi gửi lại mã hoặc đăng nhập lại."
+  "resend_code_or_login_again": "Vui lòng chờ 1 phút trước khi gửi lại mã hoặc đăng nhập lại.",
+  "reminder_in_the_past": "Thời gian nhắc nhở không được trong quá khứ.",
+  "limit_reminder": "Bảng này đã đủ số lượng lời nhắc qua email.",
+  "limit_join_create_board": "Bạn đã đạt giới hạn tham gia hoặc tạo bảng cho phép.",
+  "failed_send_mail": "Đã xảy ra lỗi khi gửi email xác minh đến bạn. Vui lòng thử lại."
 }
