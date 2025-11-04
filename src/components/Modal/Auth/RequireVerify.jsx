@@ -3,23 +3,18 @@ import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
-import SecurityIcon from '@mui/icons-material/Security'
-import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useDispatch } from 'react-redux'
 import { useTranslation, Trans } from 'react-i18next'
-import { verify2faAPI } from '~/apis'
-import { updateCurrentUser, loginUserAPI } from '~/redux/user/userSlice'
+import { loginUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import Footer from '~/components/Footer/Footer'
+import SecurityIcon from '@mui/icons-material/Security'
 
-const Require2FA = ({ user }) => {
+const RequireVerify = ({ user }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
-  const [otpToken, setConfirmOtpToken] = useState('')
-  const [error, setError] = useState(null)
-  const [loadingVerify, setLoadingVerify] = useState(false)
   const [loadingResend, setLoadingResend] = useState(false)
   const [countdown, setCountdown] = useState(60)
 
@@ -33,33 +28,15 @@ const Require2FA = ({ user }) => {
     return () => clearInterval(timer)
   }, [countdown])
 
-  const handleVerify2FA = () => {
-    if (!otpToken.trim()) {
-      const errMsg = t('require_enter_code')
-      setError(errMsg)
-      toast.error(errMsg)
-      return
-    }
-
-    setLoadingVerify(true)
-    verify2faAPI(user?.email, otpToken.trim())
-      .then((updatedUser) => {
-        dispatch(updateCurrentUser(updatedUser))
-        setConfirmOtpToken('')
-        setError(null)
-      })
-      .finally(() => {
-        setLoadingVerify(false)
-      })
-  }
-
   const handleResendCode = () => {
     setLoadingResend(true)
     dispatch(loginUserAPI({ email: user?.email, password: user?.password }))
       .unwrap()
-      .then(() => {
-        toast.success(t('code_resent'))
-        setCountdown(60)
+      .then((res) => {
+        if (res.isActive === false) {
+          toast.success(t('mail_resent'))
+          setCountdown(60)
+        }
       })
       .finally(() => setLoadingResend(false))
   }
@@ -94,7 +71,7 @@ const Require2FA = ({ user }) => {
             variant="h5"
             sx={{ fontWeight: 'bold', color: '#27ae60' }}
           >
-            {t('require_2fa')}
+            {t('please_verify_email_title')}
           </Typography>
         </Box>
 
@@ -110,8 +87,8 @@ const Require2FA = ({ user }) => {
         >
           <Box sx={{ textAlign: 'center', lineHeight: 1.8 }}>
             <Trans
-              i18nKey="enter_2fa_code_description"
-              values={{ email: user.email }}
+              i18nKey='please_verify_email_message'
+              values={{ email: user?.email }}
             />
           </Box>
 
@@ -126,37 +103,6 @@ const Require2FA = ({ user }) => {
               flexWrap: 'wrap'
             }}
           >
-            <TextField
-              autoFocus
-              autoComplete="off"
-              label={t('enter_code')}
-              variant="outlined"
-              sx={{ minWidth: '200px' }}
-              value={otpToken}
-              onChange={(e) => setConfirmOtpToken(e.target.value)}
-              error={!!error && !otpToken}
-            />
-
-            <Button
-              type="button"
-              variant="contained"
-              color="primary"
-              size="medium"
-              disabled={loadingVerify}
-              onClick={handleVerify2FA}
-              sx={{
-                minWidth: '120px',
-                height: '55px',
-                fontSize: '1em'
-              }}
-            >
-              {loadingVerify ? (
-                <CircularProgress size={24} sx={{ color: 'white' }} />
-              ) : (
-                t('confirm')
-              )}
-            </Button>
-
             <Button
               type="button"
               variant="contained"
@@ -202,4 +148,4 @@ const Require2FA = ({ user }) => {
   )
 }
 
-export default Require2FA
+export default RequireVerify

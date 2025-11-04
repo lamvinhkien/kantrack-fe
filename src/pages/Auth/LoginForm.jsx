@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
   EMAIL_RULE,
@@ -15,7 +15,7 @@ import {
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useDispatch } from 'react-redux'
 import { loginUserAPI } from '~/redux/user/userSlice'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as KanTrackIcon } from '~/assets/kantrack-transparent.svg'
 import { useColorScheme } from '@mui/material'
 import { useState } from 'react'
@@ -27,85 +27,20 @@ const LoginForm = () => {
   const { mode } = useColorScheme()
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm()
 
   let [searchParams] = useSearchParams()
   const verifiedEmail = searchParams.get('verifiedEmail')
-  const registeredEmail = searchParams.get('registeredEmail')
 
   const submitLogIn = async (data) => {
     const { email, password } = data
     setLoading(true)
 
-    const res = await dispatch(loginUserAPI({ email, password }))
-    setLoading(false)
-
-    if (!res.error) navigate('/boards')
-  }
-
-  if (registeredEmail) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          padding: '0 16px'
-        }}
-      >
-        <Box
-          sx={{
-            maxWidth: 1000,
-            py: 3,
-            px: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'start',
-            gap: 2.5,
-            borderRadius: 2,
-            bgcolor: mode === 'dark' ? 'success.dark' : 'success.light',
-            color: 'white',
-            boxShadow: 3
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CheckCircleIcon sx={{ color: 'inherit', fontSize: 30 }} />
-            <Typography variant='h6' fontWeight={600}>
-              {t('account_created')}
-            </Typography>
-          </Box>
-
-          <Typography variant='body1' fontWeight={400}>
-            <Trans
-              i18nKey='please_verify_email_message'
-              values={{ email: registeredEmail }}
-              components={{ strong: <strong /> }}
-            />
-          </Typography>
-
-          <Button
-            variant='contained'
-            color='warning'
-            onClick={() => navigate('/login')}
-            sx={{
-              mt: 1,
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500
-            }}
-          >
-            {t('back_to_login')}
-          </Button>
-        </Box>
-      </motion.div>
-    )
+    dispatch(loginUserAPI({ email, password }))
+      .unwrap()
+      .then(() => { })
+      .finally(() => setLoading(false))
   }
 
   return (

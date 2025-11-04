@@ -52,7 +52,8 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
   if (error.response?.data?.message) errorMessage = error.response.data.message
 
   const silentMessages = new Set([
-    'You do not have permission to view this board.'
+    'You do not have permission to view this board.',
+    'Unauthorized.'
   ])
 
   const toastMessages = {
@@ -70,7 +71,8 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'Reminder schedule time cannot be in the past.': t('reminder_in_the_past'),
     'This board has reached its email reminder limit.': t('limit_reminder'),
     'You’ve joined or created more boards than allowed.': t('limit_join_create_board'),
-    'Something went wrong while sending your verification email. Please try again.': t('failed_send_mail')
+    'Something went wrong while sending your verification email. Please try again.': t('failed_send_mail'),
+    'Please wait 1 minute before resending the email or logging in again.': t('wait_resend_email')
   }
 
   if (silentMessages.has(errorMessage)) {

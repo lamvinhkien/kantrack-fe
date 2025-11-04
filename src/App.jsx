@@ -8,12 +8,14 @@ import Boards from '~/pages/Boards'
 import Home from '~/pages/Home'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import Require2FA from '~/components/Modal/2FA/Require2FA'
+import Require2FA from '~/components/Modal/Auth/Require2FA'
+import RequireVerify from './components/Modal/Auth/RequireVerify'
 import DeviceBlocker from '~/components/DeviceBlocker/DeviceBlocker'
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to='/login' />
-  if (user.require2fa && user.password) return <Require2FA user={user} />
+  if (user.isActive === false && user.password) return <RequireVerify user={user} />
+  if (user.require2fa === true && user.password) return <Require2FA user={user} />
   return <Outlet />
 }
 

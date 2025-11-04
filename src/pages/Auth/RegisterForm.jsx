@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {
   EMAIL_RULE,
@@ -13,7 +13,6 @@ import {
   FIELD_REQUIRED_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
-import { registerUserAPI } from '~/apis'
 import { useTranslation } from 'react-i18next'
 import Divider from '@mui/material/Divider'
 import { ReactComponent as KanTrackIcon } from '~/assets/kantrack-transparent.svg'
@@ -24,11 +23,13 @@ import { useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import { toast } from 'react-toastify'
 import { motion } from 'framer-motion'
+import { registerUserAPI } from '~/redux/user/userSlice'
+import { useDispatch } from 'react-redux'
 
 const RegisterForm = () => {
   const { mode } = useColorScheme()
+  const dispatch = useDispatch()
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
 
@@ -36,15 +37,14 @@ const RegisterForm = () => {
     const { email, password } = data
     setLoading(true)
 
-    try {
-      const user = await registerUserAPI({ email, password })
-      if (user) {
+    dispatch(registerUserAPI({ email, password }))
+      .unwrap()
+      .then(() => {
         toast.success(t('account_created'))
-        navigate(`/login?registeredEmail=${user.email}`)
-      }
-    } finally {
-      setLoading(false)
-    }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (

@@ -154,7 +154,8 @@
   "verifying_account": "Đang xác thực tài khoản của bạn...",
   "logging": "Đang đăng nhập...",
   "email_verified_message": "Email {{email}} của bạn đã được xác minh.",
-  "please_verify_email_message": "• Chúng tôi đã gửi một liên kết xác minh đến email của bạn: <strong>{{email}}</strong>.<br /><br />• Vui lòng kiểm tra hộp thư (bao gồm thư rác) và nhấp vào liên kết để kích hoạt tài khoản.<br /><br />• Nếu bạn đã xác minh email rồi, hãy quay lại trang đăng nhập để đăng nhập vào tài khoản của bạn.",
+  "please_verify_email_title": "Vui lòng xác minh email trước khi đăng nhập.",
+  "please_verify_email_message": "Chúng tôi đã gửi một liên kết xác minh đến email của bạn: <strong>{{email}}</strong>. <br />Vui lòng kiểm tra hộp thư (bao gồm thư rác) và nhấp vào liên kết để kích hoạt tài khoản.",
   "back_to_login": "Quay lại trang đăng nhập",
   "login_button": "Đăng nhập",
   "create_account_link": "Tạo tài khoản",
@@ -266,10 +267,11 @@
   "expired_otp": "Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.",
   "resend_code": "Gửi lại mã",
   "resend_in": "Gửi lại sau",
-  "code_resent": "Mã xác minh mới đã được gửi đến email của bạn.",
+  "mail_resent": "Xác minh mới đã được gửi đến email của bạn.",
   "resend_code_or_login_again": "Vui lòng chờ 1 phút trước khi gửi lại mã hoặc đăng nhập lại.",
   "reminder_in_the_past": "Thời gian nhắc nhở không được trong quá khứ.",
   "limit_reminder": "Bảng này đã đủ số lượng lời nhắc qua email.",
   "limit_join_create_board": "Bạn đã đạt giới hạn tham gia hoặc tạo bảng cho phép.",
-  "failed_send_mail": "Đã xảy ra lỗi khi gửi email xác minh đến bạn. Vui lòng thử lại."
+  "failed_send_mail": "Đã xảy ra lỗi khi gửi email xác minh đến bạn. Vui lòng thử lại.",
+  "wait_resend_email": "Vui lòng đợi 1 phút trước khi gửi lại email hoặc đăng nhập lại."
 }
