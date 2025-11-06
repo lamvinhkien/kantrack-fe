@@ -2,7 +2,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { interceptorLoadingElements } from '~/utils/formatters'
 import { refreshTokenAPI } from '~/apis'
-import { logoutUserAPI } from '~/redux/user/userSlice'
+import { logoutUserAPI, updateCurrentUser } from '~/redux/user/userSlice'
 import i18next from 'i18next'
 const t = i18next.t.bind(i18next)
 
@@ -28,7 +28,7 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
   interceptorLoadingElements(false)
 
   if (error.response?.status === 401) {
-    axiosReduxStore.dispatch(logoutUserAPI())
+    axiosReduxStore.dispatch(updateCurrentUser(null))
   }
 
   const originalRequests = error.config

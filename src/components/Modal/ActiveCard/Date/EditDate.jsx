@@ -16,6 +16,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { getScrollbarStyles } from '~/utils/formatters'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
   const { mode } = useColorScheme()
@@ -322,6 +324,34 @@ const EditDate = ({ dates, open, anchorEl, onClose, handleEditCardDate }) => {
             {t('emailReminderInfo')}
           </Typography>
         </Box>
+
+        {dates?.reminder?.enabled && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {t('reminder_status')}
+            </Typography>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              {dates.reminder.sent ? (
+                <CheckCircleOutlineIcon sx={{ color: 'success.main', fontSize: 20 }} />
+              ) : (
+                <AccessTimeIcon sx={{ color: 'warning.main', fontSize: 20 }} />
+              )}
+
+              <Typography
+                variant="body2"
+                sx={{
+                  color: dates.reminder.sent ? 'success.main' : 'warning.main',
+                  fontStyle: 'italic'
+                }}
+              >
+                {dates.reminder.sent
+                  ? t('reminder_already_sent')
+                  : t('reminder_not_sent_yet')}
+              </Typography>
+            </Box>
+          </Box>
+        )}
 
         {/* Actions */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>

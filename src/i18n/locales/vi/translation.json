@@ -75,7 +75,7 @@
   "join": "Tham gia",
   "left": "Rời khỏi",
   "your": "của bạn",
-  "setDates": "Thiết lập ngày",
+  "setDates": "Thiết lập thời hạn",
   "startDate": "Ngày bắt đầu",
   "dueDate": "Ngày hết hạn",
   "setDueDateReminder": "Nhắc nhở ngày hết hạn",
@@ -273,5 +273,8 @@
   "limit_reminder": "Bảng này đã đủ số lượng lời nhắc qua email.",
   "limit_join_create_board": "Bạn đã đạt giới hạn tham gia hoặc tạo bảng cho phép.",
   "failed_send_mail": "Đã xảy ra lỗi khi gửi email xác minh đến bạn. Vui lòng thử lại.",
-  "wait_resend_email": "Vui lòng đợi 1 phút trước khi gửi lại email hoặc đăng nhập lại."
+  "wait_resend_email": "Vui lòng đợi 1 phút trước khi gửi lại email hoặc đăng nhập lại.",
+  "reminder_already_sent": "Email nhắc nhở đã được gửi",
+  "reminder_not_sent_yet": "Email nhắc nhở chưa được gửi",
+  "reminder_status": "Trạng thái nhắc nhở"
 }

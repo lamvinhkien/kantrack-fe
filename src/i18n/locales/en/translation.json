@@ -153,7 +153,7 @@
   "security": "Security",
   "verifying_account": "Verifying your account...",
   "logging": "Logging...",
-  "email_verified_message": "Your email {{email}} has been verified.",
+  "email_verified_message": "Your email has been verified.",
   "please_verify_email_title": "Please verify your email before login.",
   "please_verify_email_message": "We've sent a verification link to your email: <strong>{{email}}</strong>. <br />Please check your inbox (and spam folder) and click the link to activate your account.",
   "back_to_login": "Back to Login",
@@ -273,5 +273,8 @@
   "limit_reminder": "This board has reached its email reminder limit.",
   "limit_join_create_board": "You’ve joined or created more boards than allowed.",
   "failed_send_mail": "Something went wrong while sending your verification email. Please try again.",
-  "wait_resend_email": "Please wait 1 minute before resending the email or logging in again."
+  "wait_resend_email": "Please wait 1 minute before resending the email or logging in again.",
+  "reminder_already_sent": "Email reminder already sent",
+  "reminder_not_sent_yet": "Email reminder not sent yet",
+  "reminder_status": "Reminder status"
 }

@@ -133,9 +133,14 @@ const LoginForm = () => {
                   }}
                 >
                   <CheckCircleIcon sx={{ color: 'success.contrastText' }} />
-                  <Typography variant='body1' fontWeight={500}>
-                    {t('email_verified_message', { email: verifiedEmail })}
-                  </Typography>
+                  <Box>
+                    <Typography variant='body1' fontWeight={500}>
+                      {verifiedEmail}
+                    </Typography>
+                    <Typography variant='body1' fontWeight={500}>
+                      {t('email_verified_message')}
+                    </Typography>
+                  </Box>
                 </Box>
               </motion.div>
             )}
