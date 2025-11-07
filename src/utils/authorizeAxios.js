@@ -72,7 +72,10 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'This board has reached its email reminder limit.': t('limit_reminder'),
     'You’ve joined or created more boards than allowed.': t('limit_join_create_board'),
     'Something went wrong while sending your verification email. Please try again.': t('failed_send_mail'),
-    'Please wait 1 minute before resending the email or logging in again.': t('wait_resend_email')
+    'Please wait 1 minute before resending the email or logging in again.': t('wait_resend_email'),
+    'Card has reached the limit of 6 file attachments.': t('limit_attachment'),
+    'This board has reached its card limit.': t('limit_card'),
+    'This board has reached the maximum number of members allowed.': t('limit_member')
   }
 
   if (silentMessages.has(errorMessage)) {

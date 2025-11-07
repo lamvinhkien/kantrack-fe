@@ -276,15 +276,6 @@ const BoardBar = ({ board, handleRefresh }) => {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <FavouriteBoard
-          handleFavourite={onFavouriteBoard}
-          favourite={isFavourite}
-        />
-
-        <CopyBoardLink handleCopyBoardLink={onCopyBoardLink} copyStatus={copied} />
-
-        <RefreshBoard handleRefresh={handleRefresh} />
-
         <BoardType
           boardType={board?.type}
           handleUpdateBoardType={onUpdateBoardType}
@@ -292,6 +283,15 @@ const BoardBar = ({ board, handleRefresh }) => {
           memberIds={board?.memberIds}
           currentUser={currentUser}
         />
+
+        <FavouriteBoard
+          handleFavourite={onFavouriteBoard}
+          favourite={isFavourite}
+        />
+
+        <RefreshBoard handleRefresh={handleRefresh} />
+
+        <CopyBoardLink handleCopyBoardLink={onCopyBoardLink} copyStatus={copied} />
 
         <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.inviteMemberToBoard}>
           <InviteBoardUser boardId={board._id} />

@@ -8,8 +8,7 @@ import {
   Button,
   Chip,
   Menu,
-  MenuItem,
-  Divider
+  MenuItem
 } from '@mui/material'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import GroupAddIcon from '@mui/icons-material/GroupAdd'
@@ -31,6 +30,7 @@ import { useTranslation } from 'react-i18next'
 import { fetchBoardDetailsAPI } from '~/redux/activeBoard/activeBoardSlice'
 import { getScrollbarStyles } from '~/utils/formatters'
 import { BOARD_INVITATION_STATUS } from '~/utils/constants'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const Notifications = () => {
   const { t, i18n } = useTranslation()
@@ -43,6 +43,7 @@ const Notifications = () => {
   const [hover, setHover] = useState(false)
   const [disableUntil, setDisableUntil] = useState(0)
   const [newNotification, setNewNotification] = useState(false)
+  const [loadingId, setLoadingId] = useState(null)
 
   const menuOpen = Boolean(anchorEl)
   const now = Date.now()
@@ -90,9 +91,10 @@ const Notifications = () => {
   }, [notifications])
 
   const updateBoardInvitation = (invitationId, status) => {
+    setLoadingId(invitationId)
     dispatch(updateBoardInvitationAPI({ invitationId, status }))
       .then(async (res) => {
-        if (res.payload.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
+        if (res?.payload?.boardInvitation?.status === BOARD_INVITATION_STATUS.ACCEPTED) {
           const boardRes = await dispatch(fetchBoardDetailsAPI(res.payload.boardInvitation.boardId))
           const newBoard = {
             ...boardRes.payload,
@@ -101,6 +103,9 @@ const Notifications = () => {
           socketIoInstance.emit('FE_UPDATE_BOARD', { boardId: newBoard._id, board: newBoard })
           navigate(`/boards/${res.payload.boardInvitation.boardId}`)
         }
+      })
+      .finally(() => {
+        setLoadingId(null)
       })
   }
 
@@ -174,9 +179,14 @@ const Notifications = () => {
                   gap: 1.2,
                   py: 1.5,
                   px: 2,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.08)'
-                  }
+                  borderBottom:
+                    index !== notifications.length - 1
+                      ? (theme) =>
+                        `1px solid ${theme.palette.mode === 'dark'
+                          ? 'rgba(255,255,255,0.1)'
+                          : theme.palette.grey[300]
+                        }`
+                      : 'none'
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -196,35 +206,41 @@ const Notifications = () => {
                 </Box>
 
                 {notification.boardInvitation.status === BOARD_INVITATION_STATUS.PENDING && (
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', width: '100%' }}>
-                    <Button
-                      className="interceptor-loading"
-                      variant="contained"
-                      color="success"
-                      size="small"
-                      onClick={() =>
-                        updateBoardInvitation(
-                          notification._id,
-                          BOARD_INVITATION_STATUS.ACCEPTED
-                        )
-                      }
-                    >
-                      {t('accept')}
-                    </Button>
-                    <Button
-                      className="interceptor-loading"
-                      variant="contained"
-                      color="error"
-                      size="small"
-                      onClick={() =>
-                        updateBoardInvitation(
-                          notification._id,
-                          BOARD_INVITATION_STATUS.REJECTED
-                        )
-                      }
-                    >
-                      {t('reject')}
-                    </Button>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                    {loadingId === notification._id ? (
+                      <Box sx={{ py: 0.4 }}>
+                        <CircularProgress size={18} color="primary" />
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          size="small"
+                          onClick={() =>
+                            updateBoardInvitation(
+                              notification._id,
+                              BOARD_INVITATION_STATUS.ACCEPTED
+                            )
+                          }
+                        >
+                          {t('accept')}
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          size="small"
+                          onClick={() =>
+                            updateBoardInvitation(
+                              notification._id,
+                              BOARD_INVITATION_STATUS.REJECTED
+                            )
+                          }
+                        >
+                          {t('reject')}
+                        </Button>
+                      </Box>
+                    )}
                   </Box>
                 )}
 
@@ -236,7 +252,7 @@ const Notifications = () => {
                         label={t('accepted')}
                         color="success"
                         size="small"
-                        sx={{ fontSize: '0.75rem' }}
+                        sx={{ fontSize: '0.80rem' }}
                       />
                     )}
                     {notification.boardInvitation.status === BOARD_INVITATION_STATUS.REJECTED && (
@@ -245,7 +261,7 @@ const Notifications = () => {
                         label={t('rejected')}
                         color="error"
                         size="small"
-                        sx={{ fontSize: '0.75rem' }}
+                        sx={{ fontSize: '0.80rem' }}
                       />
                     )}
                   </Box>
@@ -262,10 +278,6 @@ const Notifications = () => {
                   {renderTime(notification.createdAt, { locale: i18n.language })}
                 </Typography>
               </MenuItem>
-
-              {index !== notifications.length - 1 && (
-                <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
-              )}
             </Box>
           ))
         )}

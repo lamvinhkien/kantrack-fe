@@ -276,5 +276,8 @@
   "wait_resend_email": "Please wait 1 minute before resending the email or logging in again.",
   "reminder_already_sent": "Email reminder already sent",
   "reminder_not_sent_yet": "Email reminder not sent yet",
-  "reminder_status": "Reminder status"
+  "reminder_status": "Reminder status",
+  "limit_attachment": "Card has reached the limit of 10 file attachments.",
+  "limit_card": "This board has reached its card limit.",
+  "limit_member": "This board has reached the maximum number of members allowed."
 }

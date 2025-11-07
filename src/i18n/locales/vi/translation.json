@@ -276,5 +276,8 @@
   "wait_resend_email": "Vui lòng đợi 1 phút trước khi gửi lại email hoặc đăng nhập lại.",
   "reminder_already_sent": "Email nhắc nhở đã được gửi",
   "reminder_not_sent_yet": "Email nhắc nhở chưa được gửi",
-  "reminder_status": "Trạng thái nhắc nhở"
+  "reminder_status": "Trạng thái nhắc nhở",
+  "limit_attachment": "Bạn chỉ có thể đính kèm tối đa 6 tệp cho thẻ.",
+  "limit_card": "Bảng này đã đạt giới hạn số thẻ cho phép.",
+  "limit_member": "Bảng này đã đạt số lượng thành viên tối đa cho phép."
 }

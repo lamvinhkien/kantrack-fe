@@ -9,6 +9,8 @@ if (process.env.BUILD_MODE === 'dev') webDomain = 'http://localhost:5173'
 export const API_ROOT = apiRoot
 export const WEB_DOMAIN = webDomain
 
+export const MAX_COLUMNS_PER_BOARD = 8
+
 export const DEFAULT_PAGE = 1
 export const DEFAULT_ITEMS_PER_PAGE = 6
 
