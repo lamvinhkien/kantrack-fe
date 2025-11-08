@@ -126,13 +126,13 @@ const Column = ({ column }) => {
     }).then(() => {
       toast.promise(
         deleteColumnDetailsAPI(column._id)
-          .then(res => {
+          .then(() => {
             const newBoard = { ...board }
             newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
             newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c.id !== column._id)
             dispatch(updateCurrentActiveBoard(newBoard))
             socketIoInstance.emit('FE_DELETE_COLUMN_IN_BOARD', { boardId: newBoard._id, board: newBoard })
-            toast.success(res?.deleteResult)
+            toast.success(t('column_cards_deleted'))
           }),
         { pending: t('deleting') }
       )

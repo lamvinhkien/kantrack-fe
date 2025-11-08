@@ -69,13 +69,14 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'OTP expired. Please request a new one.': t('expired_otp'),
     'Please wait 1 minute before resending the code or logging in again.': t('resend_code_or_login_again'),
     'Reminder schedule time cannot be in the past.': t('reminder_in_the_past'),
-    'This board has reached its email reminder limit.': t('limit_reminder'),
-    'You’ve joined or created more boards than allowed.': t('limit_join_create_board'),
     'Something went wrong while sending your verification email. Please try again.': t('failed_send_mail'),
     'Please wait 1 minute before resending the email or logging in again.': t('wait_resend_email'),
-    'Card has reached the limit of 6 file attachments.': t('limit_attachment'),
+    'You’ve joined or created more boards than allowed.': t('limit_join_create_board'),
+    'File attachment limit reached for this card.': t('limit_attachment'),
+    'Comment limit reached for this card.': t('limit_comment'),
+    'This board has reached its email reminder limit.': t('limit_reminder'),
     'This board has reached its card limit.': t('limit_card'),
-    'This board has reached the maximum number of members allowed.': t('limit_member')
+    'This board has reached its member limit.': t('limit_member')
   }
 
   if (silentMessages.has(errorMessage)) {

@@ -22,6 +22,7 @@ import FavouriteBoard from './FavouriteBoard'
 import CopyBoardLink from './CopyBoardLink'
 import { useState, useEffect } from 'react'
 import { WEB_DOMAIN } from '~/utils/constants'
+import StatisticsBoard from './StatisticsBoard'
 
 const BoardBar = ({ board, handleRefresh }) => {
   const dispatch = useDispatch()
@@ -292,6 +293,8 @@ const BoardBar = ({ board, handleRefresh }) => {
         <RefreshBoard handleRefresh={handleRefresh} />
 
         <CopyBoardLink handleCopyBoardLink={onCopyBoardLink} copyStatus={copied} />
+
+        <StatisticsBoard listColumn={board?.columns} />
 
         <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.inviteMemberToBoard}>
           <InviteBoardUser boardId={board._id} />

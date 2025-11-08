@@ -217,7 +217,7 @@ const ActiveCard = () => {
     }).then(() => {
       toast.promise(
         deleteCardDetailsAPI(activeCard?._id)
-          .then((res) => {
+          .then(() => {
             const newBoard = cloneDeep(board)
             const columnToUpdate = newBoard.columns.find(column => column._id === activeCard.columnId)
             if (columnToUpdate) {
@@ -232,7 +232,7 @@ const ActiveCard = () => {
             dispatch(updateCurrentActiveBoard(newBoard))
             socketIoInstance.emit('FE_DELETE_CARD_IN_BOARD', { boardId: newBoard._id, board: newBoard })
             socketIoInstance.emit('FE_DELETE_ACTIVE_CARD', activeCard._id)
-            toast.success(res.deleteResult)
+            toast.success(t('card_deleted'))
             handleCloseModal()
           }),
         { pending: t('deleting') }
