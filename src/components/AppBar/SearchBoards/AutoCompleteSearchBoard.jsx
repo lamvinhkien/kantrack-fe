@@ -65,7 +65,7 @@ const AutoCompleteSearchBoard = () => {
     <Autocomplete
       sx={{ width: '100%' }}
       id="asynchronous-search-board"
-      noOptionsText={!boards ? t('type_to_sreach') : t('not_found')}
+      noOptionsText={!boards ? t('type_to_search') : t('not_found')}
       isOptionEqualToValue={(option, value) => option._id === value._id}
       open={open}
       onOpen={() => { setOpen(true) }}

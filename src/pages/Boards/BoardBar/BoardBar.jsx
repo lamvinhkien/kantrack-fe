@@ -294,7 +294,11 @@ const BoardBar = ({ board, handleRefresh }) => {
 
         <CopyBoardLink handleCopyBoardLink={onCopyBoardLink} copyStatus={copied} />
 
-        <StatisticsBoard listColumn={board?.columns} />
+        <StatisticsBoard
+          listColumn={board?.columns}
+          members={board?.members}
+          owners={board?.owners}
+        />
 
         <BoardPermissionGate action={BOARD_MEMBER_ACTIONS.inviteMemberToBoard}>
           <InviteBoardUser boardId={board._id} />

@@ -62,7 +62,7 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'Card not found.': t('card_not_found'),
     'Invitee not found.': t('invitee_not_found'),
     'Invitee is already a member of this board.': t('exist_invitee'),
-    'Email already exist.': t('exist_email'),
+    'Email already exist.': t('exists_email'),
     'Your email or password is incorrect.': t('email_password_incorrect'),
     'Your account is not active, please verify email.': t('account_is_not_active'),
     'Invalid code.': t('invalid_code'),

@@ -133,7 +133,7 @@ const Comment = ({ cardComments = [], handleUpdateCardComment, currentUser }) =>
 
     return {
       ...comment,
-      userDisplayName: user?.displayName || t('unknow_user'),
+      userDisplayName: user?.displayName || t('unknown_user'),
       userAvatar: user?.avatar?.url || '',
       isOwner
     }
