@@ -319,7 +319,7 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
                   }}
                 />
 
-                <Box>
+                <Box sx={{ minHeight: 200 }}>
                   <Typography variant="h6" gutterBottom>
                     {t('member_progress')}
                   </Typography>
