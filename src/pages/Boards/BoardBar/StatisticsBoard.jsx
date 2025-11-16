@@ -30,6 +30,7 @@ import {
 } from 'recharts'
 import { useTranslation } from 'react-i18next'
 import { getScrollbarStyles } from '~/utils/formatters'
+import moment from 'moment'
 
 const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
   const { t } = useTranslation()
@@ -51,19 +52,46 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
     const incomplete = allCards.length - completed
     const completionRate = (completed / allCards.length) * 100
 
-    const now = new Date()
+    const now = moment()
     let overdue = 0
     let upcoming = 0
+    let future = 0
     let noDeadline = 0
+
     allCards.forEach(c => {
-      if (!c.complete && c.dates?.dueDate) {
-        const due = new Date(c.dates.dueDate)
-        if (due < now) overdue += 1
-        else if (due - now <= 3 * 24 * 60 * 60 * 1000) upcoming += 1
-      } else if (!c.dates?.dueDate) {
+      const { complete, dates } = c
+
+      if (complete) return
+
+      let dueDateTime = null
+
+      if (dates?.dueDate) {
+        const dueDate = moment(dates.dueDate)
+        const dueTime = dates?.dueTime ? moment(dates.dueTime, 'HH:mm') : null
+
+        dueDateTime =
+          dueDate && dueTime
+            ? moment(
+              `${dueDate.format('YYYY-MM-DD')} ${dueTime.format('HH:mm')}`,
+              'YYYY-MM-DD HH:mm'
+            )
+            : dueDate
+      }
+
+      if (!dueDateTime) {
         noDeadline += 1
+        return
+      }
+
+      if (dueDateTime.isBefore(now)) {
+        overdue += 1
+      } else if (dueDateTime.diff(now, 'hours') <= 24) {
+        upcoming += 1
+      } else {
+        future += 1
       }
     })
+
 
     const memberStatsMap = {}
     allCards.forEach(c => {
@@ -96,7 +124,12 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
       completed,
       incomplete,
       completionRate,
-      deadline: { overdue, upcoming, noDeadline },
+      deadline: {
+        overdue,
+        upcoming,
+        future,
+        noDeadline
+      },
       memberChartData
     }
   }, [listColumn, members, owners])
@@ -104,7 +137,12 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
   if (!stats) return null
 
   const COLORS_COMPLETION = [theme.palette.success.light, theme.palette.error.light]
-  const COLORS_DEADLINE = [theme.palette.error.light, theme.palette.warning.light, theme.palette.primary.main]
+  const COLORS_DEADLINE = [
+    theme.palette.error.light,
+    theme.palette.warning.light,
+    theme.palette.primary.main,
+    theme.palette.grey[400]
+  ]
 
   const pieCompletion = [
     { name: t('completed'), value: stats.completed },
@@ -113,8 +151,51 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
   const pieDeadline = [
     { name: t('overdue'), value: stats.deadline.overdue },
     { name: t('upcoming'), value: stats.deadline.upcoming },
+    { name: t('not_due_yet'), value: stats.deadline.future },
     { name: t('no_deadline'), value: stats.deadline.noDeadline }
   ]
+  const CustomLegend = ({ payload }) => {
+    if (!payload) return null
+
+    const rows = []
+    for (let i = 0; i < payload.length; i += 2) {
+      rows.push(payload.slice(i, i + 2))
+    }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 10 }}>
+        {rows.map((row, rowIndex) => (
+          <div
+            key={rowIndex}
+            style={{
+              display: 'flex',
+              gap: 16,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            {row.map((entry, i) => (
+              <div
+                key={i}
+                style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              >
+                <span
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    background: entry.color
+                  }}
+                />
+                <span>{entry.value}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <>
@@ -224,7 +305,10 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
                           pointerEvents: 'none'
                         }}
                       />
-                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                      <Legend
+                        verticalAlign="bottom"
+                        content={<CustomLegend />}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
 
@@ -303,7 +387,10 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
                           pointerEvents: 'none'
                         }}
                       />
-                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                      <Legend
+                        verticalAlign="bottom"
+                        content={<CustomLegend />}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </Box>
@@ -380,6 +467,10 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
                             <XAxis type="number" allowDecimals={false} />
 
                             <ReTooltip
+                              wrapperStyle={{
+                                zIndex: 9999,
+                                pointerEvents: 'none'
+                              }}
                               content={({ active, payload, label }) => {
                                 if (!active || !payload?.length) return null
                                 const user = sortedMemberData.find(u => u.name === label)
@@ -405,7 +496,7 @@ const StatisticsBoard = ({ listColumn, members = [], owners = [] }) => {
                                     <Typography variant="body2" sx={{ color: theme.palette.success.main }}>
                                       {t('completed')}: {user?.completed || 0}
                                     </Typography>
-                                    <Typography variant="body2" sx={{ color: theme.palette.warning.main }}>
+                                    <Typography variant="body2" sx={{ color: theme.palette.error.main }}>
                                       {t('incomplete')}: {user?.incomplete || 0}
                                     </Typography>
                                     <Typography variant="body2" sx={{ color: theme.palette.info.main }}>

@@ -153,7 +153,7 @@
   "security": "Bảo mật",
   "verifying_account": "Đang xác thực tài khoản của bạn...",
   "logging": "Đang đăng nhập...",
-  "email_verified_message": "Email {{email}} của bạn đã được xác minh.",
+  "email_verified_message": "Email của bạn đã được xác minh.",
   "please_verify_email_title": "Vui lòng xác minh email trước khi đăng nhập.",
   "please_verify_email_message": "Chúng tôi đã gửi một liên kết xác minh đến email của bạn: <strong>{{email}}</strong>. <br />Vui lòng kiểm tra hộp thư (bao gồm thư rác) và nhấp vào liên kết để kích hoạt tài khoản.",
   "back_to_login": "Quay lại trang đăng nhập",
@@ -293,5 +293,7 @@
   "incomplete": "Chưa hoàn thành",
   "upcoming": "Sắp đến hạn",
   "no_deadline": "Không có thời hạn",
-  "total": "Tổng cộng"
+  "total": "Tổng cộng",
+  "pending_invitation": "Người dùng này đã có lời mời tham gia bảng này.",
+  "not_due_yet": "Chưa tới hạn"
 }

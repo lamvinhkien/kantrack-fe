@@ -293,5 +293,7 @@
   "incomplete": "Incomplete",
   "upcoming": "Upcoming",
   "no_deadline": "No Deadline",
-  "total": "Total"
+  "total": "Total",
+  "pending_invitation": "This user already has a pending invitation to this board.",
+  "not_due_yet": "Not due yet"
 }

@@ -76,7 +76,8 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     'Comment limit reached for this card.': t('limit_comment'),
     'This board has reached its email reminder limit.': t('limit_reminder'),
     'This board has reached its card limit.': t('limit_card'),
-    'This board has reached its member limit.': t('limit_member')
+    'This board has reached its member limit.': t('limit_member'),
+    'This user already has a pending invitation to this board.': t('pending_invitation')
   }
 
   if (silentMessages.has(errorMessage)) {
