@@ -295,5 +295,7 @@
   "no_deadline": "Không có thời hạn",
   "total": "Tổng cộng",
   "pending_invitation": "Người dùng này đã có lời mời tham gia bảng này.",
-  "not_due_yet": "Chưa tới hạn"
+  "not_due_yet": "Chưa tới hạn",
+  "viewed_at": "Đã xem",
+  "viewed_just_now": "Vừa xem xong"
 }

@@ -30,9 +30,15 @@ import { socketIoInstance } from '~/socketio/socketClient'
 import { toast } from 'react-toastify'
 import PublicIcon from '@mui/icons-material/Public'
 import LockIcon from '@mui/icons-material/Lock'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import Chip from '@mui/material/Chip'
+import { renderTime } from '~/utils/formatters'
+import moment from 'moment'
 
 const Boards = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const location = useLocation()
   const query = new URLSearchParams(location.search)
   const ownerPage = parseInt(query.get('ownerPage') || DEFAULT_PAGE, 10)
@@ -325,6 +331,15 @@ const Boards = () => {
     )
   }
 
+  const isJustViewed = (viewedAt) => {
+    if (!viewedAt) return false
+
+    const now = moment()
+    const target = moment(viewedAt)
+
+    return now.diff(target, 'seconds') < 60
+  }
+
   return (
     <Container disableGutters maxWidth={false}>
       <AppBar />
@@ -463,12 +478,86 @@ const Boards = () => {
               {recentBoards.length > 0 && (
                 <Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <AccessTimeIcon />
+                    <AccessTimeIcon color="info" />
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
                       {t('recently_viewed')}
                     </Typography>
                   </Box>
-                  {renderBoardGrid(recentBoards, false, false)}
+
+                  <Grid container spacing={2}>
+                    {recentBoards.map((b) => (
+                      <Grid xs={12} md={3} key={b._id}>
+                        <Box
+                          sx={{
+                            bgcolor: 'background.paper',
+                            borderRadius: 2,
+                            boxShadow: 2,
+                            overflow: 'hidden',
+                            transition: '0.2s',
+                            '&:hover': {
+                              boxShadow: 4
+                            }
+                          }}
+                        >
+                          <List disablePadding>
+                            <ListItem
+                              component={Link}
+                              to={`/boards/${b._id}`}
+                              sx={{
+                                textDecoration: 'none',
+                                color: 'inherit',
+                                px: 2,
+                                py: 1.5,
+                                bgcolor: theme => theme.palette.mode === 'dark' ? '#242b34' : '#ffffff',
+                                '&:hover': {
+                                  bgcolor: theme => theme.palette.mode === 'dark' ? '#1d222aff' : 'action.hover'
+                                }
+                              }}
+                            >
+                              <ListItemText
+                                primary={
+                                  <Typography fontWeight={600} noWrap>
+                                    {b.title}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <Box
+                                    sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 1,
+                                      mt: 0.5,
+                                      flexWrap: 'wrap'
+                                    }}
+                                  >
+                                    <Chip
+                                      size="small"
+                                      icon={b.type === 'public' ? <PublicIcon /> : <LockIcon />}
+                                      label={b.type === 'public' ? t('public') : t('private')}
+                                      variant="outlined"
+                                    />
+
+                                    {b.viewedAt && (
+                                      <Typography
+                                        variant="caption"
+                                        color={isJustViewed(b.viewedAt) ? 'primary' : 'text.secondary'}
+                                        sx={{ fontWeight: isJustViewed(b.viewedAt) ? 600 : 400 }}
+                                      >
+                                        {isJustViewed(b.viewedAt)
+                                          ? t('viewed_just_now')
+                                          : `${t('viewed_at')} ${renderTime(b.viewedAt, { locale: i18n.language })}`
+                                        }
+                                      </Typography>
+                                    )}
+                                  </Box>
+                                }
+                              />
+                            </ListItem>
+                          </List>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Box>
               )}
 

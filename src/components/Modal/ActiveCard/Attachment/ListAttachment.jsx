@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -46,22 +46,30 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
   const files = ListAttachments?.filter(att => att.type === 'file') || []
   const links = ListAttachments?.filter(att => att.type === 'link') || []
 
-  const [copied, setCopied] = useState(false)
-  const [timerId, setTimerId] = useState(null)
+  const [copiedLinkIndex, setCopiedLinkIndex] = useState(null)
+  const copyTimerRef = useRef(null)
 
-  const handleCopy = async (att) => {
+  const handleCopy = async (att, index) => {
     await navigator.clipboard.writeText(att.url)
-    setCopied(true)
-    if (timerId) clearTimeout(timerId)
-    const id = setTimeout(() => setCopied(false), 2000)
-    setTimerId(id)
+
+    setCopiedLinkIndex(index)
+
+    if (copyTimerRef.current) {
+      clearTimeout(copyTimerRef.current)
+    }
+
+    copyTimerRef.current = setTimeout(() => {
+      setCopiedLinkIndex(null)
+    }, 2000)
   }
 
   useEffect(() => {
     return () => {
-      if (timerId) clearTimeout(timerId)
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current)
+      }
     }
-  }, [timerId])
+  }, [])
 
   const handleOpenPopover = (event, att) => {
     setAnchorPopoverElement(event.currentTarget)
@@ -254,10 +262,10 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                 <Tooltip
                   placement="top"
                   arrow
-                  title={copied ? t('copied') : t('copy_link')}
+                  title={copiedLinkIndex === idx ? t('copied') : t('copy_link')}
                 >
                   <Button
-                    onClick={() => handleCopy(att)}
+                    onClick={() => handleCopy(att, idx)}
                     variant="text"
                     color="primary"
                     size="small"
@@ -274,7 +282,7 @@ const ListAttachment = ({ ListAttachments, handleUpdateCardAttachments }) => {
                       transition: 'none'
                     }}
                   >
-                    {copied ? (
+                    {copiedLinkIndex === idx ? (
                       <CheckIcon fontSize="small" color="success" />
                     ) : (
                       <ContentCopyIcon fontSize="small" />

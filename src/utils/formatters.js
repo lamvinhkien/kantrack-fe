@@ -21,7 +21,6 @@ export const renderTime = (time, options = {}) => {
   const diffDaysFloat = now.diff(target, 'hours') / 24
   const diffDays = Math.round(diffDaysFloat)
 
-  // === Dưới 1 phút ===
   if (diffSeconds < 60) {
     if (showSeconds)
       return locale === 'vi'

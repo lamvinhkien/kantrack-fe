@@ -295,5 +295,7 @@
   "no_deadline": "No Deadline",
   "total": "Total",
   "pending_invitation": "This user already has a pending invitation to this board.",
-  "not_due_yet": "Not due yet"
+  "not_due_yet": "Not due yet",
+  "viewed_at": "Viewed at",
+  "viewed_just_now": "Viewed just now"
 }
