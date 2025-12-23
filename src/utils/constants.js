@@ -8,7 +8,7 @@ export const WEB_DOMAIN = webDomain
 export const MAX_COLUMNS_PER_BOARD = 8
 
 export const DEFAULT_PAGE = 1
-export const DEFAULT_ITEMS_PER_PAGE = 6
+export const DEFAULT_ITEMS_PER_PAGE = 4
 
 export const CARD_MEMBER_ACTIONS = { ADD: 'ADD', REMOVE: 'REMOVE' }
 

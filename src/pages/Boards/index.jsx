@@ -214,14 +214,14 @@ const Boards = () => {
   }
 
   const renderBoardGrid = (boardsList, isLoading, allowCreateFallback = false) => {
-    const placeholderCount = 6
+    const placeholderCount = 4
     const displayList = isLoading ? Array(placeholderCount).fill(null) : boardsList
 
     return (
       <Grid container spacing={2} minHeight={160}>
         {displayList.length > 0 ? (
           displayList.map((b, index) => (
-            <Grid xs={12} sm={6} md={4} lg={2} key={b?._id || index}>
+            <Grid xs={12} sm={6} md={4} lg={3} key={b?._id || index}>
               <Card
                 component={b ? Link : 'div'}
                 to={b ? `/boards/${b._id}` : undefined}
@@ -298,7 +298,7 @@ const Boards = () => {
           ))
         ) : (
           allowCreateFallback && !isLoading && (
-            <Grid xs={12} sm={6} md={4} lg={2}>
+            <Grid xs={12} sm={6} md={4} lg={3}>
               <Box
                 sx={{
                   width: '100%',
