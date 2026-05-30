@@ -1,8 +1,16 @@
 let webDomain = ''
-if (process.env.BUILD_MODE === 'production') webDomain = 'https://kantrack.io.vn'
-if (process.env.BUILD_MODE === 'dev') webDomain = 'http://localhost:5173'
+let apiRoot = ''
+if (process.env.BUILD_MODE === 'production') {
+  webDomain = 'https://kantrack.io.vn'
+  apiRoot = 'https://kantrack-server.onrender.com'
+}
 
-export const API_ROOT = 'http://localhost:8017'
+if (process.env.BUILD_MODE === 'dev') {
+  webDomain = 'http://localhost:5173'
+  apiRoot = 'http://localhost:8017'
+}
+
+export const API_ROOT = apiRoot
 export const WEB_DOMAIN = webDomain
 
 export const MAX_COLUMNS_PER_BOARD = 8
