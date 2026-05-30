@@ -1,0 +1,14 @@
+<svg viewBox="0 0 70 72" xmlns="http://www.w3.org/2000/svg">
+  <g fill="currentColor">
+    <!-- 3 cột Kanban -->
+    <rect x="6" y="14" width="12" height="36" rx="2" />
+    <rect x="26" y="10" width="12" height="40" rx="2" />
+    <rect x="46" y="14" width="12" height="36" rx="2" />
+
+    <!-- Thanh ngang rút ngắn để mũi tên vừa khít -->
+    <rect x="6" y="60" width="46" height="4" rx="2" />
+
+    <!-- Mũi tên nằm hoàn toàn trong vùng 3 cột -->
+    <polygon points="52,56 58,62 52,68" />
+  </g>
+</svg>
