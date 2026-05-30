@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/src/assets/kantrack-mini.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/kantrack-mini.svg" />
   <title>KanTrack</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+  <script type="text/javascript">
+    // Lưu trữ URL hiện tại (ví dụ: /boards/6a1a96ec...) vào sessionStorage
+    sessionStorage.setItem('redirect_path', window.location.pathname + window.location.search);
+    
+    // Ép trình duyệt quay về trang chủ gốc '/' để nạp file index.html đã build hoàn chỉnh
+    window.location.replace('/');
+  </script>
 </head>
-
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
 </body>
-
 </html>
